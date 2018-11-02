@@ -114,7 +114,11 @@ public class World {
             boolean preRet = false;
             inner: 
             for(PersonProperty personProp : person.getProperties()) {
-                preRet = taskProp.fulfills(personProp.getEquivalenceKey());
+                EquivalenceKey[] keys = new EquivalenceKey[]
+                        {taskProp.getEquivalenceKey(), personProp.getEquivalenceKey()};
+                preRet =    keys[0].getID() == keys[1].getID()
+                         && personProp.fulfills(keys[0])
+                         && taskProp.fulfills(keys[1]);
                 if(preRet) break inner;
             }
             ret &= preRet;

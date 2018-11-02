@@ -10,9 +10,12 @@ public class EqualEquivalenceKey<T> implements EquivalenceKey {
     private static final String PROP_NAME = "equal";
     private static final String PROP_DESC = "an equivalence key for equivalent values";
     
+    private int id;
+    
     private final T value;
     
-    public EqualEquivalenceKey(final T constant) {
+    public EqualEquivalenceKey(final int id, final T constant) {
+        this.id = id;
         this.value = constant;
     }
     
@@ -28,18 +31,23 @@ public class EqualEquivalenceKey<T> implements EquivalenceKey {
 
     @Override
     public int hashCode() {
-        return Objects.hash(value.getClass(), value.hashCode());
+        return Objects.hash(id, value.getClass(), value.hashCode());
     }
     
     @Override
     public boolean equals(Object other) {
         if(other != null && getClass() == other.getClass()) {
             final EqualEquivalenceKey<?> o = (EqualEquivalenceKey<?>)other;
-            return value.getClass() == o.value.getClass() && value.equals(o.value);
+            return value.getClass() == o.value.getClass() && id == o.id && value.equals(o.value);
         }
         return false;
     }
 
+    @Override
+    public int getID() {
+        return id;
+    }
+    
     @Override
     public boolean isEquivalent(EquivalenceKey other) {
         return equals(other);

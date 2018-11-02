@@ -11,6 +11,7 @@ public enum Gender implements EquivalenceKey {
     public static final String MALE_STR = "m";
     public static final String OTHER_STR = "o";
     
+    private static final int ID = 123456789;
     private static final String PROP_NAME = "gender";
     private static final String PROP_DESC = "the de-jure gender of a person";
     
@@ -36,5 +37,10 @@ public enum Gender implements EquivalenceKey {
     @Override
     public boolean isEquivalent(EquivalenceKey other) {
         return equals(other);
+    }
+
+    @Override
+    public int getID() {
+        return ID;
     }
 }

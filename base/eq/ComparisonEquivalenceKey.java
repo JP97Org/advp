@@ -8,10 +8,13 @@ public class ComparisonEquivalenceKey<T extends Comparable<T>> implements Equiva
     private static final String PROP_NAME = "comparison";
     private static final String PROP_DESC = "an equivalence key which compares two values";
     
+    private int id;
+    
     private T value;
     private final Comparison comp;
     
-    public ComparisonEquivalenceKey(final T value, Comparison comp) {
+    public ComparisonEquivalenceKey(final int id, final T value, final Comparison comp) {
+        this.id = id;
         this.value = value;
         this.comp = comp;
     }
@@ -31,10 +34,15 @@ public class ComparisonEquivalenceKey<T extends Comparable<T>> implements Equiva
     }
     
     @Override
+    public int getID() {
+        return id;
+    }
+    
+    @Override
     public boolean isEquivalent(EquivalenceKey other) {
         if(other != null && getClass() == other.getClass()) {
             final ComparisonEquivalenceKey<?> o = (ComparisonEquivalenceKey<?>)other;
-            if(value.getClass() == o.value.getClass() && comp == o.comp.anti()) {
+            if(value.getClass() == o.value.getClass() && comp == o.comp.anti() && id == o.id) {
                 return comp((T)o.value); //TODO: evtl. noch besser machen, falls moeglich
             }
         }
