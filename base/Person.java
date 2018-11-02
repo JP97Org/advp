@@ -18,6 +18,10 @@ public class Person {
         this.properties.addAll(properties);
     }
     
+    public String getName() {
+        return name;
+    }
+    
     public Set<PersonProperty> getProperties() {
         return properties;
     }

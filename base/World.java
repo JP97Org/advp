@@ -129,15 +129,16 @@ public class World {
         
         outer: 
         for(TaskProperty taskProp : task.getProperties()) {
-            // for every task property there must exist at least one matching person property
+            // For every task property there must exist at least one matching person property.
+            // Two properties match, if one of them fulfills the other.
             boolean preRet = false;
             inner: 
             for(PersonProperty personProp : person.getProperties()) {
                 EquivalenceKey[] keys = new EquivalenceKey[]
                         {taskProp.getEquivalenceKey(), personProp.getEquivalenceKey()};
                 preRet =    keys[0].getID() == keys[1].getID()
-                         && personProp.fulfills(keys[0])
-                         && taskProp.fulfills(keys[1]);
+                         && (personProp.fulfills(keys[0])
+                             || taskProp.fulfills(keys[1]));
                 if(preRet) break inner;
             }
             ret &= preRet;
