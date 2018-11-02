@@ -10,8 +10,10 @@ public class IDs {
     //for internal equivalence keys (see e.g. Age#key)
     public static final int INTERNAL = 100000000;
    
-    public static final int AGE      = 100000001;
-    public static final int GENDER   = 100000002;
+    public static final int TIME     = 100000010;
+    
+    public static final int AGE      = 100000020;
+    public static final int GENDER   = 100000030;
     
     //////////////////////////////////////////////////////////////////////////
     
