@@ -10,9 +10,24 @@ import base.World;
 public class NaiveSolver implements Solver {
 
     private World world;
+    private boolean computePartialSolutionWhenSolvingNotPossible;
     
     public NaiveSolver() {
         this.world = null;
+        this.computePartialSolutionWhenSolvingNotPossible = false;
+    }
+    
+    public NaiveSolver(boolean computePartialSolutionWhenSolvingNotPossible) {
+        this.world = null;
+        this.computePartialSolutionWhenSolvingNotPossible = computePartialSolutionWhenSolvingNotPossible;
+    }
+    
+    public boolean doesComputePartialSolutionWhenSolvingNotPossible() {
+        return this.computePartialSolutionWhenSolvingNotPossible;
+    }
+    
+    public void setComputePartialSolutionWhenSolvingNotPossible(boolean computePartialSolutionWhenSolvingNotPossible) {
+        this.computePartialSolutionWhenSolvingNotPossible = computePartialSolutionWhenSolvingNotPossible;
     }
     
     @Override
@@ -35,12 +50,20 @@ public class NaiveSolver implements Solver {
                     mapped = world.mapTaskInstanceToPerson(task, person);
                     // at the moment no two task-instances of the same task can be mapped to 
                     // the same person with this solver
-                    if(mapped && task.getNumberOfInstances() == 0) continue outer;
+                    if(mapped && task.getNumberOfInstances() == 0) {
+                        continue outer;
+                    }
                 }
-                if(task.getNumberOfInstances() > 0) break outer; //failed to map this task --> no solution!
+                if(task.getNumberOfInstances() > 0 && !this.computePartialSolutionWhenSolvingNotPossible) {
+                    break outer; //failed to map this task --> no solution!
+                }
             }
             
-            return world.isCompletelyMapped();
+            boolean fullMapped = world.isCompletelyMapped();
+            if(!fullMapped && !this.computePartialSolutionWhenSolvingNotPossible) {
+                world.resetMapping();
+            }
+            return fullMapped;
         }
         throw new IllegalStateException("World was not set!");
     }
