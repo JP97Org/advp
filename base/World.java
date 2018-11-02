@@ -16,12 +16,15 @@ public class World {
     
     private final Map<TaskInstance, Person> taskInstanceToPersonMap;
     
+    private Solver solver;
+    
     public World(String name) {
         this.name = name;
         this.properties = new HashSet<>();
         this.persons = new HashSet<>();
         this.tasks = new HashSet<>();
         this.taskInstanceToPersonMap = new HashMap<>();
+        this.solver = null;
     }
     
     public World(String name, Set<WorldProperty> properties, Set<Person> persons, Set<Task> tasks) {
@@ -71,8 +74,8 @@ public class World {
         return this.taskInstanceToPersonMap.get(pairGenerate(task, instanceNum));
     }
     
-    public Set<Map.Entry<Task, Integer>> getTaskInstancesOfPerson(Person person) {
-        Set<Map.Entry<Task, Integer>> ret = new HashSet<>();
+    public Set<TaskInstance> getTaskInstancesOfPerson(Person person) {
+        Set<TaskInstance> ret = new HashSet<>();
         
         if(this.taskInstanceToPersonMap.containsValue(person)) {
             Set<TaskInstance> keySet = this.taskInstanceToPersonMap.keySet();
@@ -84,6 +87,22 @@ public class World {
         }
         
         return ret;
+    }
+    
+    public void setSolver(Solver solver) {
+        this.solver = solver;
+        this.solver.setWorld(this);
+    }
+    
+    public Solver getSolver() {
+        return this.solver;
+    }
+    
+    public boolean solve() throws UnsupportedOperationException {
+        if(this.solver != null) {
+            return solver.solve();
+        }
+        throw new UnsupportedOperationException("No solver specified!");
     }
     
     public boolean mapTaskInstanceToPerson(final Task taskArg, final Person personArg) {
@@ -138,6 +157,10 @@ public class World {
     
     public boolean isCompletelyMapped() {
         return tasks.stream().map(x -> x.getNumberOfInstances()).reduce(0, (x,y) -> x + y).intValue() == 0; 
+    }
+    
+    public void resetMapping() {
+        this.taskInstanceToPersonMap.clear();
     }
     
     @Override
