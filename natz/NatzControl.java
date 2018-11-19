@@ -29,9 +29,11 @@ public class NatzControl {
     }
     
     private String[][] generateOutput() {
-        String[][] ret = null; //TODO
+        String[][] ret = null;
         
-        
+        if(this.world.isCompletelyMapped()) {
+            
+        }
         
         return ret;
     }
