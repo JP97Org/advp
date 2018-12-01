@@ -8,6 +8,7 @@ import base.Person;
 import base.Solver;
 import base.Task;
 import base.World;
+import base.eq.TimeEquivalenceKey;
 import base.eq.TimeInterval;
 import base.solution.NaiveSolver;
 
@@ -22,7 +23,7 @@ public class NatzControl {
 
         this.dates = dates;
 
-        Solver solver = new NaiveSolver(true); // TODO other solver
+        Solver solver = new NaiveSolver(true, true); // TODO other solver
         this.world.setSolver(solver);
     }
 
@@ -57,9 +58,13 @@ public class NatzControl {
 
         // adding body
         for (int o = 1; o < ret.length; o++) {
+            final int odex = o - 1;
             for (int i = 0; i < ret[o].length; i++) {
                 final int index = i;
-                final Task task = this.world.getTasks().stream().filter(x -> x.getName().equals(header[index]))
+                final Task task = this.world.getTasks()
+                        .stream()
+                        .filter(x -> x.getName().equals(header[index]))
+                        .filter(x -> dateFilterMethod(x, odex))
                         .iterator().next();
                 final Person person = this.world.getPersonOfTaskInstance(task, getTaskIndex(header, i));
                 ret[o][i] = person != null ? person.getName() : "null";
@@ -67,6 +72,18 @@ public class NatzControl {
         }
 
         return ret;
+    }
+
+    private boolean dateFilterMethod(final Task x, final int odex) {
+        final TimeInterval date = dates.get(odex);
+        
+        return x
+                .getProperties()
+                .stream()
+                .filter(a -> a.getEquivalenceKey().getClass().equals(TimeEquivalenceKey.class))
+                .map(a -> TimeEquivalenceKey.class.cast(a.getEquivalenceKey()))
+                .map(a -> a.getTimeIntervals())
+                .iterator().next().iterator().next().equals(date);
     }
 
     private static int getTaskIndex(final String[] header, final int i) {
@@ -79,7 +96,7 @@ public class NatzControl {
         return (i < numPool) ? i : ((i - numPool) % numFloor);
     }
 
-    public void resetMapping() {
-        this.world.resetMapping();
+    public boolean isFullyMapped() {
+        return world.isCompletelyMapped();
     }
 }

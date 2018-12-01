@@ -21,7 +21,7 @@ public abstract class Property {
         return description;
     }
     
-    protected EquivalenceKey getEquivalenceKey() {
+    public EquivalenceKey getEquivalenceKey() {
         return equivalenceKey;
     }
     

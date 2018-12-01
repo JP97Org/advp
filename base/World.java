@@ -171,10 +171,6 @@ public class World {
         return tasks.stream().map(x -> x.getNumberOfInstances()).reduce(0, (x,y) -> x + y).intValue() == 0; 
     }
     
-    public void resetMapping() {
-        this.taskInstanceToPersonMap.clear();
-    }
-    
     @Override
     public int hashCode() {
         return Objects.hash(name, properties, persons, tasks);
