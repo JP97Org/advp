@@ -29,6 +29,10 @@ public abstract class Property {
         return this.equivalenceKey.isEquivalent(otherEqKey);
     }
     
+    public void mapped() {
+        getEquivalenceKey().mapped();
+    }
+    
     @Override
     public String toString() {
         return this.name    

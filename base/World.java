@@ -6,6 +6,9 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
+import base.eq.TimeEquivalenceKey;
+import base.eq.TimeInterval;
+
 public class World {
     private static final String STD_NAME = "std-world";
     
@@ -117,6 +120,14 @@ public class World {
                 if(!b) return false; //TODO: EXC in diesem Fall
                 final TaskInstance key = pairGenerate(task);
                 taskInstanceToPersonMap.put(key, person);
+                task.mapped();
+                final TimeInterval ti = task.getProperties()
+                        .stream()
+                        .filter(x -> x.getEquivalenceKey().getClass().equals(TimeEquivalenceKey.class))
+                        .map(x -> TimeEquivalenceKey.class.cast(x.getEquivalenceKey()))
+                        .map(x -> x.getTimeIntervals())
+                        .iterator().next().iterator().next();
+                person.mapped(ti);
                 return true;
             }
             return false;

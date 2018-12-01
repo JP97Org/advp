@@ -6,4 +6,11 @@ public interface EquivalenceKey {
     public int getID();
     
     public boolean isEquivalent(EquivalenceKey other);
+    
+    /**
+     * Can be overwritten by Properties which change behavior after mapping.
+     */
+    public default void mapped() {
+        
+    }
 }

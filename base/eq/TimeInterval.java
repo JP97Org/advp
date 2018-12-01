@@ -17,6 +17,10 @@ public class TimeInterval {
         this.to = to;
     }
     
+    public TimeInterval(final TimeInterval toCopy) {
+        this(new Date(toCopy.from.getTime()), new Date(toCopy.to.getTime()));
+    }
+    
     public Date getFrom() {
         return from;
     }

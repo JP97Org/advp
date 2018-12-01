@@ -56,10 +56,6 @@ public class ContainerEquivalenceKey<T extends EquivalenceKey> implements Equiva
                     break;
                 case ALTERNATE:
                     ret = keys.get(alternationIndex).isEquivalent(other);
-                    alternationIndex++;
-                    if(alternationIndex >= keys.size()) {
-                        alternationIndex -= keys.size();
-                    }
                     break;
                 case AND: //AND and default same case
                 default:
@@ -71,6 +67,16 @@ public class ContainerEquivalenceKey<T extends EquivalenceKey> implements Equiva
             return ret;
         }
         return false;
+    }
+    
+    @Override
+    public void mapped() {
+        if(operation == Operation.ALTERNATE) {
+            alternationIndex++;
+            if(alternationIndex >= keys.size()) {
+                alternationIndex -= keys.size();
+            }
+        }
     }
 
 }

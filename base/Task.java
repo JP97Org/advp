@@ -49,9 +49,13 @@ public class Task {
         return this.properties.add(property);
     }
     
+    public void mapped() {
+        properties.stream().forEach(x -> x.mapped());
+    }
+    
     @Override
     public int hashCode() {
-        return Objects.hash(name, numberInstances, properties);
+        return Objects.hash(name, properties);
     }
     
     @Override
@@ -59,7 +63,6 @@ public class Task {
         if(other != null && getClass() == other.getClass()) {
             final Task o = (Task)other;
             return  name.equals(o.name) && 
-                    numberInstances == o.numberInstances &&
                     properties.equals(o.properties);
         }
         return false;

@@ -40,6 +40,14 @@ public class TimeEquivalenceKey implements EquivalenceKey {
         this(false, Arrays.asList(taskTimeIntervals));
     }
     
+    public void mapped(final TimeInterval ti) {
+        this.personsPossibleTimeIntervals.remove(ti);
+    }
+    
+    public Set<TimeInterval> getTimeIntervals() {
+        return new HashSet<TimeInterval>(ofPerson ? this.personsPossibleTimeIntervals : Arrays.asList(taskFromTo));
+    }
+    
     @Override
     public PersonProperty getPersonProperty() {
         if (ofPerson) {

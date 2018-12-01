@@ -4,6 +4,9 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
+import base.eq.TimeEquivalenceKey;
+import base.eq.TimeInterval;
+
 public class Person {
     private final String name;
     private final Set<PersonProperty> properties;
@@ -32,6 +35,18 @@ public class Person {
     
     public boolean addProperty(PersonProperty property) {
         return this.properties.add(property);
+    }
+    
+    public void mapped(final TimeInterval ti) {
+        if(ti != null) {
+            final TimeEquivalenceKey key = (TimeEquivalenceKey) this.properties.stream()
+                .filter(x -> x.getEquivalenceKey().getClass().equals(TimeEquivalenceKey.class))
+                .map(x -> x.getEquivalenceKey())
+                .iterator().next();
+            if(key != null) {
+                key.mapped(ti);
+            }
+        }
     }
     
     @Override
