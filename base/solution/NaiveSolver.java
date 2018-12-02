@@ -1,7 +1,6 @@
 package base.solution;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -16,18 +15,15 @@ public class NaiveSolver implements Solver {
 
     private World world;
     private boolean computePartialSolutionWhenSolvingNotPossible;
-    private boolean randomize;
     
     public NaiveSolver() {
         this.world = null;
         this.computePartialSolutionWhenSolvingNotPossible = false;
-        this.randomize = false; 
     }
     
-    public NaiveSolver(boolean computePartialSolutionWhenSolvingNotPossible, boolean randomize) {
+    public NaiveSolver(boolean computePartialSolutionWhenSolvingNotPossible) {
         this.world = null;
         this.computePartialSolutionWhenSolvingNotPossible = computePartialSolutionWhenSolvingNotPossible;
-        this.randomize = randomize;
     }
     
     public boolean doesComputePartialSolutionWhenSolvingNotPossible() {
@@ -63,9 +59,6 @@ public class NaiveSolver implements Solver {
                     // the same person with this solver
                     if(mapped) {
                         alreadyMappedPersons.add(person);
-                        if(randomize) {
-                            Collections.shuffle(persons);
-                        }
                         iter = persons.iterator(); //beginning again since other persons could now be mappable 
                     }
                     

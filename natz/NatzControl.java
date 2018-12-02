@@ -10,7 +10,7 @@ import base.Task;
 import base.World;
 import base.eq.TimeEquivalenceKey;
 import base.eq.TimeInterval;
-import base.solution.NaiveSolver;
+import base.solution.FairNumSolver;
 
 public class NatzControl {
     private World world;
@@ -23,7 +23,7 @@ public class NatzControl {
 
         this.dates = dates;
 
-        Solver solver = new NaiveSolver(true, true); // TODO other solver
+        Solver solver = new FairNumSolver(true);
         this.world.setSolver(solver);
     }
 

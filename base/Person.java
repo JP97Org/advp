@@ -66,8 +66,8 @@ public class Person {
     
     @Override
     public String toString() {
-        return this.name
+        return this.name;/*
                 + " | " 
-                + this.properties.stream().map(p -> p.toString()).reduce("", (s,t) -> s + " | " + t);
+                + this.properties.stream().map(p -> p.toString()).reduce("", (s,t) -> s + " | " + t);*/
     }
 }
