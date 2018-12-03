@@ -7,26 +7,25 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
 import base.Person;
 import base.Solver;
 import base.Task;
 import base.World;
+
 import base.eq.TimeEquivalenceKey;
 
-public class FairNumSolver implements Solver {
+public abstract class FairNumSolver implements Solver {
     private World world;
     private boolean computePartialSolutionWhenSolvingNotPossible;
-    //private boolean randomize; //TODO evtl.
     
     public FairNumSolver() {
         this.world = null;
         this.computePartialSolutionWhenSolvingNotPossible = false;
     }
     
-    public FairNumSolver(boolean computePartialSolutionWhenSolvingNotPossible) {
+    public FairNumSolver(final boolean computePartialSolutionWhenSolvingNotPossible) {
         this.world = null;
         this.computePartialSolutionWhenSolvingNotPossible = computePartialSolutionWhenSolvingNotPossible;
     }
@@ -55,6 +54,11 @@ public class FairNumSolver implements Solver {
             final Map<Person, Integer> personToNumMap = new HashMap<>();
             persons.forEach(x -> personToNumMap.put(x, 0));
             
+            //////////////////////////////
+            //DEBUG TODO: entfernen sobald fehler behoben
+            //boolean jumpedIn = false;
+            //////////////////////////////
+            
             for(final Task task : tasks) {
                 boolean taskMapped = false;
                 final Set<Person> alreadyTried = new HashSet<>();
@@ -66,9 +70,10 @@ public class FairNumSolver implements Solver {
                     //////////////////////////////////////////////////////////////
                     
                     //TODO: DEBUG-Einspringpunkt entfernen sobald fehler gefunden
+                    
                     /*
                     try {
-                        if(task.getName().equals("Floor 1")
+                        if(!jumpedIn && task.getName().equals("Floor 1")
                                 &&
                                 task.getProperties()
                                 .stream()
@@ -77,12 +82,12 @@ public class FairNumSolver implements Solver {
                                 .map(x -> x.getTimeIntervals())
                                 .iterator().next().iterator().next()
                                 .getFrom().equals(DateFormat.getDateInstance().parse("12.08.2018"))) {
-                            System.err.println("DEBUG");
+                            jumpedIn = true;
                         }
                     } catch (ParseException e) {
                         e.printStackTrace();
-                    }
-                    */
+                    }*/
+                    
                     
                     //////////////////////////////////////////////////////////////
                     
@@ -115,20 +120,6 @@ public class FairNumSolver implements Solver {
         }
         throw new IllegalStateException("World was not set!");
     }
-
-    private Person getNextPerson(final Map<Person, Integer> map, final Set<Person> alreadyTried) {
-        //TODO: optimize
-        int min = Integer.MAX_VALUE;
-        Person pMin = null;
-        for(Entry<Person, Integer> entry : map.entrySet()) {
-            final Person person = entry.getKey();
-            final int num = entry.getValue();
-            if (!alreadyTried.contains(person) && num <= min) {
-                min = num;
-                pMin = person;
-            }
-        }
-        
-        return pMin;
-    }
+    
+    protected abstract Person getNextPerson(Map<Person, Integer> map, Set<Person> alreadyTried);
 }

@@ -12,10 +12,25 @@ import base.Task;
 import base.eq.TimeInterval;
 
 public class Test {
+    private static final boolean PARTIAL = true;
+    private static final int RANDOMIZE_LVL = 100; //TODO: stats: 91 mit rand = 0, ca. 80 sonst  
+    private static final int ITERATIONS = 100;
+    private static final boolean OPTIMIZE = true; //TODO: it's not realy optimized :/
+    
     private static File realInput = /*null;*/  new File("/home/jojo/Dokumente/in.csv"); /**/
     private static TestInputLoader til;
     
     public static void main(String[] args) throws FileNotFoundException {
+        final long before = System.currentTimeMillis();
+        System.out.println(calc(0,0));
+        System.out.println((System.currentTimeMillis() - before) + "ms");
+    }
+    
+    private static int calc(final int cntMapped, final int iter) throws FileNotFoundException {
+        if(iter == ITERATIONS) {
+            return cntMapped;
+        }
+        
         PersonFactory pf = new PersonFactory();
         if(realInput != null) til = new TestInputLoader(realInput, pf);
         
@@ -31,31 +46,19 @@ public class Test {
 
         final Set<Task> tasks = tf.getAllTasks();
 
-        NatzControl nc = new NatzControl(persons, tasks, dates);
-        final int iterations = 2;
-        int cntMapped = 0;
-        for(int i = 0;i < iterations;i++) {
-            final String[][] output = nc.calculateTable();
-            cntMapped = nc.isFullyMapped() ? (cntMapped + 1) : cntMapped;
-            final String outputStr = Arrays
+        NatzControl nc = new NatzControl(persons, tasks, dates, PARTIAL, RANDOMIZE_LVL, OPTIMIZE);
+        final String[][] output = nc.calculateTable();
+        final String outputStr = Arrays
                 .stream(output)
                 .map(x -> Arrays.stream(x).reduce("", (a, b) -> a + ";" + b))
                 .reduce("", (c, d) -> c + "\n" + d)
                 .replaceAll("\\n;", "\n")
                 .replaceFirst("\\n", "");
-            System.out.println(outputStr.replaceAll("null", "NUUUULL") + "\n");
-            
-            //resetting pf, tf and (nc and world)
-            pf = new PersonFactory();
-            if(til != null) til.load(pf);
-            
-            tf = new TaskFactory(getDateStrings());
-            nc = new NatzControl(getPersons(pf, tf.getDates()), tf.getAllTasks(), tf.getDates());
-        }
-        System.out.println(cntMapped);
+        System.out.println(outputStr.replaceAll("null", "NUUUULL") + "\n");
+        return calc(cntMapped + (nc.isFullyMapped() ? 1 : 0), iter + 1);
     }
     
-    private static final String[] getDateStrings() {
+    private static String[] getDateStrings() {
         final String[] ret;
         if(realInput == null) {
             ret = new String[21];
@@ -69,7 +72,7 @@ public class Test {
         return ret;
     }
     
-    private static final Set<Person> getPersons(final PersonFactory pf, final List<TimeInterval> dates) {
+    private static Set<Person> getPersons(final PersonFactory pf, final List<TimeInterval> dates) {
         final Set<Person> persons = new HashSet<Person>();
         if(realInput == null) {
             /*persons.add(pf.getPerson("Felix|m|o", false, false, dates));

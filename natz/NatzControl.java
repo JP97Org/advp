@@ -5,25 +5,30 @@ import java.util.List;
 import java.util.Set;
 
 import base.Person;
-import base.Solver;
 import base.Task;
 import base.World;
 import base.eq.TimeEquivalenceKey;
 import base.eq.TimeInterval;
 import base.solution.FairNumSolver;
+import base.solution.NaiveFairNumSolver;
+import base.solution.OptimizedFairNumSolver;
 
 public class NatzControl {
     private World world;
     private List<TimeInterval> dates;
 
-    public NatzControl(final Set<Person> persons, final Set<Task> tasks, final List<TimeInterval> dates) {
+    public NatzControl(final Set<Person> persons, final Set<Task> tasks, 
+            final List<TimeInterval> dates, final boolean partial, final int randomizeLvl,
+            final boolean optimize) {
+        if(randomizeLvl < 0) throw new IllegalArgumentException("randomizeLvl must be >= 0");
         this.world = new World("natz");
         persons.forEach(p -> this.world.addPerson(p));
         tasks.forEach(t -> this.world.addTask(t));
 
         this.dates = dates;
 
-        Solver solver = new FairNumSolver(true);
+        final FairNumSolver solver = optimize ? new OptimizedFairNumSolver(partial, randomizeLvl) 
+                                              : new NaiveFairNumSolver(partial, randomizeLvl);
         this.world.setSolver(solver);
     }
 
