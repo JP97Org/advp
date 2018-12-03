@@ -60,7 +60,7 @@ public class Task {
     
     @Override
     public boolean equals(Object other) {
-        if(other != null && getClass() == other.getClass()) {
+        if(other != null && getClass().equals(other.getClass())) {
             final Task o = (Task)other;
             return  name.equals(o.name) && 
                     properties.equals(o.properties);

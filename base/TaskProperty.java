@@ -15,7 +15,7 @@ public class TaskProperty extends Property {
     
     @Override
     public boolean equals(Object other) {
-        if(other != null && getClass() == other.getClass()) {
+        if(other != null && getClass().equals(other.getClass())) {
             final TaskProperty o = (TaskProperty)other;
             return  getName().equals(o.getName()) && 
                     getDescription().equals(o.getDescription()) &&

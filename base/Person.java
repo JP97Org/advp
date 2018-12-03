@@ -56,7 +56,7 @@ public class Person {
     
     @Override
     public boolean equals(Object other) {
-        if(other != null && getClass() == other.getClass()) {
+        if(other != null && getClass().equals(other.getClass())) {
             final Person o = (Person)other;
             return  name.equals(o.name) && 
                     properties.equals(o.properties);

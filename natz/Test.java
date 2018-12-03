@@ -13,11 +13,18 @@ import base.eq.TimeInterval;
 
 public class Test {
     private static final boolean PARTIAL = true;
-    private static final int RANDOMIZE_LVL = 100; //TODO: stats: 91 mit rand = 0, ca. 80 sonst  
-    private static final int ITERATIONS = 100;
-    private static final boolean OPTIMIZE = true; //TODO: it's not realy optimized :/
     
-    private static File realInput = /*null;*/  new File("/home/jojo/Dokumente/in.csv"); /**/
+    //////////////////////////////////////////////////////////////////////////////////////////////////
+    // SETTINGS
+    
+    private static final int RANDOMIZE_LVL = 0; //TODO: stats: 91 mit rand = 0, ca. 80 sonst  
+    private static final int ITERATIONS = 100;
+    private static final boolean OPTIMIZE = false; //TODO: it's not realy optimized :/
+    
+    private static File realInput = /*null; */ new File("/home/jojo/Dokumente/in.csv"); /**/
+    
+    //////////////////////////////////////////////////////////////////////////////////////////////////
+    
     private static TestInputLoader til;
     
     public static void main(String[] args) throws FileNotFoundException {
@@ -79,7 +86,7 @@ public class Test {
             persons.add(pf.getPerson("Jonathan|m|n", false, true, dates));
             persons.add(pf.getPerson("Anna|f|o", true, false, dates));
             persons.add(pf.getPerson("Berta|f|n", true, true, dates));*/
-            final int cnt = 24;
+            final int cnt = 48; //24; //TODO better rate :|
             for(int i = 0;i < cnt;i++) {
                 final boolean female = Math.random() < 0.5;
                 final boolean newK = Math.random() < 0.5;

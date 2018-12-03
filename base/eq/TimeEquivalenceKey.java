@@ -75,7 +75,7 @@ public class TimeEquivalenceKey implements EquivalenceKey {
     
     @Override
     public boolean isEquivalent(EquivalenceKey other) {
-        if(other != null && getClass() == other.getClass()) {
+        if(other != null && getClass().equals(other.getClass())) {
             final TimeEquivalenceKey o = (TimeEquivalenceKey)other;
             
             boolean taskIntervalContained = false;

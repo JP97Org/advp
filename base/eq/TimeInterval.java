@@ -86,7 +86,7 @@ public class TimeInterval {
     
     @Override
     public boolean equals(Object other) {
-        return getClass() == other.getClass() && from.equals(((TimeInterval)other).from)
+        return getClass().equals(other.getClass()) && from.equals(((TimeInterval)other).from)
                 && to.equals(((TimeInterval)other).to);
     }
 }

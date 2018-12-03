@@ -18,7 +18,7 @@ public class WorldProperty extends Property{
     
     @Override
     public boolean equals(Object other) {
-        if(other != null && getClass() == other.getClass()) {
+        if(other != null && getClass().equals(other.getClass())) {
             final WorldProperty o = (WorldProperty)other;
             return  getName().equals(o.getName()) && 
                     getDescription().equals(o.getDescription()) &&

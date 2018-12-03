@@ -15,7 +15,7 @@ public class PersonProperty extends Property {
     
     @Override
     public boolean equals(Object other) {
-        if(other != null && getClass() == other.getClass()) {
+        if(other != null && getClass().equals(other.getClass())) {
             final PersonProperty o = (PersonProperty)other;
             return  getName().equals(o.getName()) && 
                     getDescription().equals(o.getDescription()) &&

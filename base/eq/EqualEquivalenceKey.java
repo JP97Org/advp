@@ -36,9 +36,9 @@ public class EqualEquivalenceKey<T> implements EquivalenceKey {
     
     @Override
     public boolean equals(Object other) {
-        if(other != null && getClass() == other.getClass()) {
+        if(other != null && getClass().equals(other.getClass())) {
             final EqualEquivalenceKey<?> o = (EqualEquivalenceKey<?>)other;
-            return value.getClass() == o.value.getClass() && id == o.id && value.equals(o.value);
+            return value.getClass().equals(o.value.getClass()) && id == o.id && value.equals(o.value);
         }
         return false;
     }

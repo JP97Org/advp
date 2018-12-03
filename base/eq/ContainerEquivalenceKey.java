@@ -47,8 +47,9 @@ public class ContainerEquivalenceKey<T extends EquivalenceKey> implements Equiva
         if(id == other.getID()) {
             boolean ret = true;
             
-            if(getClass() == other.getClass()) { //other type is also a container
+            if(getClass().equals(other.getClass())) { //other type is also a container
                 //TODO: evtl. auch nicht akzeptieren
+                System.err.println("UNDEFINED_BEHAVIOR_Container_Eq_Key!!!!!!!!!!!!!");
                 final ContainerEquivalenceKey<?> o = (ContainerEquivalenceKey<?>)other;
                 ret = o.keys.stream().map(k -> this.isEquivalent(k)).reduce(false, (a,b) -> a || b);
             } else { //other type is a singular eq-key

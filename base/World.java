@@ -117,7 +117,7 @@ public class World {
             
             if(ok) {
                 final boolean b = task.decrementNumberOfInstances();
-                if(!b) return false; //TODO: EXC in diesem Fall
+                assert b;
                 final TaskInstance key = pairGenerate(task);
                 taskInstanceToPersonMap.put(key, person);
                 task.mapped();
@@ -178,7 +178,7 @@ public class World {
     
     @Override
     public boolean equals(Object other) {
-        if(other != null && getClass() == other.getClass()) {
+        if(other != null && getClass().equals(other.getClass())) {
             final World o = (World)other;
             return  name.equals(o.name) && 
                     properties.equals(o.properties) &&

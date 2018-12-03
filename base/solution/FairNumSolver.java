@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import base.Person;
@@ -113,7 +114,7 @@ public abstract class FairNumSolver implements Solver {
                 }
             }   
             
-            System.out.println(personToNumMap); //TODO: DEBUG-Ausgabe entfernen!
+            System.out.println(personToNumMap + "\n" + edge(personToNumMap, true) + "|" + edge(personToNumMap, false)); //TODO: DEBUG-Ausgabe entfernen!
             
             boolean fullMapped = world.isCompletelyMapped();
             return fullMapped;
@@ -121,5 +122,19 @@ public abstract class FairNumSolver implements Solver {
         throw new IllegalStateException("World was not set!");
     }
     
+    //TODO: DEBUG method entfernen
+    private int edge(final Map<Person, Integer> personToNumMap, final boolean min) {
+        int ret = min ? Integer.MAX_VALUE : Integer.MIN_VALUE;
+        
+        for (final Entry<Person, Integer> entry : personToNumMap.entrySet()) {
+            final int val = entry.getValue();
+            if(min ? val < ret : val > ret) {
+                ret = val;
+            }
+        }
+        
+        return ret;
+    }
+
     protected abstract Person getNextPerson(Map<Person, Integer> map, Set<Person> alreadyTried);
 }
