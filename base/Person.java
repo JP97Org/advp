@@ -7,36 +7,79 @@ import java.util.Set;
 import base.eq.TimeEquivalenceKey;
 import base.eq.TimeInterval;
 
+/**
+ * Represents a person in the broadest sense of the word, i.e. an (sub/ob)ject with a name and
+ * a set of properties.
+ * 
+ * @author jojo
+ * @version 0.9
+ */
 public class Person {
     private final String name;
     private final Set<PersonProperty> properties;
     
-    public Person(String name) {
+    /**
+     * Creates a new Person without properties.
+     * 
+     * @param name - the person's name
+     */
+    public Person(final String name) {
         this.name = name;
         this.properties = new HashSet<PersonProperty>();
     }
     
-    public Person(String name, Set<PersonProperty> properties) {
+    /**
+     * Creates a new Person with the given properties.
+     * 
+     * @param name - the person's name
+     * @param properties - the person's properties
+     */
+    public Person(final String name, final Set<PersonProperty> properties) {
         this(name);
         this.properties.addAll(properties);
     }
     
+    /**
+     * 
+     * @return person's name
+     */
     public String getName() {
         return name;
     }
     
+    /**
+     * 
+     * @return person's properties
+     */
     public Set<PersonProperty> getProperties() {
         return properties;
     }
     
+    /**
+     * 
+     * @param property - the given property
+     * @return whether the person has the given property
+     */
     public boolean hasProperty(PersonProperty property) {
         return this.properties.contains(property);
     }
     
+    /**
+     * Adds the given property to this person's properties.
+     * 
+     * @param property - the given properties
+     * @return whether the adding was successful, i.e. the property was not formerly contained
+     */
     public boolean addProperty(PersonProperty property) {
         return this.properties.add(property);
     }
     
+    /**
+     * If ti != null and this person has an TimeEquivalenceKey's PersonProperty,
+     * maps the given TimeInterval, i.e. calls TimeEquivalenceKey's mapped(TimeInterval ti) method.
+     * 
+     * @param ti - the given TimeInterval
+     */
     public void mapped(final TimeInterval ti) {
         if(ti != null) {
             final TimeEquivalenceKey key = (TimeEquivalenceKey) this.properties.stream()

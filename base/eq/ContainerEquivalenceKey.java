@@ -74,21 +74,22 @@ public class ContainerEquivalenceKey<T extends EquivalenceKey> implements Equiva
     
     private boolean alternateEquivalence(final EquivalenceKey other) {
         if(this.freshlyInitialized) {
-            final Boolean[] boolArr = keys.stream().map(k -> k.isEquivalent(other)).toArray(Boolean[]::new);
+            final Boolean[] boolArr = this.keys.stream().map(k -> k.isEquivalent(other)).toArray(Boolean[]::new);
             for(int i = 0;i < boolArr.length;i++) {
                 if(boolArr[i]) {
                     this.alternationIndex = i;
                     break;
                 }
             }
-            return keys.stream().map(k -> k.isEquivalent(other)).reduce(false, (a,b) -> a || b);
+            return this.keys.stream().map(k -> k.isEquivalent(other)).reduce(false, (a,b) -> a || b);
         } else {
-            return keys.get(alternationIndex).isEquivalent(other);
+            return this.keys.get(alternationIndex).isEquivalent(other);
         }
     }
 
     @Override
     public void mapped() {
+        this.keys.forEach(x -> x.mapped());
         if(this.operation == Operation.ALTERNATE) {
             this.alternationIndex++;
             if(this.alternationIndex >= this.keys.size()) {
