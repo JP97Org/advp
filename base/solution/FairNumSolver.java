@@ -17,24 +17,48 @@ import base.World;
 
 import base.eq.TimeEquivalenceKey;
 
+/**
+ * Represents a solver which solves the problem as fairly as possible, i.e. every person should do ca.
+ * the same amount of task instances.
+ * 
+ * @author jojo
+ * @version 0.9
+ */
 public abstract class FairNumSolver implements Solver {
     private World world;
     private boolean computePartialSolutionWhenSolvingNotPossible;
     
+    /**
+     * Constructor of FairNumSolver without partial calculation.
+     */
     public FairNumSolver() {
         this.world = null;
         this.computePartialSolutionWhenSolvingNotPossible = false;
     }
     
+    /**
+     * Constructor of FairNumSolver with partial calculation settable.
+     * @param computePartialSolutionWhenSolvingNotPossible - the partial solution boolean
+     */
     public FairNumSolver(final boolean computePartialSolutionWhenSolvingNotPossible) {
         this.world = null;
         this.computePartialSolutionWhenSolvingNotPossible = computePartialSolutionWhenSolvingNotPossible;
     }
     
+    /**
+     * Determines whether the solver also calculates a partial solution.
+     * 
+     * @return whether the solver also calculates a partial solution
+     */
     public boolean doesComputePartialSolutionWhenSolvingNotPossible() {
         return this.computePartialSolutionWhenSolvingNotPossible;
     }
     
+    /**
+     * Sets the partial solution boolean.
+     * 
+     * @param computePartialSolutionWhenSolvingNotPossible - the partial solution boolean
+     */
     public void setComputePartialSolutionWhenSolvingNotPossible(boolean computePartialSolutionWhenSolvingNotPossible) {
         this.computePartialSolutionWhenSolvingNotPossible = computePartialSolutionWhenSolvingNotPossible;
     }
@@ -136,5 +160,12 @@ public abstract class FairNumSolver implements Solver {
         return ret;
     }
 
+    /**
+     * Gets the next person.
+     * 
+     * @param map - the persons to num map
+     * @param alreadyTried - the persons already tried
+     * @return the next person
+     */
     protected abstract Person getNextPerson(Map<Person, Integer> map, Set<Person> alreadyTried);
 }

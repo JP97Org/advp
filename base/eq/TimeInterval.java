@@ -6,10 +6,22 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * Represents a time interval with millisecond precision including beginning and end.
+ * 
+ * @author jojo
+ * @version 0.9
+ */
 public class TimeInterval {
     private final Date from;
     private final Date to;
     
+    /**
+     * Creates a new TimeInterval.
+     * 
+     * @param from - the beginning of the interval
+     * @param to - the end of the interval
+     */
     public TimeInterval(Date from, Date to) {
         if(to.getTime() < from.getTime()) throw new IllegalArgumentException("to time must be >= from time!");
         
@@ -17,33 +29,65 @@ public class TimeInterval {
         this.to = to;
     }
     
+    /**
+     * Copies the given TimeInterval.
+     * 
+     * @param toCopy - the given time interval
+     */
     public TimeInterval(final TimeInterval toCopy) {
         this(new Date(toCopy.from.getTime()), new Date(toCopy.to.getTime()));
     }
     
+    /**
+     * Gets the beginning of this interval.
+     * 
+     * @return the beginning of this interval
+     */
     public Date getFrom() {
         return from;
     }
     
+    /**
+     * Gets the end of this interval.
+     * 
+     * @return the end of this interval
+     */
     public Date getTo() {
         return to;
     }
     
-    //for all: inclusive both interval-borders
-    
+    /**
+     * Determines whether the given time is included, including both border, in this interval.
+     * 
+     * @param time - the given time
+     * @return whether the given time is included
+     */
     public boolean contains(Date time) {
         return time.getTime() >= from.getTime() && time.getTime() <= to.getTime();
     }
     
+    /**
+     * Determines whether the other TimeInterval is completely included, including both border, in this interval.
+     * 
+     * @param other - the given time interval
+     * @return whether the given time interval is completely included
+     */
     public boolean contains(TimeInterval other) {
-        return contains(other.from) && contains(other.to);
-    }
-    
-    public boolean isContainedIn(TimeInterval other) {
-        return other.contains(this);
+        return other != null ? (contains(other.from) && contains(other.to)) : false;
     }
     
     /**
+     * Determines whether this TimeInterval is completely included, including both border, in the other one.
+     * 
+     * @param other - the given time interval
+     * @return whether this TimeInterval is completely included in the other one
+     */
+    public boolean isContainedIn(TimeInterval other) {
+        return other != null ? other.contains(this) : false;
+    }
+    
+    /**
+     * TODO experimental method
      * 
      * @param toCut - must be disjunct and ordered asceding and all contained in this time interval!
      * @return ordered ascending list of time intervals containing all time except for the cut out open intervals
@@ -71,6 +115,7 @@ public class TimeInterval {
     }
     
     /**
+     * TODO experimental method
      * 
      * @param toCut - must be contained in this time interval!
      * @return

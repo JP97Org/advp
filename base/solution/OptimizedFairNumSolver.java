@@ -9,14 +9,30 @@ import java.util.Set;
 
 import base.Person;
 
+/**
+ * Represents a solver which solves (more optimized) the problem as fairly as possible, i.e. every person should do ca.
+ * the same amount of task instances.
+ * 
+ * @author jojo
+ * @version 0.9
+ */
 public class OptimizedFairNumSolver extends FairNumSolver {
     private int randomizeLvl;
     
+    /**
+     * Creates a new OptimizedFairNumSolver with standard settings and randomize level 0.
+     */
     public OptimizedFairNumSolver() {
         super();
         this.randomizeLvl = 0;
     }
     
+    /**
+     * Creates a new OptimizedFairNumSolver with the given settings.
+     * 
+     * @param computePartialSolutionWhenSolvingNotPossible
+     * @param randomizeLvl
+     */
     public OptimizedFairNumSolver(final boolean computePartialSolutionWhenSolvingNotPossible, final int randomizeLvl) {
         super(computePartialSolutionWhenSolvingNotPossible);
         if(randomizeLvl < 0) throw new IllegalArgumentException("randomizeLvl must be >= 0");

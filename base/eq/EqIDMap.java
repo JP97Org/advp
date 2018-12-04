@@ -5,8 +5,14 @@ import java.util.Map;
 
 import base.EquivalenceKey;
 
+/**
+ * Represents a map for equivalence keys. It can be used to store ids, so that there are unique.
+ * 
+ * @author jojo
+ * @version 0.9
+ */
 public class EqIDMap {
-    private Map<EquivalenceKey, Integer> map;
+    private final Map<EquivalenceKey, Integer> map;
     
     public EqIDMap() {
         map = new HashMap<>();

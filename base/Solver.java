@@ -10,6 +10,7 @@ public interface Solver {
     
     /**
      * Sets the World which should be solved to the given world.
+     * 
      * @param world - the given world
      */
     public void setWorld(World world);

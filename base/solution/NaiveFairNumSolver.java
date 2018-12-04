@@ -9,14 +9,30 @@ import java.util.Set;
 
 import base.Person;
 
+/**
+ * Represents a solver which solves naively the problem as fairly as possible, i.e. every person should do ca.
+ * the same amount of task instances.
+ * 
+ * @author jojo
+ * @version 0.9
+ */
 public class NaiveFairNumSolver extends FairNumSolver {
     private int randomizeLvl;
     
+    /**
+     * Creates a new NaiveFairNumSolver with standard settings and randomize level 0.
+     */
     public NaiveFairNumSolver() {
         super();
         this.randomizeLvl = 0;
     }
     
+    /**
+     * Creates a new NaiveFairNumSolver with the given settings.
+     * 
+     * @param computePartialSolutionWhenSolvingNotPossible
+     * @param randomizeLvl
+     */
     public NaiveFairNumSolver(final boolean computePartialSolutionWhenSolvingNotPossible, final int randomizeLvl) {
         super(computePartialSolutionWhenSolvingNotPossible);
         if(randomizeLvl < 0) throw new IllegalArgumentException("randomizeLvl must be >= 0");
@@ -25,7 +41,6 @@ public class NaiveFairNumSolver extends FairNumSolver {
 
     @Override
     protected Person getNextPerson(final Map<Person, Integer> map, final Set<Person> alreadyTried) {
-        //TODO: optimize
         int min = Integer.MAX_VALUE;
         List<Person> pMin = new ArrayList<>();
         

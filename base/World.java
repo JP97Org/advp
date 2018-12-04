@@ -228,13 +228,13 @@ public class World {
                 final TaskInstance key = pairGenerate(task);
                 taskInstanceToPersonMap.put(key, person);
                 task.mapped();
-                final TimeInterval ti = task.getProperties()
+                final Set<TimeInterval> tis = task.getProperties()
                         .stream()
                         .filter(x -> x.getEquivalenceKey().getClass().equals(TimeEquivalenceKey.class))
                         .map(x -> TimeEquivalenceKey.class.cast(x.getEquivalenceKey()))
                         .map(x -> x.getTimeIntervals())
-                        .iterator().next().iterator().next();
-                person.mapped(ti);
+                        .iterator().next();
+                person.mapped(tis == null ? null : tis.iterator().next());
                 return true;
             }
             return false;

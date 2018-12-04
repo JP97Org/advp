@@ -1,8 +1,18 @@
 package base.eq;
 
+/**
+ * Represents a Comparison.
+ * 
+ * @author jojo
+ * @version 0.9
+ */
 public enum Comparison {
     GR,SM,GREQ,SMEQ,EQ;
 
+    /**
+     * Gets the anti-comparison of this comparison, i.e. the contrary comparison, e.g. for SM: GR.
+     * @return the anti-comparison, i.e. the contrary comparison
+     */
     public Comparison anti() {
         switch(this) {
             case GR: return SM;

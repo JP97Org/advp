@@ -6,6 +6,12 @@ import base.EquivalenceKey;
 import base.PersonProperty;
 import base.TaskProperty;
 
+/**
+ * Represents an equivalence key for equivalent values.
+ * 
+ * @author jojo
+ * @version 0.9
+ */
 public class EqualEquivalenceKey<T> implements EquivalenceKey {
     private static final String PROP_NAME = "equal";
     private static final String PROP_DESC = "an equivalence key for equivalent values";
@@ -14,6 +20,12 @@ public class EqualEquivalenceKey<T> implements EquivalenceKey {
     
     private final T value;
     
+    /**
+     * Creates a new EqualEquivalenceKey with the given id and the given constant.
+     * 
+     * @param id
+     * @param constant
+     */
     public EqualEquivalenceKey(final int id, final T constant) {
         this.id = id;
         this.value = constant;

@@ -4,6 +4,12 @@ import base.EquivalenceKey;
 import base.PersonProperty;
 import base.TaskProperty;
 
+/**
+ * Represents a an equivalence key which compares two values.
+ * 
+ * @author jojo
+ * @version 0.9
+ */
 public class ComparisonEquivalenceKey<T extends Comparable<T>> implements EquivalenceKey {
     private static final String PROP_NAME = "comparison";
     private static final String PROP_DESC = "an equivalence key which compares two values";
@@ -13,12 +19,24 @@ public class ComparisonEquivalenceKey<T extends Comparable<T>> implements Equiva
     private T value;
     private final Comparison comp;
     
+    /**
+     * Creates a new ComparisonEquivalenceKey with the given id, value and comparison.
+     * 
+     * @param id
+     * @param value
+     * @param comp
+     */
     public ComparisonEquivalenceKey(final int id, final T value, final Comparison comp) {
         this.id = id;
         this.value = value;
         this.comp = comp;
     }
     
+    /**
+     * Gets the value.
+     * 
+     * @return the value.
+     */
     public T getValue() {
         return value;
     }

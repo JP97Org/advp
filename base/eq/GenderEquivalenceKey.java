@@ -4,6 +4,12 @@ import base.EquivalenceKey;
 import base.PersonProperty;
 import base.TaskProperty;
 
+/**
+ * Represents an equivalence key for the de-jure gender of a person.
+ * 
+ * @author jojo
+ * @version 0.9
+ */
 public enum GenderEquivalenceKey implements EquivalenceKey {
     FEMALE, MALE, OTHER;
     
@@ -14,6 +20,12 @@ public enum GenderEquivalenceKey implements EquivalenceKey {
     private static final String PROP_NAME = "gender";
     private static final String PROP_DESC = "the de-jure gender of a person";
     
+    /**
+     * Gets the respective key.
+     *
+     * @param genderStr - the gender string
+     * @return the respective key
+     */
     public static GenderEquivalenceKey of(final String genderStr) {
         switch(genderStr) {
             case FEMALE_STR: return FEMALE;

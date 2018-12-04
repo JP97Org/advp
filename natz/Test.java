@@ -17,7 +17,7 @@ public class Test {
     //////////////////////////////////////////////////////////////////////////////////////////////////
     // SETTINGS
     
-    private static final int RANDOMIZE_LVL = 0; //TODO: stats: 91 mit rand = 0, ca. 80 sonst  
+    private static final int RANDOMIZE_LVL = 0; //TODO: ca. 80 :(, to be improved!
     private static final int ITERATIONS = 100;
     private static final boolean OPTIMIZE = false; //TODO: it's not realy optimized :/
     

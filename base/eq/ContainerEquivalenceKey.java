@@ -7,6 +7,12 @@ import base.EquivalenceKey;
 import base.PersonProperty;
 import base.TaskProperty;
 
+/**
+ * Represents a container equivalence key.
+ * 
+ * @author jojo
+ * @version 0.9
+ */
 public class ContainerEquivalenceKey<T extends EquivalenceKey> implements EquivalenceKey {
     private static final String PROP_NAME = "container";
     private static final String PROP_DESC = "a container equivalence key";
@@ -17,6 +23,13 @@ public class ContainerEquivalenceKey<T extends EquivalenceKey> implements Equiva
     private int alternationIndex;
     private boolean freshlyInitialized;
     
+    /**
+     * Creates a new ContainerEquivalenceKey with the given id, keys and operation.
+     * 
+     * @param id
+     * @param keys - list of equivalence keys
+     * @param operation
+     */
     public ContainerEquivalenceKey(int id, List<T> keys, Operation operation) {
         //id must be the same as the id of T
         this.id = id;

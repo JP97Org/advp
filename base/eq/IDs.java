@@ -1,5 +1,12 @@
 package base.eq;
 
+/**
+ * Utility class which contains constant IDs for some equivalence keys. <br />
+ * It also can be used for getting a next unique ID.
+ * 
+ * @author jojo
+ * @version 0.9
+ */
 public class IDs {
     private static int id = 0;
     
@@ -17,6 +24,11 @@ public class IDs {
     
     //////////////////////////////////////////////////////////////////////////
     
+    /**
+     * Gets the next unused ID.
+     * 
+     * @return the next unused ID.
+     */
     public static int nextID() {
         final int ret = id;
         id++;

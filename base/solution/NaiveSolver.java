@@ -11,25 +11,49 @@ import base.Solver;
 import base.Task;
 import base.World;
 
+/**
+ * Represents a solver which solves the problem naively.
+ * 
+ * @author jojo
+ * @version 0.9
+ */
 public class NaiveSolver implements Solver {
 
     private World world;
     private boolean computePartialSolutionWhenSolvingNotPossible;
     
+    /**
+     * Creates a new naive solver without partial calculation.
+     */
     public NaiveSolver() {
         this.world = null;
         this.computePartialSolutionWhenSolvingNotPossible = false;
     }
     
+    /**
+     * Creates a new naive solver with the given setting.
+     * 
+     * @param computePartialSolutionWhenSolvingNotPossible
+     */
     public NaiveSolver(boolean computePartialSolutionWhenSolvingNotPossible) {
         this.world = null;
         this.computePartialSolutionWhenSolvingNotPossible = computePartialSolutionWhenSolvingNotPossible;
     }
     
+    /**
+     * Determines whether the solver also calculates a partial solution.
+     * 
+     * @return whether the solver also calculates a partial solution
+     */
     public boolean doesComputePartialSolutionWhenSolvingNotPossible() {
         return this.computePartialSolutionWhenSolvingNotPossible;
     }
     
+    /**
+     * Sets the partial solution boolean.
+     * 
+     * @param computePartialSolutionWhenSolvingNotPossible - the partial solution boolean
+     */
     public void setComputePartialSolutionWhenSolvingNotPossible(boolean computePartialSolutionWhenSolvingNotPossible) {
         this.computePartialSolutionWhenSolvingNotPossible = computePartialSolutionWhenSolvingNotPossible;
     }
