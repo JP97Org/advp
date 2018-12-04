@@ -157,10 +157,10 @@ public class World {
      * @return a set of TaskInstance which are mapped to the given person
      */
     public Set<TaskInstance> getTaskInstancesOfPerson(Person person) {
-        Set<TaskInstance> ret = new HashSet<>();
+        final Set<TaskInstance> ret = new HashSet<>();
         
         if(this.taskInstanceToPersonMap.containsValue(person)) {
-            Set<TaskInstance> keySet = this.taskInstanceToPersonMap.keySet();
+            final Set<TaskInstance> keySet = this.taskInstanceToPersonMap.keySet();
             for(TaskInstance key : keySet) {
                 if(this.taskInstanceToPersonMap.get(key).equals(person)) {
                     ret.add(key);
@@ -208,7 +208,7 @@ public class World {
      * Does nothing and returns false if the task or the person does not exist in this world. <br />
      * Also returns false if the task has no further instances which could be mapped. <br /> <br />
      * Returns true and maps only if this is valid: <br />
-     * - for all task properties must exist at least one matching person property. <br />
+     * - For all task properties must exist at least one matching person property. <br />
      * - Two properties match, if one of them fulfills the other.
      * 
      * @param taskArg - the given task
@@ -252,7 +252,7 @@ public class World {
             boolean preRet = false;
             inner: 
             for(PersonProperty personProp : person.getProperties()) {
-                EquivalenceKey[] keys = new EquivalenceKey[]
+                final EquivalenceKey[] keys = new EquivalenceKey[]
                         {taskProp.getEquivalenceKey(), personProp.getEquivalenceKey()};
                 preRet =    keys[0].getID() == keys[1].getID()
                          && (personProp.fulfills(keys[0])

@@ -25,6 +25,11 @@ import base.eq.TimeEquivalenceKey;
  * @version 0.9
  */
 public abstract class FairNumSolver implements Solver {
+    //////////////////////////////////////////////////////
+    //TODO DEBUG entfernen
+    //private static int cntDb = 0;
+    //////////////////////////////////////////////////////
+    
     private World world;
     private boolean computePartialSolutionWhenSolvingNotPossible;
     
@@ -81,7 +86,10 @@ public abstract class FairNumSolver implements Solver {
             
             //////////////////////////////
             //DEBUG TODO: entfernen sobald fehler behoben
-            //boolean jumpedIn = false;
+            /*
+            cntDb++;
+            boolean jumpedIn = false;
+            */
             //////////////////////////////
             
             for(final Task task : tasks) {
@@ -98,7 +106,7 @@ public abstract class FairNumSolver implements Solver {
                     
                     /*
                     try {
-                        if(!jumpedIn && task.getName().equals("Floor 1")
+                        if(!jumpedIn && task.getName().equals("Floor 2")
                                 &&
                                 task.getProperties()
                                 .stream()
@@ -106,12 +114,14 @@ public abstract class FairNumSolver implements Solver {
                                 .map(x -> TimeEquivalenceKey.class.cast(x.getEquivalenceKey()))
                                 .map(x -> x.getTimeIntervals())
                                 .iterator().next().iterator().next()
-                                .getFrom().equals(DateFormat.getDateInstance().parse("12.08.2018"))) {
-                            jumpedIn = true;
+                                .getFrom().equals(DateFormat.getDateInstance().parse("10.08.2018"))) {
+                            if(cntDb == 2)
+                                jumpedIn = true;
                         }
                     } catch (ParseException e) {
                         e.printStackTrace();
-                    }*/
+                    }
+                    */
                     
                     
                     //////////////////////////////////////////////////////////////
