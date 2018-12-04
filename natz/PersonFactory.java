@@ -1,5 +1,7 @@
 package natz;
 
+import static base.eq.IDs.nextID;
+
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -12,7 +14,7 @@ import base.eq.TimeEquivalenceKey;
 import base.eq.TimeInterval;
 
 public class PersonFactory {
-    public static final int ID_NEW = 1; //TODO: better ID-management
+    public static final int ID_NEW = nextID();
     
     private Set<Person> persons;
     

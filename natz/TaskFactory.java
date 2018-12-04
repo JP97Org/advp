@@ -25,6 +25,9 @@ public class TaskFactory {
     protected static final int FLOOR_NUM_INSTANCE = 2;
     protected static final int POOL_NUM_INSTANCE = 6;
     
+    protected static final String POOL_STR = "Pool";
+    protected static final String FLOOR_STR = "Floor ";
+    
     private final List<TimeInterval> dates;
     
     public TaskFactory(String... datesAsStr) {
@@ -52,7 +55,7 @@ public class TaskFactory {
         if(k < 0) throw new IllegalArgumentException("k must be >= 0");
         if(k >= COUNT_FLOORS) throw new IllegalArgumentException("k must be less than " + COUNT_FLOORS);
         
-        final Task ret = new Task("Floor " + k, FLOOR_NUM_INSTANCE);
+        final Task ret = new Task(FLOOR_STR + k, FLOOR_NUM_INSTANCE);
             
         final Operation alternate = Operation.ALTERNATE;
             
@@ -80,7 +83,7 @@ public class TaskFactory {
     }
     
     public Task getPool(TimeInterval date) {
-        final Task ret = new Task("Pool", POOL_NUM_INSTANCE);
+        final Task ret = new Task(POOL_STR, POOL_NUM_INSTANCE);
         //TODO: evtl. properties noch setzen! (wenn es welche gibt, hab jetzt erstmal keine gesehen)
         
         final TimeEquivalenceKey tek = new TimeEquivalenceKey(date);

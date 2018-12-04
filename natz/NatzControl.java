@@ -16,7 +16,7 @@ import base.solution.OptimizedFairNumSolver;
 public class NatzControl {
     private World world;
     private List<TimeInterval> dates;
-
+    
     public NatzControl(final Set<Person> persons, final Set<Task> tasks, 
             final List<TimeInterval> dates, final boolean partial, final int randomizeLvl,
             final boolean optimize) {
@@ -50,12 +50,12 @@ public class NatzControl {
         String[][] ret = new String[dates.size() + 1][headerSize];
         // adding header
         for (int i = 0; i < TaskFactory.POOL_NUM_INSTANCE; i++) {
-            ret[0][i] = "Pool"; // TODO: better constant management
+            ret[0][i] = TaskFactory.POOL_STR;
         }
         int cnt = 0;
         for (int o = TaskFactory.POOL_NUM_INSTANCE; o < headerSize; o += TaskFactory.FLOOR_NUM_INSTANCE) {
             for (int i = o; i < o + TaskFactory.FLOOR_NUM_INSTANCE; i++) {
-                ret[0][i] = "Floor " + cnt; // TODO: better constant management
+                ret[0][i] = TaskFactory.FLOOR_STR + cnt;
             }
             cnt++;
         }
@@ -92,9 +92,8 @@ public class NatzControl {
     }
 
     private static int getTaskIndex(final String[] header, final int i) {
-        // TODO: better constant management
-        final int numPool = (int) Arrays.stream(header).filter(x -> x.equals("Pool")).count();
-        final String floor = "Floor ";
+        final int numPool = (int) Arrays.stream(header).filter(x -> x.equals(TaskFactory.POOL_STR)).count();
+        final String floor = TaskFactory.FLOOR_STR;
         final int numFloor = (int) Arrays.stream(header).filter(x -> x.startsWith(floor))
                 .map(x -> x.substring(floor.length())).filter(x -> x.equals("0")).count();
 
