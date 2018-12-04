@@ -2,8 +2,21 @@ package base;
 
 import java.util.Objects;
 
+/**
+ * Represents a person's property.
+ * 
+ * @author jojo
+ * @version 0.9
+ */
 public class PersonProperty extends Property {
     
+    /**
+     * Creates a new PersonProperty with the given name, description and equivalence key.
+     * 
+     * @param name
+     * @param description
+     * @param equivalenceKey
+     */
     public PersonProperty(String name, String description, EquivalenceKey equivalenceKey) {
         super(name,description,equivalenceKey);
     }

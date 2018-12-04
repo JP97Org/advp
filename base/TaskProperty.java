@@ -2,8 +2,21 @@ package base;
 
 import java.util.Objects;
 
+/**
+ * Represents a task's property.
+ * 
+ * @author jojo
+ * @version 0.9
+ */
 public class TaskProperty extends Property {
     
+    /**
+     * Creates a new TaskProperty with the given name, description and equivalence key.
+     * 
+     * @param name
+     * @param description
+     * @param equivalenceKey
+     */
     public TaskProperty(String name, String description, EquivalenceKey equivalenceKey) {
         super(name,description,equivalenceKey);
     }
