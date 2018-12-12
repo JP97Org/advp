@@ -18,12 +18,13 @@ public class Test {
     // SETTINGS
     
     private static final int RANDOMIZE_LVL = 100; 
-    private static final int ITERATIONS = 1;//100;
+    //private static final int ITERATIONS = 1;//100; //no longer used!
     private static final boolean OPTIMIZE = false; //TODO optimize more!
+    private static final boolean ORIG_SOLVER = true;
     
     private static final File REAL_INPUT = /*null; */ new File("/home/jojo/Dokumente/in.csv"); /**/
     
-    private static final int TRY_FIND_ITERATIONS = 1000;
+    private static final int TRY_FIND_ITERATIONS = 10; //use not more than 10 for WorseOrigSolver!
     
     //////////////////////////////////////////////////////////////////////////////////////////////////
     
@@ -34,11 +35,11 @@ public class Test {
     
     public static void main(String[] args) throws FileNotFoundException {
         long before;
-        if(ITERATIONS > 0) {
+        /*if(ITERATIONS > 0) {
             before = System.currentTimeMillis();
             System.out.println(calc(0,0, ITERATIONS));
             time(before);
-        }
+        }*/
         
         if(TRY_FIND_ITERATIONS > 0) {
             double[] counts = new double[TRY_FIND_ITERATIONS];
@@ -97,14 +98,10 @@ public class Test {
         final List<TimeInterval> dates = tf.getDates();
         
         final Set<Person> persons = getPersons(pf, dates);
-        
-        for(final Person person : persons) {
-            System.out.println(person.getName());
-        }
 
         final Set<Task> tasks = tf.getAllTasks();
 
-        NatzControl nc = new NatzControl(persons, tasks, dates, PARTIAL, RANDOMIZE_LVL, OPTIMIZE);
+        NatzControl nc = new NatzControl(persons, tasks, dates, PARTIAL, RANDOMIZE_LVL, OPTIMIZE, ORIG_SOLVER, tf);
         final String[][] output = nc.calculateTable();
         lastRes = output;
         final String outputStr = Arrays
@@ -113,7 +110,12 @@ public class Test {
                 .reduce("", (c, d) -> c + "\n" + d)
                 .replaceAll("\\n;", "\n")
                 .replaceFirst("\\n", "");
-        System.out.println(outputStr.replaceAll("null", "NUUUULL") + "\n");
+        if(nc.isFullyMapped()) {
+            for(final Person person : persons) {
+                System.out.println(person.getName());
+            }
+            System.out.println(outputStr.replaceAll("null", "NUUUULL") + "\n");
+        }
         if (nc.isFullyMapped()) {
            solutionFound = true; 
         } else {

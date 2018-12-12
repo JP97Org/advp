@@ -19,7 +19,7 @@ public class NatzControl {
     
     public NatzControl(final Set<Person> persons, final Set<Task> tasks, 
             final List<TimeInterval> dates, final boolean partial, final int randomizeLvl,
-            final boolean optimize) {
+            final boolean optimize, final boolean origSolver, final TaskFactory tf) {
         if(randomizeLvl < 0) throw new IllegalArgumentException("randomizeLvl must be >= 0");
         this.world = new World("natz");
         persons.forEach(p -> this.world.addPerson(p));
@@ -27,8 +27,11 @@ public class NatzControl {
 
         this.dates = dates;
 
-        final FairNumSolver solver = optimize ? new OptimizedFairNumSolver(partial, randomizeLvl) 
+        FairNumSolver solver = optimize ? new OptimizedFairNumSolver(partial, randomizeLvl) 
                                               : new NaiveFairNumSolver(partial, randomizeLvl);
+        
+        solver = origSolver ? new WorseOriginalNatzSolver(partial, randomizeLvl, tf) : solver;
+        
         this.world.setSolver(solver);
     }
 

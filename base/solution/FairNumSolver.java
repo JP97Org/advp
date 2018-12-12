@@ -30,8 +30,8 @@ public abstract class FairNumSolver implements Solver {
     //private static int cntDb = 0;
     //////////////////////////////////////////////////////
     
-    private World world;
-    private boolean computePartialSolutionWhenSolvingNotPossible;
+    protected World world;
+    protected boolean computePartialSolutionWhenSolvingNotPossible;
     
     /**
      * Constructor of FairNumSolver without partial calculation.

@@ -29,6 +29,7 @@ public class TaskFactory {
     protected static final String FLOOR_STR = "Floor ";
     
     private final List<TimeInterval> dates;
+    private final List<Task> tasks;
     
     public TaskFactory(String... datesAsStr) {
         final ArrayList<String> datesClean = new ArrayList<String>();
@@ -49,6 +50,7 @@ public class TaskFactory {
                 e.printStackTrace();
             }
         }
+        this.tasks = new ArrayList<>();
     }
     
     public Task getFloorK(int k, TimeInterval date) {
@@ -79,6 +81,10 @@ public class TaskFactory {
         
         ret.addProperty(new TimeEquivalenceKey(date).getTaskProperty());
         
+        if(!tasks.contains(ret)) {
+            tasks.add(ret);
+        }
+        
         return ret;
     }
     
@@ -89,6 +95,10 @@ public class TaskFactory {
         final TimeEquivalenceKey tek = new TimeEquivalenceKey(date);
         ret.addProperty(tek.getTaskProperty());
         
+        if(!tasks.contains(ret)) {
+            tasks.add(ret);
+        }
+        
         return ret;
     }
     
@@ -96,10 +106,10 @@ public class TaskFactory {
         final Set<Task> ret = new HashSet<Task>();
         
         for (final TimeInterval date : this.dates) {
+            ret.add(getPool(date));
             for(int i = 0;i < COUNT_FLOORS;i++) {
                 ret.add(getFloorK(i, date));
             }
-            ret.add(getPool(date));
         }
         
         return ret;
@@ -107,5 +117,13 @@ public class TaskFactory {
     
     public List<TimeInterval> getDates() {
         return this.dates;
+    }
+
+    public List<Task> getTasksOfDate(final TimeInterval date) {
+        return Arrays.asList(this.tasks.stream().filter(x -> x.getProperties()
+                    .stream().filter(y -> y.getEquivalenceKey().getClass().equals(TimeEquivalenceKey.class))
+                    .map(y -> y.getEquivalenceKey()).map(y -> TimeEquivalenceKey.class.cast(y)).iterator().next()
+                    .getTimeIntervals().iterator().next().equals(date))
+                .toArray(Task[]::new));
     }
 }

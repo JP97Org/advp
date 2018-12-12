@@ -12,7 +12,7 @@ import java.util.Objects;
  * @author jojo
  * @version 0.9
  */
-public class TimeInterval {
+public class TimeInterval implements Comparable<TimeInterval> {
     private final Date from;
     private final Date to;
     
@@ -131,7 +131,15 @@ public class TimeInterval {
     
     @Override
     public boolean equals(Object other) {
-        return getClass().equals(other.getClass()) && from.equals(((TimeInterval)other).from)
+        return other != null && getClass().equals(other.getClass()) && from.equals(((TimeInterval)other).from)
                 && to.equals(((TimeInterval)other).to);
+    }
+
+    /**
+     * getFrom compare!!!!!!!!
+     */
+    @Override
+    public int compareTo(TimeInterval o) {
+        return this.getFrom().compareTo(o.getFrom());
     }
 }
