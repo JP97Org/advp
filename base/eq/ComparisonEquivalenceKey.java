@@ -1,5 +1,7 @@
 package base.eq;
 
+import java.util.Objects;
+
 import base.EquivalenceKey;
 import base.PersonProperty;
 import base.TaskProperty;
@@ -28,8 +30,8 @@ public class ComparisonEquivalenceKey<T extends Comparable<T>> implements Equiva
      */
     public ComparisonEquivalenceKey(final int id, final T value, final Comparison comp) {
         this.id = id;
-        this.value = value;
-        this.comp = comp;
+        this.value = Objects.requireNonNull(value);
+        this.comp = Objects.requireNonNull(comp);
     }
     
     /**

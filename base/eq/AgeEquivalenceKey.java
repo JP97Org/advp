@@ -43,7 +43,7 @@ public class AgeEquivalenceKey implements EquivalenceKey {
 
     @Override
     public boolean isEquivalent(EquivalenceKey other) {
-        return getClass().equals(other.getClass()) && key.isEquivalent(((AgeEquivalenceKey)other).key);
+        return other != null && getClass().equals(other.getClass()) && key.isEquivalent(((AgeEquivalenceKey)other).key);
     }
 
 }

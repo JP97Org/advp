@@ -1,5 +1,6 @@
 package base.eq;
 
+import java.util.Objects;
 import java.util.function.BiPredicate;
 
 import base.EquivalenceKey;
@@ -24,16 +25,19 @@ public class LambdaEquivalenceKey<P,T> implements EquivalenceKey {
     private final P valueP;
     private final T valueT;
     
+    private final Class<?> oValClass;
+    
     private final BiPredicate<P,T> biPredicate;
     
     private final boolean ofPerson;
     
-    private LambdaEquivalenceKey(final int id, final P valueP, final T valueT, final BiPredicate<P,T> biPredicate) {
+    private LambdaEquivalenceKey(final int id, final P valueP, final T valueT, final BiPredicate<P,T> biPredicate, final Class<?> oValClass) {
         this.id = id;
         this.valueP = valueP;
         this.valueT = valueT;
         this.ofPerson = valueP != null;
         this.biPredicate = biPredicate;
+        this.oValClass = Objects.requireNonNull(oValClass);
     }
     
     /**
@@ -42,9 +46,10 @@ public class LambdaEquivalenceKey<P,T> implements EquivalenceKey {
      * @param id
      * @param valueP
      * @param biPredicate
+     * @param oValClass - the other val's class
      */
-    public LambdaEquivalenceKey(final int id, final P valueP, final BiPredicate<P,T> biPredicate) {
-        this(id, valueP, null, biPredicate);
+    public LambdaEquivalenceKey(final int id, final P valueP, final BiPredicate<P,T> biPredicate, final Class<?> oValClass) {
+        this(id, Objects.requireNonNull(valueP), null, biPredicate, oValClass);
     }
     
     /**
@@ -53,9 +58,10 @@ public class LambdaEquivalenceKey<P,T> implements EquivalenceKey {
      * @param valueT
      * @param id
      * @param biPredicate
+     * @param oValClass - the other val's class
      */
-    public LambdaEquivalenceKey(final T valueT, final int id, final BiPredicate<P,T> biPredicate) {
-        this(id, null, valueT, biPredicate);
+    public LambdaEquivalenceKey(final T valueT, final int id, final BiPredicate<P,T> biPredicate, final Class<?> oValClass) {
+        this(id, null, Objects.requireNonNull(valueT), biPredicate, oValClass);
     }
     
     @Override
@@ -93,19 +99,20 @@ public class LambdaEquivalenceKey<P,T> implements EquivalenceKey {
                 final T valT;
                 if (this.ofPerson) {
                     valP = this.valueP;
-                    try {
+                    if (this.oValClass.isInstance(o.valueT) && o.oValClass.isInstance(this.valueP)) {
                         valT = (T) o.valueT;
-                    } catch(ClassCastException exc) {
-                        return false; //TODO vllt. auch EXC oder sowieso ganz anders machen, das ist so sehr unschoen
+                    } else {
+                        return false;
                     }
                 } else {
-                    try {
+                    if (this.oValClass.isInstance(o.valueP) && o.oValClass.isInstance(this.valueT)) {
                         valP = (P) o.valueP;
-                    } catch(ClassCastException exc) {
-                        return false; //TODO vllt. auch EXC oder sowieso ganz anders machen, das ist so sehr unschoen
+                    } else {
+                        return false;
                     }
                     valT = this.valueT;
                 }
+                
                 return biPredicate.test(valP, valT);
             } else {
                 throw new IllegalArgumentException("Wrong comparison p<-->p or t<-->t !");
