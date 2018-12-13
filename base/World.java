@@ -192,8 +192,10 @@ public class World {
                 final TaskInstance key = pairGenerate(task);
                 taskInstanceToPersonMap.put(key, person);
                 task.mapped();
-                final Set<TimeInterval> tis = TimeEquivalenceKey.extract(task).getTimeIntervals();
-                person.mapped(tis == null ? null : tis.iterator().next());
+                if(task.hasTEK()) {
+                    final Set<TimeInterval> tis = TimeEquivalenceKey.extract(task).getTimeIntervals();
+                    person.mapped(tis == null ? null : tis.iterator().next());
+                }
                 return true;
             }
             return false;

@@ -4,6 +4,8 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
+import base.eq.TimeEquivalenceKey;
+
 /**
  * Represents a Task.
  * 
@@ -101,6 +103,17 @@ public class Task {
      */
     public void mapped() {
         properties.stream().forEach(x -> x.mapped());
+    }
+    
+    /**
+     * Determines whether this task has at least one TEK property.
+     * 
+     * @return whether this task has at least one TEK property
+     */
+    public boolean hasTEK() {
+        return this.properties.stream()
+            .map(x -> x.getEquivalenceKey())
+            .filter(x -> x.getClass().equals(TimeEquivalenceKey.class)).iterator().hasNext();
     }
     
     @Override

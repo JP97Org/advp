@@ -133,7 +133,7 @@ public class TimeEquivalenceKey implements EquivalenceKey {
      * 
      * @param task - the task
      * @return the task's TEK
-     * @throws IllegalArgumentException - when Task does not have a TEK
+     * @throws IllegalArgumentException - when the task does not have a TEK
      */
     public static TimeEquivalenceKey extract(final Task task) {
         final Iterator<TimeEquivalenceKey> ret = task.getProperties()
