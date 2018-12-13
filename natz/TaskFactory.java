@@ -120,10 +120,8 @@ public class TaskFactory {
     }
 
     public List<Task> getTasksOfDate(final TimeInterval date) {
-        return Arrays.asList(this.tasks.stream().filter(x -> x.getProperties()
-                    .stream().filter(y -> y.getEquivalenceKey().getClass().equals(TimeEquivalenceKey.class))
-                    .map(y -> y.getEquivalenceKey()).map(y -> TimeEquivalenceKey.class.cast(y)).iterator().next()
-                    .getTimeIntervals().iterator().next().equals(date))
+        return Arrays.asList(this.tasks.stream()
+                .filter(x -> date.equals(TimeEquivalenceKey.extract(x).getTimeIntervals().iterator().next()))
                 .toArray(Task[]::new));
     }
 }

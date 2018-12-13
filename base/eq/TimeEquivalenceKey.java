@@ -3,10 +3,12 @@ package base.eq;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 import base.EquivalenceKey;
 import base.PersonProperty;
+import base.Task;
 import base.TaskProperty;
 
 /**
@@ -124,5 +126,24 @@ public class TimeEquivalenceKey implements EquivalenceKey {
             return getID() == o.getID() && taskIntervalContained;
         }
         return false;
+    }
+    
+    /**
+     * Extracts the taks's TEK.
+     * 
+     * @param task - the task
+     * @return the task's TEK
+     * @throws IllegalArgumentException - when Task does not have a TEK
+     */
+    public static TimeEquivalenceKey extract(final Task task) {
+        final Iterator<TimeEquivalenceKey> ret = task.getProperties()
+            .stream()
+            .filter(x -> x.getEquivalenceKey().getClass().equals(TimeEquivalenceKey.class))
+            .map(x -> TimeEquivalenceKey.class.cast(x.getEquivalenceKey())).iterator();
+        if(ret.hasNext()) {
+            return ret.next();
+        } else {
+            throw new IllegalArgumentException("Task must have a TEK to extract it!");
+        }
     }
 }

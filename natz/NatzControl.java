@@ -85,13 +85,7 @@ public class NatzControl {
     private boolean dateFilterMethod(final Task x, final int odex) {
         final TimeInterval date = dates.get(odex);
         
-        return x
-                .getProperties()
-                .stream()
-                .filter(a -> a.getEquivalenceKey().getClass().equals(TimeEquivalenceKey.class))
-                .map(a -> TimeEquivalenceKey.class.cast(a.getEquivalenceKey()))
-                .map(a -> a.getTimeIntervals())
-                .iterator().next().iterator().next().equals(date);
+        return date.equals(TimeEquivalenceKey.extract(x).getTimeIntervals().iterator().next());
     }
 
     private static int getTaskIndex(final String[] header, final int i) {

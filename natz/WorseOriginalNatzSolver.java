@@ -117,14 +117,9 @@ public class WorseOriginalNatzSolver extends FairNumSolver {
             final Person person = entry.getKey();
             final int num = entry.getValue();
             final Task lastTaskOfPerson = lastTaskMap.get(person);
-            final boolean lastDateMatch = lastTaskOfPerson == null ? false
-                    : similar(lastTaskOfPerson, task) && lastTaskOfPerson.getProperties()
-                    .stream()
-                    .map(x -> x.getEquivalenceKey())
-                    .filter(x -> x.getClass().equals(TimeEquivalenceKey.class))
-                    .map(x -> TimeEquivalenceKey.class.cast(x))
-                    .map(x -> x.getTimeIntervals()).iterator().next().iterator().next()
-                    .equals(lastDate);
+            final boolean lastDateMatch = lastTaskOfPerson == null || lastDate == null ? false
+                    : similar(lastTaskOfPerson, task) && 
+                    lastDate.equals(TimeEquivalenceKey.extract(lastTaskOfPerson).getTimeIntervals().iterator().next());
             if (!this.alreadyTried.contains(person) && !lastDateMatch && num <= min) {
                 if(num < min) {
                     min = num;
