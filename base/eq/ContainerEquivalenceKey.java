@@ -26,7 +26,7 @@ public class ContainerEquivalenceKey<T extends EquivalenceKey> implements Equiva
     /**
      * Creates a new ContainerEquivalenceKey with the given id, keys and operation.
      * 
-     * @param id
+     * @param id - id must be the same as the id of T
      * @param keys - list of equivalence keys
      * @param operation
      */

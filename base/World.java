@@ -19,7 +19,6 @@ public class World {
     private static final String STD_NAME = "std-world";
     
     private final String name;
-    private final Set<WorldProperty> properties; //TODO: noch unused, evtl. auch nicht benoetigt
     private final Set<Person> persons;
     private final Set<Task> tasks;
     
@@ -34,7 +33,6 @@ public class World {
      */
     public World(String name) {
         this.name = name;
-        this.properties = new HashSet<>();
         this.persons = new HashSet<>();
         this.tasks = new HashSet<>();
         this.taskInstanceToPersonMap = new HashMap<>();
@@ -45,13 +43,11 @@ public class World {
      * Creates a new World with the given name and properties.
      * 
      * @param name
-     * @param properties
      * @param persons
      * @param tasks
      */
-    public World(String name, Set<WorldProperty> properties, Set<Person> persons, Set<Task> tasks) {
+    public World(String name, Set<Person> persons, Set<Task> tasks) {
         this(name);
-        this.properties.addAll(properties);
         this.persons.addAll(persons);
         this.tasks.addAll(tasks);
     }
@@ -64,33 +60,11 @@ public class World {
     }
     
     /**
-     * Creates a new standard World with the given properties.
-     * 
-     * @param name
-     * @param properties
-     * @param persons
-     * @param tasks
-     */
-    public World(Set<WorldProperty> properties, Set<Person> persons, Set<Task> tasks) {
-        this(STD_NAME, properties, persons, tasks);
-    }
-
-    /**
      * 
      * @return the name
      */
     public String getName() {
         return name;
-    }
-    
-    /**
-     * TODO
-     * 
-     * @param property - 
-     * @return
-     */
-    public boolean hasProperty(WorldProperty property) {
-        return this.properties.contains(property);
     }
     
     /**
@@ -107,16 +81,6 @@ public class World {
      */
     public Set<Task> getTasks() {
         return tasks;
-    }
-    
-    /**
-     * Adds the given property.
-     * 
-     * @param property - the given property
-     * @return whether it was added
-     */
-    public boolean addProperty(WorldProperty property) {
-        return this.properties.add(property);
     }
     
     /**
@@ -280,7 +244,7 @@ public class World {
     
     @Override
     public int hashCode() {
-        return Objects.hash(name, properties, persons, tasks);
+        return Objects.hash(name, persons, tasks);
     }
     
     @Override
@@ -288,7 +252,6 @@ public class World {
         if(other != null && getClass().equals(other.getClass())) {
             final World o = (World)other;
             return  name.equals(o.name) && 
-                    properties.equals(o.properties) &&
                     persons.equals(o.persons) &&
                     tasks.equals(o.tasks);
         }
@@ -299,8 +262,6 @@ public class World {
     public String toString() {
         return this.name
                 + " | " 
-                + setStr(this.properties)
-                + " | "
                 + setStr(this.persons)
                 + " | "
                 + setStr(this.tasks);
