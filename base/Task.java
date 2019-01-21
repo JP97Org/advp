@@ -5,6 +5,7 @@ import java.util.Objects;
 import java.util.Set;
 
 import base.eq.TimeEquivalenceKey;
+import base.factory.TaskDescriptor;
 
 /**
  * Represents a Task.
@@ -42,6 +43,11 @@ public class Task {
         this.properties.addAll(properties);
     }
     
+    public Task(TaskDescriptor taskDesc, Set<TaskProperty> properties) {
+        this(taskDesc.getName(), taskDesc.getNumInstances());
+        this.properties.addAll(properties);
+    }
+
     /**
      * 
      * @return the name
