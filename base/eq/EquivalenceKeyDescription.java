@@ -2,6 +2,7 @@ package base.eq;
 
 import base.EquivalenceKey;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.function.BiPredicate;
@@ -21,6 +22,8 @@ public enum EquivalenceKeyDescription {
     private final Class<? extends EquivalenceKey> keyClass;
     private final Class<?>[] parameterTypes;
     
+    private CreationHint[] creationHints;
+    
     EquivalenceKeyDescription(final Class<? extends EquivalenceKey> keyClass, 
             final Class<?>... parameterTypes) {
         this.keyClass = keyClass;
@@ -33,5 +36,46 @@ public enum EquivalenceKeyDescription {
     
     public Class<?>[] getParamTypes() {
         return this.parameterTypes;
+    }
+    
+    public static EquivalenceKeyDescription ofArgs(final String args, final String delim) {
+        final String[] splitted = args.split(delim);
+        final String descName = splitted[0];
+        EquivalenceKeyDescription ret = null;
+        for (final EquivalenceKeyDescription desc : EquivalenceKeyDescription.values()) {
+            if (desc.name().equals(descName)) {
+                ret = desc;
+                break;
+            }
+        }
+        if (ret != null) {
+            ret.creationHints = new CreationHint[splitted.length - 1];
+            for (int i = 1; i < splitted.length; i++) {
+                final int k = i;
+                final CreationHint hint = Arrays.stream(CreationHint.values()).filter(x -> x.name().equals(splitted[k])).iterator().next();
+                if (hint == null) {
+                    throw new IllegalArgumentException("unknown hint \"" + splitted[k] + "\"!");
+                }
+                ret.creationHints[i - 1] = hint;
+            }
+        }
+        return ret;
+    }
+
+    public Object[] createInitArgs(final String[] argsStr) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+    
+    private enum CreationHint {
+        STR,
+        INT,
+        COMP,
+        LIST_STR,
+        LIST_INT,
+        OP,
+        LAMBDA, //TODO: evtl. genauere hints
+        HASH_SET_TI,
+        TI;
     }
 }

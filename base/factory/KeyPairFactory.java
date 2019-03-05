@@ -1,6 +1,7 @@
 package base.factory;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import base.EquivalenceKey;
@@ -8,25 +9,30 @@ import base.EquivalenceKey;
 public class KeyPairFactory {
     //TODO: this is a key-pair- factory for ONE person-task pair!
     
-    private final List<EquivalenceKey> ofPersonKeys;
-    private final List<EquivalenceKey> ofTaskKeys;
+    private final List<EquivalenceKeyDescriptor> ofPersonKeys;
+    private final List<EquivalenceKeyDescriptor> ofTaskKeys;
     
     public KeyPairFactory() {
         this.ofPersonKeys = new ArrayList<>();
         this.ofTaskKeys = new ArrayList<>();
     }
     
+    public KeyPairFactory(final KeyPairFactory toCopy) {
+        this.ofPersonKeys = Arrays.asList(toCopy.ofPersonKeys.stream().map(x -> new EquivalenceKeyDescriptor(x)).toArray(EquivalenceKeyDescriptor[]::new));
+        this.ofTaskKeys = Arrays.asList(toCopy.ofTaskKeys.stream().map(x -> new EquivalenceKeyDescriptor(x)).toArray(EquivalenceKeyDescriptor[]::new));
+    }
+    
     public List<EquivalenceKey> getOfPersonKeys() {
-        return new ArrayList<>(ofPersonKeys);
+        return Arrays.asList(this.ofPersonKeys.stream().map(x -> x.getKey()).toArray(EquivalenceKey[]::new));
     }
     
     public List<EquivalenceKey> getOfTaskKeys() {
-        return new ArrayList<>(ofTaskKeys);
+        return Arrays.asList(this.ofTaskKeys.stream().map(x -> x.getKey()).toArray(EquivalenceKey[]::new));
     }
     
     public void generateKeyPair(final EquivalenceKeyDescriptor personKeyDesc, 
             final EquivalenceKeyDescriptor taskKeyDesc) {
-        this.ofPersonKeys.add(personKeyDesc.getKey());
-        this.ofTaskKeys.add(taskKeyDesc.getKey());
+        this.ofPersonKeys.add(personKeyDesc);
+        this.ofTaskKeys.add(taskKeyDesc);
     }
 }
