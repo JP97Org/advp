@@ -35,4 +35,13 @@ public class KeyPairFactory {
         this.ofPersonKeys.add(personKeyDesc);
         this.ofTaskKeys.add(taskKeyDesc);
     }
+    
+    public String toString(final boolean bPerson) {
+        return bPerson ? this.ofPersonKeys.toString() : this.ofTaskKeys.toString();
+    }
+    
+    @Override
+    public String toString() {
+        return "ofPerson= " + toString(true) + "\nofTask= " + toString(false);
+    }
 }

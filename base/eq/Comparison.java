@@ -1,5 +1,8 @@
 package base.eq;
 
+import java.util.Arrays;
+import java.util.Iterator;
+
 /**
  * Represents a Comparison.
  * 
@@ -21,5 +24,13 @@ public enum Comparison {
             case SMEQ: return GREQ;
             default: return this;
         }
+    }
+    
+    public static Comparison of(final String str) {
+        final Iterator<Comparison> iter = Arrays.stream(values()).filter(x -> x.name().equals(str)).iterator();
+        if (iter.hasNext()) {
+            return iter.next();
+        }
+        return null;
     }
 }

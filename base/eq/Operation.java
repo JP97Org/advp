@@ -1,5 +1,8 @@
 package base.eq;
 
+import java.util.Arrays;
+import java.util.Iterator;
+
 /**
  * Represents an operation for the ContainerEquivalenceKey.
  * 
@@ -8,4 +11,12 @@ package base.eq;
  */
 public enum Operation {
     OR,ALTERNATE,AND;
+    
+    public static Operation of(final String str) {
+        final Iterator<Operation> iter = Arrays.stream(values()).filter(x -> x.name().equals(str)).iterator();
+        if (iter.hasNext()) {
+            return iter.next();
+        }
+        return null;
+    }
 }

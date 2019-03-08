@@ -63,4 +63,9 @@ public class EquivalenceKeyDescriptor {
     public EquivalenceKey getKey() {
         return this.key;
     }
+    
+    @Override
+    public String toString() {
+        return this.key.toString();
+    }
 }

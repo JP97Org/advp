@@ -7,6 +7,7 @@ import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import base.EquivalenceKey;
 import base.Solver;
 import base.eq.EquivalenceKeyDescription;
 import base.factory.EquivalenceKeyDescriptor;
@@ -29,35 +30,37 @@ public enum Command {
     KEY_SYM("keySym (.+);(.+)") {
         @Override
         public void execute(MatchResult matcher, CommandLineInterface cli) throws IllegalArgumentException {
-            final EquivalenceKeyDescription eqDescription = EquivalenceKeyDescription.ofArgs(matcher.group(1), DELIM_USR);
-            if (eqDescription != null) {
-                Object[] init = createInitArgs(eqDescription, matcher.group(2).split(DELIM_USR));
-                if (init != null) {
-                    final EquivalenceKeyDescriptor keyPerson = new EquivalenceKeyDescriptor(eqDescription, init);
-                    final EquivalenceKeyDescriptor keyTask = new EquivalenceKeyDescriptor(eqDescription, init);
-                    final KeyPairFactory keyPairFactory = new KeyPairFactory();
-                    keyPairFactory.generateKeyPair(keyPerson, keyTask);
-                    cli.getCore().addPersonKeyPairFactory(keyPairFactory);
-                    cli.getCore().addTaskKeyPairFactory(keyPairFactory);
-                } else {
-                    throw new IllegalArgumentException("object creation failed!");
-                }
-            } else {
-                throw new IllegalArgumentException("not a valid key description!");
-            }
+            keyGen(matcher, cli, true, true);
         }
-
-        private Object[] createInitArgs(final EquivalenceKeyDescription eqDescription, String[] argsStr) {
-            return eqDescription.createInitArgs(argsStr);
+    },
+    KEY_PERSON("keyPerson (.+);(.+)") {
+        @Override
+        public void execute(MatchResult matcher, CommandLineInterface cli) throws IllegalArgumentException {
+            keyGen(matcher, cli, true, false);
+        }
+    },
+    KEY_TASK("keyTask (.+);(.+)") {
+        @Override
+        public void execute(MatchResult matcher, CommandLineInterface cli) throws IllegalArgumentException {
+            keyGen(matcher, cli, false, true);
+        }
+    },
+    KEY_LIST("keyList (person|task)") {
+        @Override
+        public void execute(MatchResult matcher, CommandLineInterface cli) throws IllegalArgumentException {
+            final boolean bPerson = matcher.group(1).equals("person");
+            final List<KeyPairFactory> list = bPerson ? 
+                    cli.getCore().getPersonKeyPairFactoryList() : cli.getCore().getTaskKeyPairFactoryList();
+            //TODO: toStr fuer alle key klassen impl. und noch schauen ob das so stimmt
+            this.output = "[" + list.stream().map(x -> x.toString(bPerson)).reduce("", (a,b) -> a + "," + b) + "]";
         }
     },
     
-    //TODO: assymetric key creation, i.e. only person key adding and only task key adding
     //TODO: output for both lists
     //TODO: key reusing with factory copying
     //TODO: (assymetric) key editing (adding new keyPairs to exising single key pair factories)
     //TODO: removing one or more key pair factory (in both lists (assymetric))
-    
+   
     COMPLETE_PREP_PERSONS("completePrepPersons ((.+;)*(.+){0,1})") {
         @Override
         public void execute(MatchResult matcher, CommandLineInterface cli) throws IllegalArgumentException {
@@ -95,6 +98,17 @@ public enum Command {
                 } else {
                     throw new IllegalArgumentException("completion failed!");
                 }
+            } else {
+                throw new IllegalArgumentException("not started!");
+            }
+        }
+    },
+    CLEAR_PREP("clearPrep") {
+        @Override
+        public void execute(MatchResult matcher, CommandLineInterface cli) throws IllegalArgumentException {
+            if (cli.getCore().isStarted()) {
+                cli.getCore().clearPreparations();
+                this.output = OK;
             } else {
                 throw new IllegalArgumentException("not started!");
             }
@@ -183,5 +197,29 @@ public enum Command {
     
     public String getOutput() {
         return output;
+    }
+    
+    protected void keyGen(final MatchResult matcher, final CommandLineInterface cli, final boolean bPerson, final boolean bTask) {
+        final EquivalenceKeyDescription eqDescription = EquivalenceKeyDescription.ofArgs(matcher.group(1), DELIM_USR);
+        if (eqDescription != null) {
+            Object[] init = eqDescription.createInitArgs(matcher.group(2).split(DELIM_USR));
+            if (init != null) {
+                final EquivalenceKeyDescriptor keyPerson = new EquivalenceKeyDescriptor(eqDescription, init);
+                final EquivalenceKeyDescriptor keyTask = new EquivalenceKeyDescriptor(eqDescription, init);
+                final KeyPairFactory keyPairFactory = new KeyPairFactory();
+                keyPairFactory.generateKeyPair(keyPerson, keyTask);
+                if (bPerson) {
+                    cli.getCore().addPersonKeyPairFactory(keyPairFactory);
+                }
+                if (bTask) {
+                    cli.getCore().addTaskKeyPairFactory(keyPairFactory);
+                }
+                this.output = OK;
+            } else {
+                throw new IllegalArgumentException("object creation failed!");
+            }
+        } else {
+            throw new IllegalArgumentException("not a valid key description!");
+        }
     }
 }
