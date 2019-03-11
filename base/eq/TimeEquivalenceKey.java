@@ -128,6 +128,11 @@ public class TimeEquivalenceKey implements EquivalenceKey {
         return false;
     }
     
+    @Override
+    public String toString() {
+        return PROP_NAME + " | value= " + (ofPerson ? personsPossibleTimeIntervals : taskFromTo); 
+    }
+    
     /**
      * Extracts the taks's TEK.
      * 

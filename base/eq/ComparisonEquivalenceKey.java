@@ -79,4 +79,9 @@ public class ComparisonEquivalenceKey<T extends Comparable<T>> implements Equiva
             default: return comparison == 0;
         }
     }
+    
+    @Override
+    public String toString() {
+        return PROP_NAME + " | id= " + id + " | value= " + value + " | comp= " + comp; 
+    }
 }

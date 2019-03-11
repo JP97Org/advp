@@ -51,12 +51,12 @@ public enum Command {
             final boolean bPerson = matcher.group(1).equals("person");
             final List<KeyPairFactory> list = bPerson ? 
                     cli.getCore().getPersonKeyPairFactoryList() : cli.getCore().getTaskKeyPairFactoryList();
-            //TODO: toStr fuer alle key klassen impl. und noch schauen ob das so stimmt
-            this.output = "[" + list.stream().map(x -> x.toString(bPerson)).reduce("", (a,b) -> a + "," + b) + "]";
+            String lStr = list.stream().map(x -> x.toString(bPerson)).reduce("", (a,b) -> a + "," + b);
+            lStr = lStr.startsWith(",") ? lStr.substring(1) : lStr;
+            this.output = "[" + lStr + "]";
         }
     },
     
-    //TODO: output for both lists
     //TODO: key reusing with factory copying
     //TODO: (assymetric) key editing (adding new keyPairs to exising single key pair factories)
     //TODO: removing one or more key pair factory (in both lists (assymetric))

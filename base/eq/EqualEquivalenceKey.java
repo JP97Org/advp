@@ -64,4 +64,9 @@ public class EqualEquivalenceKey<T> implements EquivalenceKey {
     public boolean isEquivalent(EquivalenceKey other) {
         return equals(other);
     }
+    
+    @Override
+    public String toString() {
+        return PROP_NAME + " | id= " + id + " | value= " + value; 
+    }
 }

@@ -111,5 +111,9 @@ public class ContainerEquivalenceKey<T extends EquivalenceKey> implements Equiva
         }
         this.freshlyInitialized = false;
     }
-
+    
+    @Override
+    public String toString() {
+        return PROP_NAME + " | id= " + id + " | keys= " + keys + " | operation= " + operation; 
+    }
 }

@@ -45,5 +45,9 @@ public class AgeEquivalenceKey implements EquivalenceKey {
     public boolean isEquivalent(EquivalenceKey other) {
         return other != null && getClass().equals(other.getClass()) && key.isEquivalent(((AgeEquivalenceKey)other).key);
     }
-
+    
+    @Override
+    public String toString() {
+        return PROP_NAME + " | " + key;
+    }
 }
