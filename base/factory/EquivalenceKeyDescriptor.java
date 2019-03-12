@@ -43,7 +43,7 @@ public class EquivalenceKeyDescriptor {
     public EquivalenceKeyDescriptor(final EquivalenceKeyDescriptor toCopy) {
         this.keyClass = toCopy.keyClass;
         if (toCopy.initargs == null) {
-            throw new IllegalArgumentException("not copiable desriptor!");
+            throw new IllegalArgumentException("not copiable descriptor!");
         }
         this.initargs = toCopy.initargs;
         try {

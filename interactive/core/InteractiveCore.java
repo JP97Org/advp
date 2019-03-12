@@ -57,6 +57,14 @@ public class InteractiveCore {
         this.tasksPreparation.add(keyPairFactory);
     }
     
+    public void removePersonKeyPairFactory(final int index) {
+        this.personsPreparation.remove(index);
+    }
+    
+    public void removeTaskKeyPairFactory(final int index) {
+        this.tasksPreparation.remove(index);
+    }
+    
     public List<KeyPairFactory> getPersonKeyPairFactoryList() {
         return new ArrayList<>(this.personsPreparation);
     }

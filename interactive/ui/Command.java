@@ -7,7 +7,6 @@ import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import base.EquivalenceKey;
 import base.Solver;
 import base.eq.EquivalenceKeyDescription;
 import base.factory.EquivalenceKeyDescriptor;
@@ -45,7 +44,7 @@ public enum Command {
             keyGen(matcher, cli, false, true);
         }
     },
-    KEY_LIST("keyList (person|task)") {
+    KEY_LIST("keyList ((person)|(task))") {
         @Override
         public void execute(MatchResult matcher, CommandLineInterface cli) throws IllegalArgumentException {
             final boolean bPerson = matcher.group(1).equals("person");
@@ -56,10 +55,96 @@ public enum Command {
             this.output = "[" + lStr + "]";
         }
     },
-    
-    //TODO: key reusing with factory copying
-    //TODO: (assymetric) key editing (adding new keyPairs to exising single key pair factories)
-    //TODO: removing one or more key pair factory (in both lists (assymetric))
+    KEY_OF("keyOf ((person)|(task)) (\\d+)") {
+        @Override
+        public void execute(MatchResult matcher, CommandLineInterface cli) throws IllegalArgumentException {
+            final boolean bPerson = matcher.group(1).equals("person");
+            try {
+                final int index = Integer.parseInt(matcher.group(4));
+                final List<KeyPairFactory> list = bPerson ? cli.getCore().getPersonKeyPairFactoryList() : cli.getCore().getTaskKeyPairFactoryList();
+                if (index < list.size()) {
+                    this.output = list.get(index).toString(bPerson);
+                } else {
+                    throw new IllegalArgumentException("indexOutOfBounds with index= " + index + " | size= " + list.size());
+                }
+            } catch (NumberFormatException e) {
+                throw new IllegalArgumentException("NumberFormatException " + e.getMessage());
+            }
+        }
+    },
+    KEY_REUSE("keyReuse ((person)|(task)) (\\d+)") {
+        @Override
+        public void execute(MatchResult matcher, CommandLineInterface cli) throws IllegalArgumentException {
+            final boolean bPerson = matcher.group(1).equals("person");
+            try {
+                final int index = Integer.parseInt(matcher.group(4));
+                final List<KeyPairFactory> list = bPerson ? cli.getCore().getPersonKeyPairFactoryList() : cli.getCore().getTaskKeyPairFactoryList();
+                if (index < list.size()) {
+                    final KeyPairFactory toAdd = new KeyPairFactory(list.get(index));
+                    if (bPerson) {
+                        cli.getCore().addPersonKeyPairFactory(toAdd);
+                    } else {
+                        cli.getCore().addTaskKeyPairFactory(toAdd);
+                    }
+                    this.output = OK;
+                } else {
+                    throw new IllegalArgumentException("indexOutOfBounds with index= " + index + " | size= " + list.size());
+                }
+            } catch (NumberFormatException e) {
+                throw new IllegalArgumentException("NumberFormatException " + e.getMessage());
+            }
+        }
+    },
+    /**
+     * Add all contained keys from key factory at second index into factory at first.
+     * Afterwards removing key at second index.
+     */
+    KEY_ADD_ALL("keyAddAll ((person)|(task)) (\\d+) (\\d+)") {
+        @Override
+        public void execute(MatchResult matcher, CommandLineInterface cli) throws IllegalArgumentException {
+            final boolean bPerson = matcher.group(1).equals("person");
+            try {
+                final int indexTo = Integer.parseInt(matcher.group(4));
+                final int indexFrom = Integer.parseInt(matcher.group(5));
+                final List<KeyPairFactory> list = bPerson ? cli.getCore().getPersonKeyPairFactoryList() : cli.getCore().getTaskKeyPairFactoryList();
+                if (indexTo < list.size() && indexFrom < list.size()) {
+                    list.get(indexTo).addKeyPairs(list.get(indexFrom));
+                    if (bPerson) {
+                        cli.getCore().removePersonKeyPairFactory(indexFrom);
+                    } else {
+                        cli.getCore().removeTaskKeyPairFactory(indexFrom);
+                    }
+                    this.output = OK;
+                } else {
+                    throw new IllegalArgumentException("indexOutOfBounds with index= " + (indexFrom >= list.size() ? indexFrom : indexTo) + " | size= " + list.size());
+                }
+            } catch (NumberFormatException e) {
+                throw new IllegalArgumentException("NumberFormatException " + e.getMessage());
+            }
+        }
+    },
+    KEY_REMOVE("keyRemove ((person)|(task)) (\\d+)") {
+        @Override
+        public void execute(MatchResult matcher, CommandLineInterface cli) throws IllegalArgumentException {
+            final boolean bPerson = matcher.group(1).equals("person");
+            try {
+                final int index = Integer.parseInt(matcher.group(4));
+                final List<KeyPairFactory> list = bPerson ? cli.getCore().getPersonKeyPairFactoryList() : cli.getCore().getTaskKeyPairFactoryList();
+                if (index < list.size()) {
+                    if (bPerson) {
+                        cli.getCore().removePersonKeyPairFactory(index);
+                    } else {
+                        cli.getCore().removeTaskKeyPairFactory(index);
+                    }
+                    this.output = OK;
+                } else {
+                    throw new IllegalArgumentException("indexOutOfBounds with index= " + index + " | size= " + list.size());
+                }
+            } catch (NumberFormatException e) {
+                throw new IllegalArgumentException("NumberFormatException " + e.getMessage());
+            }
+        }
+    },
    
     COMPLETE_PREP_PERSONS("completePrepPersons ((.+;)*(.+){0,1})") {
         @Override
@@ -114,6 +199,7 @@ public enum Command {
             }
         }
     },
+    
     SET_SOLVER("setSolver ((naive)|(fairNum))(( part)|( full)){0,1}( \\d+){0,1}") {
         @Override
         public void execute(MatchResult matcher, CommandLineInterface cli) throws IllegalArgumentException {

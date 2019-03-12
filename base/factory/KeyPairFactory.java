@@ -44,4 +44,9 @@ public class KeyPairFactory {
     public String toString() {
         return "ofPerson= " + toString(true) + "\nofTask= " + toString(false);
     }
+
+    public void addKeyPairs(final KeyPairFactory other) {
+        this.ofPersonKeys.addAll(other.ofPersonKeys);
+        this.ofTaskKeys.addAll(other.ofTaskKeys);
+    }
 }
