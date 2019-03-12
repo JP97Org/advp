@@ -50,7 +50,8 @@ public class EquivalenceKeyDescriptor {
             final Iterator<?> iter = Arrays.stream(this.initargs).map(x -> x.getClass()).iterator();
             final List<Class<?>> paramTypes = new ArrayList<>();
             while (iter.hasNext()) {
-                paramTypes.add((Class<?>)iter.next());
+                final Class<?> next = (Class<?>)iter.next();
+                paramTypes.add(primitiveReplace(next));
             }
             this.key = this.keyClass.getConstructor(paramTypes.toArray(new Class<?>[paramTypes.size()])).newInstance(initargs);
         } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
@@ -58,6 +59,35 @@ public class EquivalenceKeyDescriptor {
             e.printStackTrace();
             // should not happen, this would be an internal error!
         }
+    }
+
+    private static Class<?> primitiveReplace(final Class<?> cls) {
+        if (cls.equals(Boolean.class)) {
+            return boolean.class;
+        }
+        if (cls.equals(Character.class)) {
+            return char.class;
+        }
+        if (cls.equals(Byte.class)) {
+            return byte.class;
+        }
+        if (cls.equals(Short.class)) {
+            return short.class;
+        }
+        if (cls.equals(Integer.class)) {
+            return int.class;
+        }
+        if (cls.equals(Long.class)) {
+            return long.class;
+        }
+        if (cls.equals(Float.class)) {
+            return float.class;
+        }
+        if (cls.equals(Double.class)) {
+            return double.class;
+        }
+        
+        return cls;
     }
 
     public EquivalenceKey getKey() {

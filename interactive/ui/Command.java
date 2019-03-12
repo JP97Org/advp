@@ -23,6 +23,7 @@ public enum Command {
             this.output = OK;
         }
     },
+    
     /**
      * Symmetric single key creation (one key pair) and symmetric adding at the end of the respective list.
      */
@@ -236,8 +237,11 @@ public enum Command {
             }
         }
     },
+    
+    
     //TODO: output des ergebnis (einzelausgabe)
     //TODO: output des ergebnis als Uebersicht
+    
     RESET("reset") {
         @Override
         public void execute(MatchResult matcher, CommandLineInterface cli) throws IllegalArgumentException {
