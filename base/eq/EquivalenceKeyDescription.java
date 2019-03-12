@@ -18,6 +18,7 @@ public enum EquivalenceKeyDescription {
     COMPARISON (ComparisonEquivalenceKey.class, int.class, Comparable.class, Comparison.class),
     CONTAINER (ContainerEquivalenceKey.class, int.class, List.class, Operation.class),
     EQUAL (EqualEquivalenceKey.class, int.class, Object.class),
+    GENDER (GenderEquivalenceKey.class, String.class),
     LAMBDA_PERSON (LambdaEquivalenceKey.class, int.class, Object.class, BiPredicate.class, Class.class),
     LAMBDA_TASK (LambdaEquivalenceKey.class, Object.class, int.class, BiPredicate.class, Class.class),
     TIME_PERSON (TimeEquivalenceKey.class, Set.class),
@@ -89,10 +90,11 @@ public enum EquivalenceKeyDescription {
         } else if (this.creationHints.length == 0){
             //creation without hints
             switch(this) {
-            case AGE: this.creationHints = new CreationHint[]{CreationHint.INT,CreationHint.COMP}; break;
-            case COMPARISON: this.creationHints = new CreationHint[]{CreationHint.INT, CreationHint.INT,CreationHint.COMP}; break; //assuming int comparison
-            case TIME_PERSON: this.creationHints = new CreationHint[] {CreationHint.HASH_SET_TI};
-            case TIME_TASK: this.creationHints = new CreationHint[] {CreationHint.TI};
+            case AGE: this.creationHints = new CreationHint[] {CreationHint.INT,CreationHint.COMP}; break;
+            case COMPARISON: this.creationHints = new CreationHint[] {CreationHint.INT, CreationHint.INT,CreationHint.COMP}; break; //assuming int comparison
+            case GENDER: this.creationHints = new CreationHint[] {CreationHint.STR}; break;
+            case TIME_PERSON: this.creationHints = new CreationHint[] {CreationHint.HASH_SET_TI}; break;
+            case TIME_TASK: this.creationHints = new CreationHint[] {CreationHint.TI}; break;
             default: break;
             }
             if (argsStr.length == this.creationHints.length) {

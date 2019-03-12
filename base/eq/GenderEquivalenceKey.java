@@ -31,7 +31,7 @@ public enum GenderEquivalenceKey implements EquivalenceKey {
             case FEMALE_STR: return FEMALE;
             case MALE_STR: return MALE;
             case OTHER_STR: return OTHER;
-            default: return null; //TODO: evtl. noch EXC anstatt null zurueckgeben
+            default: throw new IllegalArgumentException("only f,m,o are allowed!");
         }
     }
     

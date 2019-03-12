@@ -8,6 +8,7 @@ import java.util.List;
 
 import base.EquivalenceKey;
 import base.eq.EquivalenceKeyDescription;
+import base.eq.GenderEquivalenceKey;
 
 public class EquivalenceKeyDescriptor {
     private final Class<? extends EquivalenceKey> keyClass;
@@ -24,12 +25,17 @@ public class EquivalenceKeyDescriptor {
 
     public EquivalenceKeyDescriptor(final EquivalenceKeyDescription desc, final Object... initargs) {
         this.keyClass = desc.getEqKeyClass();
-        try {
-            this.key = this.keyClass.getConstructor(desc.getParamTypes()).newInstance(initargs);
-        } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
+        if (desc == EquivalenceKeyDescription.GENDER) {
+            final String gStr = initargs[0].toString();
+            this.key = GenderEquivalenceKey.of(gStr);
+        } else {
+            try {
+                this.key = this.keyClass.getConstructor(desc.getParamTypes()).newInstance(initargs);
+            } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
                 | NoSuchMethodException | SecurityException e) {
-            e.printStackTrace();
-            // should not happen, this would be an internal error!
+                e.printStackTrace();
+                // should not happen, this would be an internal error!
+            }
         }
         this.initargs = initargs;
     }
@@ -46,18 +52,23 @@ public class EquivalenceKeyDescriptor {
             throw new IllegalArgumentException("not copiable descriptor!");
         }
         this.initargs = toCopy.initargs;
-        try {
-            final Iterator<?> iter = Arrays.stream(this.initargs).map(x -> x.getClass()).iterator();
-            final List<Class<?>> paramTypes = new ArrayList<>();
-            while (iter.hasNext()) {
-                final Class<?> next = (Class<?>)iter.next();
-                paramTypes.add(primitiveReplace(next));
-            }
-            this.key = this.keyClass.getConstructor(paramTypes.toArray(new Class<?>[paramTypes.size()])).newInstance(initargs);
-        } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
+        if (this.keyClass.equals(GenderEquivalenceKey.class)) {
+            final String gStr = initargs[0].toString();
+            this.key = GenderEquivalenceKey.of(gStr);
+        } else {
+            try {
+                final Iterator<?> iter = Arrays.stream(this.initargs).map(x -> x.getClass()).iterator();
+                final List<Class<?>> paramTypes = new ArrayList<>();
+                while (iter.hasNext()) {
+                    final Class<?> next = (Class<?>)iter.next();
+                    paramTypes.add(primitiveReplace(next));
+                }
+                this.key = this.keyClass.getConstructor(paramTypes.toArray(new Class<?>[paramTypes.size()])).newInstance(initargs);
+            } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
                 | NoSuchMethodException | SecurityException e) {
-            e.printStackTrace();
-            // should not happen, this would be an internal error!
+                e.printStackTrace();
+                // should not happen, this would be an internal error!
+            }
         }
     }
 
