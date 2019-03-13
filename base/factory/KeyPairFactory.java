@@ -5,6 +5,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import base.EquivalenceKey;
+import base.eq.EquivalenceKeyDescription;
+import base.eq.Operation;
 
 public class KeyPairFactory {
     //TODO: this is a key-pair- factory for ONE person-task pair!
@@ -48,5 +50,21 @@ public class KeyPairFactory {
     public void addKeyPairs(final KeyPairFactory other) {
         this.ofPersonKeys.addAll(other.ofPersonKeys);
         this.ofTaskKeys.addAll(other.ofTaskKeys);
+    }
+
+    public void container(int id, final boolean bPerson, final Operation op) {
+        if (bPerson) {
+            container(id, this.ofPersonKeys, op);
+        } else {
+            container(id, this.ofTaskKeys, op);
+        }
+    }
+
+    private void container(final int id, final List<EquivalenceKeyDescriptor> keysDesc, final Operation op) {
+        final List<EquivalenceKey> keys = Arrays.asList(keysDesc.stream().map(x -> x.getKey()).toArray(EquivalenceKey[]::new));
+        keysDesc.clear();
+        final Object[] initargs = {id, keys, op};
+        final EquivalenceKeyDescriptor containerDesc = new EquivalenceKeyDescriptor(EquivalenceKeyDescription.CONTAINER, initargs);
+        keysDesc.add(containerDesc);
     }
 }
