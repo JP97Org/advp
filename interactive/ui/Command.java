@@ -195,7 +195,7 @@ public enum Command {
         }
     },
    
-    COMPLETE_PREP_PERSONS("completePrepPersons ((.+;)*(.+){0,1})") {
+    COMPLETE_PREP_PERSONS("completePrepPersons ((.+;)*(.+))") {
         @Override
         public void execute(MatchResult matcher, CommandLineInterface cli) throws IllegalArgumentException {
             if (cli.getCore().isStarted()) {
@@ -210,7 +210,7 @@ public enum Command {
             }
         }
     },
-    COMPLETE_PREP_TASKS("completePrepTasks ((.+,d+;)*(.+,d+){0,1})") {
+    COMPLETE_PREP_TASKS("completePrepTasks ((.+,\\d+;)*(.+,\\d+))") { 
         @Override
         public void execute(MatchResult matcher, CommandLineInterface cli) throws IllegalArgumentException {
             if (cli.getCore().isStarted()) {
@@ -286,9 +286,28 @@ public enum Command {
         }
     },
     
-    
-    //TODO: output des ergebnis (einzelausgabe)
-    //TODO: output des ergebnis als Uebersicht
+    PRINT_TASK("printTaskPerson (.+) ([0-9]+)") {
+        @Override
+        public void execute(MatchResult matcher, CommandLineInterface cli) throws IllegalArgumentException {
+            if(cli.getCore().isStarted()) {
+                final String taskName = matcher.group(1);
+                final int instanceNum = Integer.parseInt(matcher.group(2));
+                this.output = cli.getCore().getPersonOfTaskInstance(taskName, instanceNum).getName();
+            } else {
+                throw new IllegalArgumentException("not started!");
+            }
+        }
+    },
+    PRINT("print") {
+        @Override
+        public void execute(MatchResult matcher, CommandLineInterface cli) throws IllegalArgumentException {
+            if(cli.getCore().isStarted()) {
+                this.output = cli.getCore().getPrintResult();
+            } else {
+                throw new IllegalArgumentException("not started!");
+            }
+        }   
+    },
     
     RESET("reset") {
         @Override

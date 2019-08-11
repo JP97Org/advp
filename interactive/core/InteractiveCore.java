@@ -1,13 +1,13 @@
 package interactive.core;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
-import java.util.Set;
+import java.util.stream.Collectors;
 
 import base.Person;
 import base.Solver;
 import base.Task;
-import base.TaskInstance;
 import base.World;
 import base.factory.GeneralFactory;
 import base.factory.KeyPairFactory;
@@ -128,13 +128,25 @@ public class InteractiveCore {
         return this.world.addTask(task);
     }
     
-    public Person getPersonOfTaskInstance (final Task task, int instanceNum) {
-        return this.world.getPersonOfTaskInstance(task, instanceNum);
+    public Person getPersonOfTaskInstance (final String taskName, int instanceNum) {
+        final Task task = this.world.getTasks()
+                .stream().filter(t -> t.getName().equals(taskName)).findFirst().orElse(null);
+        if (task != null) {
+            final Person ret = this.world.getPersonOfTaskInstance(task, instanceNum);
+            if (ret != null) {
+                return ret;
+            } else {
+                throw new IllegalArgumentException("task instance number not found");
+            }
+        } else {
+            throw new IllegalArgumentException("task not found");
+        }
     }
     
+    /* not supported at the moment for interactive
     public Set<TaskInstance> getTaskInstancesOfPerson(Person person) {
         return this.world.getTaskInstancesOfPerson(person);
-    }
+    }*/
 
     public void setSolver(final Solver solver) {
         this.world.setSolver(solver);
@@ -142,6 +154,47 @@ public class InteractiveCore {
     
     public boolean solve() {
         return this.world.solve();
+    }
+    
+    public String getPrintResult() {
+        final StringBuilder ret = new StringBuilder();
+        
+        ret.append("Preparation persons:\n");
+        this.personsPreparation.forEach(x -> ret.append(x.toString(true)).append("\n"));
+        ret.append("\nPreparation tasks:\n");
+        this.tasksPreparation.forEach(x -> ret.append(x.toString(true)).append("\n"));
+        
+        ret.append("\nPersons:\n");
+        final List<Person> persons = this.world.getPersons().stream().sorted(new Comparator<Person>() {
+            @Override
+            public int compare(Person o1, Person o2) {
+                return o1.getName().compareTo(o2.getName());
+            }}).collect(Collectors.toList());
+        persons.forEach(p -> ret.append(p.getName()).append("\n"));
+        
+        ret.append("\nTasks:\n");
+        final List<Task> tasks = this.world.getTasks().stream().sorted(new Comparator<Task>() {
+            @Override
+            public int compare(Task o1, Task o2) {
+                return o1.getName().compareTo(o2.getName());
+            }}).collect(Collectors.toList());
+        tasks.forEach(t -> ret.append(t.getName()).append("\n"));
+        
+        ret.append("\nMappings:\n");
+        for (Task t : tasks) {
+            Person person;
+            int num = 0;
+            do {
+                person = this.world.getPersonOfTaskInstance(t, num);
+                if (person != null) {
+                    ret.append(t.getName()).append("[").append(num)
+                        .append("] -> ").append(person).append("\n");
+                    num++;
+                }
+            } while (person != null);
+        }
+        
+        return ret.toString();
     }
     
     public void reset() {

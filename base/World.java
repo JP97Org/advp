@@ -64,7 +64,7 @@ public class World {
      * @return the name
      */
     public String getName() {
-        return name;
+        return this.name;
     }
     
     /**
@@ -72,7 +72,7 @@ public class World {
      * @return the persons
      */
     public Set<Person> getPersons() {
-        return persons;
+        return new HashSet<>(this.persons);
     }
     
     /**
@@ -80,7 +80,7 @@ public class World {
      * @return the tasks
      */
     public Set<Task> getTasks() {
-        return tasks;
+        return new HashSet<>(this.tasks);
     }
     
     /**
