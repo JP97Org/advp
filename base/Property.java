@@ -56,7 +56,7 @@ public abstract class Property {
      * @return whether this property's key is equivalent to the given other key
      */
     public final boolean fulfills(EquivalenceKey otherEqKey) {
-        return this.equivalenceKey.isEquivalent(otherEqKey);
+        return this.equivalenceKey.isEquivalent(Objects.requireNonNull(otherEqKey));
     }
     
     /**

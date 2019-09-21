@@ -26,7 +26,7 @@ public class Task {
      */
     public Task(String name, int numberInstances) {
         if(numberInstances < 0) throw new IllegalArgumentException("NumberInstances must be >= 0.");
-        this.name = name;
+        this.name = Objects.requireNonNull(name);
         this.numberInstances = numberInstances;
         this.properties = new HashSet<>();
     }
@@ -44,8 +44,8 @@ public class Task {
     }
     
     public Task(TaskDescriptor taskDesc, Set<TaskProperty> properties) {
-        this(taskDesc.getName(), taskDesc.getNumInstances());
-        this.properties.addAll(properties);
+        this(Objects.requireNonNull(taskDesc).getName(), taskDesc.getNumInstances());
+        this.properties.addAll(Objects.requireNonNull(properties));
     }
 
     /**
@@ -91,7 +91,7 @@ public class Task {
      * @return whether the task contains the given property
      */
     public boolean hasProperty(TaskProperty property) {
-        return this.properties.contains(property);
+        return this.properties.contains(Objects.requireNonNull(property));
     }
     
     /**
@@ -101,7 +101,7 @@ public class Task {
      * @return whether it was added
      */
     public boolean addProperty(TaskProperty property) {
-        return this.properties.add(property);
+        return this.properties.add(Objects.requireNonNull(property));
     }
     
     /**

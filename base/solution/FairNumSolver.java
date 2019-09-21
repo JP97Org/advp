@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Map.Entry;
 import java.util.Set;
 
@@ -70,7 +71,7 @@ public abstract class FairNumSolver implements Solver {
     
     @Override
     public void setWorld(World world) {
-        this.world = world;
+        this.world = Objects.requireNonNull(world);
     }
 
     @Override

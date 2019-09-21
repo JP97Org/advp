@@ -34,7 +34,7 @@ public class ContainerEquivalenceKey<T extends EquivalenceKey> implements Equiva
         //id must be the same as the id of T
         this.id = id;
         this.keys = Objects.requireNonNull(keys);
-        this.operation = operation;
+        this.operation = Objects.requireNonNull(operation);
         
         this.alternationIndex = 0;
         this.freshlyInitialized = true;
@@ -57,7 +57,7 @@ public class ContainerEquivalenceKey<T extends EquivalenceKey> implements Equiva
 
     @Override
     public boolean isEquivalent(EquivalenceKey other) {
-        if(id == other.getID()) {
+        if(other != null && id == other.getID()) {
             boolean ret = true;
             
             if(getClass().equals(other.getClass())) { //other type is also a container

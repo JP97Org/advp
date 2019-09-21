@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Objects;
 import java.util.Set;
 
 import base.EquivalenceKey;
@@ -31,7 +32,7 @@ public class TimeEquivalenceKey implements EquivalenceKey {
         this.ofPerson = ofPerson;
         if(ofPerson) {
             this.personsPossibleTimeIntervals = new HashSet<>();
-            this.personsPossibleTimeIntervals.addAll(timeIntervalOrTimeIntervals);
+            this.personsPossibleTimeIntervals.addAll(Objects.requireNonNull(timeIntervalOrTimeIntervals));
         } else {
             if(timeIntervalOrTimeIntervals.size() != 1) {
                 throw new IllegalArgumentException("task interval must be only one!");
@@ -46,7 +47,7 @@ public class TimeEquivalenceKey implements EquivalenceKey {
      * @param personTimeIntervals - the set of time intervals
      */
     public TimeEquivalenceKey(Set<TimeInterval> personTimeIntervals) {
-        this(true, personTimeIntervals);
+        this(true, Objects.requireNonNull(personTimeIntervals));
     }
     
     /**
@@ -55,7 +56,7 @@ public class TimeEquivalenceKey implements EquivalenceKey {
      * @param taskTimeInterval - the task's time interval
      */
     public TimeEquivalenceKey(TimeInterval taskTimeInterval) {
-        this(false, Arrays.asList(taskTimeInterval));
+        this(false, Arrays.asList(Objects.requireNonNull(taskTimeInterval)));
     }
     
     /**
@@ -65,6 +66,7 @@ public class TimeEquivalenceKey implements EquivalenceKey {
      * @throws UnsupportedOperationException - if called on a task's TEK
      */
     public void mapped(final TimeInterval ti) throws UnsupportedOperationException{
+        Objects.requireNonNull(ti);
         if(ofPerson) {
             this.personsPossibleTimeIntervals.remove(ti);
         } else {
@@ -141,6 +143,7 @@ public class TimeEquivalenceKey implements EquivalenceKey {
      * @throws IllegalArgumentException - when the task does not have a TEK
      */
     public static TimeEquivalenceKey extract(final Task task) {
+        Objects.requireNonNull(task);
         final Iterator<TimeEquivalenceKey> ret = task.getProperties()
             .stream()
             .filter(x -> x.getEquivalenceKey().getClass().equals(TimeEquivalenceKey.class))

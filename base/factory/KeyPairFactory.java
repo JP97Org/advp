@@ -3,6 +3,7 @@ package base.factory;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 import base.EquivalenceKey;
 import base.eq.EquivalenceKeyDescription;
@@ -20,6 +21,7 @@ public class KeyPairFactory {
     }
     
     public KeyPairFactory(final KeyPairFactory toCopy) {
+        Objects.requireNonNull(toCopy);
         this.ofPersonKeys = Arrays.asList(toCopy.ofPersonKeys.stream().map(x -> new EquivalenceKeyDescriptor(x)).toArray(EquivalenceKeyDescriptor[]::new));
         this.ofTaskKeys = Arrays.asList(toCopy.ofTaskKeys.stream().map(x -> new EquivalenceKeyDescriptor(x)).toArray(EquivalenceKeyDescriptor[]::new));
     }
@@ -34,8 +36,8 @@ public class KeyPairFactory {
     
     public void generateKeyPair(final EquivalenceKeyDescriptor personKeyDesc, 
             final EquivalenceKeyDescriptor taskKeyDesc) {
-        this.ofPersonKeys.add(personKeyDesc);
-        this.ofTaskKeys.add(taskKeyDesc);
+        this.ofPersonKeys.add(Objects.requireNonNull(personKeyDesc));
+        this.ofTaskKeys.add(Objects.requireNonNull(taskKeyDesc));
     }
     
     public String toString(final boolean bPerson) {
@@ -48,11 +50,13 @@ public class KeyPairFactory {
     }
 
     public void addKeyPairs(final KeyPairFactory other) {
+        Objects.requireNonNull(other);
         this.ofPersonKeys.addAll(other.ofPersonKeys);
         this.ofTaskKeys.addAll(other.ofTaskKeys);
     }
 
     public void container(int id, final boolean bPerson, final Operation op) {
+        Objects.requireNonNull(op);
         if (bPerson) {
             container(id, this.ofPersonKeys, op);
         } else {

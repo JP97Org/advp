@@ -1,5 +1,7 @@
 package base.eq;
 
+import java.util.Objects;
+
 import base.EquivalenceKey;
 import base.PersonProperty;
 import base.TaskProperty;
@@ -23,7 +25,7 @@ public class AgeEquivalenceKey implements EquivalenceKey {
      * @param comparison - the given comparison
      */
     public AgeEquivalenceKey(int age, Comparison comparison) {
-        this.key = new ComparisonEquivalenceKey<Integer>(IDs.INTERNAL, age, comparison);
+        this.key = new ComparisonEquivalenceKey<Integer>(IDs.INTERNAL, Objects.requireNonNull(age), Objects.requireNonNull(comparison));
     }
     
     @Override

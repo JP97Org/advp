@@ -24,7 +24,7 @@ public class Person {
      * @param name - the person's name
      */
     public Person(final String name) {
-        this.name = name;
+        this.name = Objects.requireNonNull(name);
         this.properties = new HashSet<PersonProperty>();
     }
     
@@ -36,7 +36,7 @@ public class Person {
      */
     public Person(final String name, final Set<PersonProperty> properties) {
         this(name);
-        this.properties.addAll(properties);
+        this.properties.addAll(Objects.requireNonNull(properties));
     }
     
     /**
@@ -61,7 +61,7 @@ public class Person {
      * @return whether the person has the given property
      */
     public boolean hasProperty(PersonProperty property) {
-        return this.properties.contains(property);
+        return this.properties.contains(Objects.requireNonNull(property));
     }
     
     /**
@@ -71,7 +71,7 @@ public class Person {
      * @return whether the adding was successful, i.e. the property was not formerly contained
      */
     public boolean addProperty(PersonProperty property) {
-        return this.properties.add(property);
+        return this.properties.add(Objects.requireNonNull(property));
     }
     
     /**

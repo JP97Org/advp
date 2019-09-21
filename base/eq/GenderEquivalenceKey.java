@@ -1,5 +1,7 @@
 package base.eq;
 
+import java.util.Objects;
+
 import base.EquivalenceKey;
 import base.PersonProperty;
 import base.TaskProperty;
@@ -27,6 +29,7 @@ public enum GenderEquivalenceKey implements EquivalenceKey {
      * @return the respective key
      */
     public static GenderEquivalenceKey of(final String genderStr) {
+        Objects.requireNonNull(genderStr);
         switch(genderStr) {
             case FEMALE_STR: return FEMALE;
             case MALE_STR: return MALE;

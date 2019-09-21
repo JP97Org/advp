@@ -32,7 +32,7 @@ public class World {
      * @param name - the given name
      */
     public World(String name) {
-        this.name = name;
+        this.name = Objects.requireNonNull(name);
         this.persons = new HashSet<>();
         this.tasks = new HashSet<>();
         this.taskInstanceToPersonMap = new HashMap<>();
@@ -47,9 +47,9 @@ public class World {
      * @param tasks
      */
     public World(String name, Set<Person> persons, Set<Task> tasks) {
-        this(name);
-        this.persons.addAll(persons);
-        this.tasks.addAll(tasks);
+        this(Objects.requireNonNull(name));
+        this.persons.addAll(Objects.requireNonNull(persons));
+        this.tasks.addAll(Objects.requireNonNull(tasks));
     }
     
     /**
@@ -90,7 +90,7 @@ public class World {
      * @return whether it was added
      */
     public boolean addPerson(Person person) {
-        return this.persons.add(person);
+        return this.persons.add(Objects.requireNonNull(person));
     }
     
     /**
@@ -100,7 +100,7 @@ public class World {
      * @return whether it was added
      */
     public boolean addTask(Task task) {
-        return this.tasks.add(task);
+        return this.tasks.add(Objects.requireNonNull(task));
     }
     
     /**
@@ -111,7 +111,7 @@ public class World {
      * @return the person mapped to the given task instance or null if no person is mapped to the instance
      */
     public Person getPersonOfTaskInstance(Task task, int instanceNum) {
-        return this.taskInstanceToPersonMap.get(pairGenerate(task, instanceNum));
+        return this.taskInstanceToPersonMap.get(pairGenerate(Objects.requireNonNull(task), instanceNum));
     }
     
     /**
@@ -123,7 +123,7 @@ public class World {
     public Set<TaskInstance> getTaskInstancesOfPerson(Person person) {
         final Set<TaskInstance> ret = new HashSet<>();
         
-        if(this.taskInstanceToPersonMap.containsValue(person)) {
+        if(this.taskInstanceToPersonMap.containsValue(Objects.requireNonNull(person))) {
             final Set<TaskInstance> keySet = this.taskInstanceToPersonMap.keySet();
             for(TaskInstance key : keySet) {
                 if(this.taskInstanceToPersonMap.get(key).equals(person)) {
@@ -141,7 +141,7 @@ public class World {
      * @param solver - the given solver
      */
     public void setSolver(Solver solver) {
-        this.solver = solver;
+        this.solver = Objects.requireNonNull(solver);
         this.solver.setWorld(this);
     }
     
@@ -180,7 +180,7 @@ public class World {
      * @return whether the mapping succeeded
      */
     public boolean mapTaskInstanceToPerson(final Task taskArg, final Person personArg) {
-        if(tasks.contains(taskArg) && persons.contains(personArg)) {
+        if(tasks.contains(Objects.requireNonNull(taskArg)) && persons.contains(Objects.requireNonNull(personArg))) {
             final Task task = tasks.stream().filter(x -> x.equals(taskArg)).iterator().next();
             final Person person = persons.stream().filter(x -> x.equals(personArg)).iterator().next();
             

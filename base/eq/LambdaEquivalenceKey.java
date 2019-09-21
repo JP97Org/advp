@@ -35,8 +35,13 @@ public class LambdaEquivalenceKey<P,T> implements EquivalenceKey {
         this.id = id;
         this.valueP = valueP;
         this.valueT = valueT;
+        if (valueP == null && valueT == null) {
+            throw new IllegalArgumentException("undefined valueP and valueT, exactly one must be defined");
+        } else if (valueP != null && valueT != null) {
+            throw new IllegalArgumentException("defined valueP and valueT, only one must be defined");
+        }
         this.ofPerson = valueP != null;
-        this.biPredicate = biPredicate;
+        this.biPredicate = Objects.requireNonNull(biPredicate);
         this.oValClass = Objects.requireNonNull(oValClass);
     }
     

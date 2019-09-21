@@ -28,7 +28,7 @@ public class EqualEquivalenceKey<T> implements EquivalenceKey {
      */
     public EqualEquivalenceKey(final int id, final T constant) {
         this.id = id;
-        this.value = constant;
+        this.value = Objects.requireNonNull(constant);
     }
     
     @Override

@@ -20,7 +20,7 @@ public class Test {
     private static final int RANDOMIZE_LVL = 100; 
     //private static final int ITERATIONS = 1;//100; //no longer used!
     private static final boolean OPTIMIZE = false; //TODO optimize more!
-    private static final boolean ORIG_SOLVER = true;
+    private static final boolean ORIG_SOLVER = false;
     
     private static final File REAL_INPUT = /*null; */ new File("/home/jojo/Dokumente/in.csv"); /**/
     

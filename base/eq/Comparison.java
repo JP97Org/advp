@@ -2,6 +2,7 @@ package base.eq;
 
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.Objects;
 
 /**
  * Represents a Comparison.
@@ -27,6 +28,7 @@ public enum Comparison {
     }
     
     public static Comparison of(final String str) {
+        Objects.requireNonNull(str);
         final Iterator<Comparison> iter = Arrays.stream(values()).filter(x -> x.name().equals(str)).iterator();
         if (iter.hasNext()) {
             return iter.next();

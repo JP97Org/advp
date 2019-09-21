@@ -9,7 +9,7 @@ public class TaskDescriptor {
     public TaskDescriptor(final String name, final int numInstances) {
         if(numInstances < 0) throw new IllegalArgumentException("NumberInstances must be >= 0.");
         
-        this.name = name;
+        this.name = Objects.requireNonNull(name);
         this.numInstances = numInstances;
     }
     

@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
@@ -35,8 +36,8 @@ public enum EquivalenceKeyDescription {
     
     EquivalenceKeyDescription(final Class<? extends EquivalenceKey> keyClass, 
             final Class<?>... parameterTypes) {
-        this.keyClass = keyClass;
-        this.parameterTypes = parameterTypes;
+        this.keyClass = Objects.requireNonNull(keyClass);
+        this.parameterTypes = Objects.requireNonNull(parameterTypes);
     }
     
     public Class<? extends EquivalenceKey> getEqKeyClass() {
@@ -48,6 +49,8 @@ public enum EquivalenceKeyDescription {
     }
     
     public static EquivalenceKeyDescription ofArgs(final String args, final String delim) {
+        Objects.requireNonNull(args);
+        Objects.requireNonNull(delim);
         final String[] splitted = args.split(delim);
         final String descName = splitted[0];
         EquivalenceKeyDescription ret = null;
@@ -72,6 +75,7 @@ public enum EquivalenceKeyDescription {
     }
 
     public Object[] createInitArgs(final String[] argsStr) {
+        Objects.requireNonNull(argsStr);
         if (argsStr.length == this.creationHints.length) {
             final int length = argsStr.length;
             final Object[] ret = new Object[length];

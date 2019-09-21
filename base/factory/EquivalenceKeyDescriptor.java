@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 
 import base.EquivalenceKey;
 import base.eq.EquivalenceKeyDescription;
@@ -18,12 +19,14 @@ public class EquivalenceKeyDescriptor {
     public EquivalenceKeyDescriptor(final Class<? extends EquivalenceKey> keyClass, final Class<?>[] parameterTypes,
             final Object... initargs) throws NoSuchMethodException, SecurityException, InstantiationException,
             IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-        this.keyClass = keyClass;
-        this.key = keyClass.getConstructor(parameterTypes).newInstance(initargs);
-        this.initargs = initargs;
+        this.keyClass = Objects.requireNonNull(keyClass);
+        this.key = keyClass.getConstructor(Objects.requireNonNull(parameterTypes)).newInstance(Objects.requireNonNull(initargs));
+        this.initargs = Objects.requireNonNull(initargs);
     }
 
     public EquivalenceKeyDescriptor(final EquivalenceKeyDescription desc, final Object... initargs) {
+        Objects.requireNonNull(desc);
+        Objects.requireNonNull(initargs);
         this.keyClass = desc.getEqKeyClass();
         if (desc == EquivalenceKeyDescription.GENDER) {
             final String gStr = initargs[0].toString();
@@ -41,12 +44,14 @@ public class EquivalenceKeyDescriptor {
     }
     
     public EquivalenceKeyDescriptor(final EquivalenceKey key) {
+        Objects.requireNonNull(key);
         this.keyClass = key.getClass();
         this.key = key;
         this.initargs = null;
     }
     
     public EquivalenceKeyDescriptor(final EquivalenceKeyDescriptor toCopy) {
+        Objects.requireNonNull(toCopy);
         this.keyClass = toCopy.keyClass;
         if (toCopy.initargs == null) {
             throw new IllegalArgumentException("not copiable descriptor!");

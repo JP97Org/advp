@@ -1,6 +1,7 @@
 package base.factory;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 import base.EquivalenceKey;
@@ -23,6 +24,7 @@ public class PropertySetFactory {
     }
     
     public static Set<PersonProperty> getPersonProperties(final Set<EquivalenceKey> keys) {
+        Objects.requireNonNull(keys);
         final Set<PersonProperty> ret = new HashSet<>();
         
         keys.forEach(x -> ret.add(x.getPersonProperty()));
@@ -39,6 +41,7 @@ public class PropertySetFactory {
     }
     
     public static Set<TaskProperty> getTaskProperties(final Set<EquivalenceKey> keys) {
+        Objects.requireNonNull(keys);
         final Set<TaskProperty> ret = new HashSet<>();
         
         keys.forEach(x -> ret.add(x.getTaskProperty()));

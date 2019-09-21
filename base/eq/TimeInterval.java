@@ -23,6 +23,8 @@ public class TimeInterval implements Comparable<TimeInterval> {
      * @param to - the end of the interval
      */
     public TimeInterval(Date from, Date to) {
+        Objects.requireNonNull(from);
+        Objects.requireNonNull(to);
         if(to.getTime() < from.getTime()) throw new IllegalArgumentException("to time must be >= from time!");
         
         this.from = from;
@@ -35,7 +37,7 @@ public class TimeInterval implements Comparable<TimeInterval> {
      * @param toCopy - the given time interval
      */
     public TimeInterval(final TimeInterval toCopy) {
-        this(new Date(toCopy.from.getTime()), new Date(toCopy.to.getTime()));
+        this(new Date(Objects.requireNonNull(toCopy).from.getTime()), new Date(toCopy.to.getTime()));
     }
     
     /**
@@ -63,6 +65,7 @@ public class TimeInterval implements Comparable<TimeInterval> {
      * @return whether the given time is included
      */
     public boolean contains(Date time) {
+        Objects.requireNonNull(time);
         return time.getTime() >= from.getTime() && time.getTime() <= to.getTime();
     }
     
@@ -93,6 +96,7 @@ public class TimeInterval implements Comparable<TimeInterval> {
      * @return ordered ascending list of time intervals containing all time except for the cut out open intervals
      */
     public List<TimeInterval> cut(List<TimeInterval> toCut) {
+        Objects.requireNonNull(toCut);
         List<TimeInterval> ret = new ArrayList<TimeInterval>();
         
         final int size = toCut.size();
@@ -121,6 +125,7 @@ public class TimeInterval implements Comparable<TimeInterval> {
      * @return
      */
     public List<TimeInterval> cut(TimeInterval toCut) {
+        Objects.requireNonNull(toCut);
         return cut(Arrays.asList(toCut));
     }
     
