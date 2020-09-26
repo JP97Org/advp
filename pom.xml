@@ -65,7 +65,7 @@
 					</descriptorRefs>
 					<archive>
 						<manifest>
-							<mainClass>org.jojo.advp.interactive.ui.Main</mainClass>
+							<mainClass>org.jojo.advp.interactive.gui.Main</mainClass>
 						</manifest>
 					</archive>
 				</configuration>

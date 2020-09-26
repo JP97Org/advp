@@ -36,7 +36,7 @@ public class CommandLineInterface {
         this.scanner.close();
     }
     
-    private void executeCommand(final String input) {
+    public void executeCommand(final String input) {
         try {
             final Command command = Command.executeMatching(input, this);
             final String output = command.getOutput();
@@ -48,7 +48,7 @@ public class CommandLineInterface {
         }
     }
     
-    protected InteractiveCore getCore() {
+    public InteractiveCore getCore() {
         return this.core;
     }
     
