@@ -1,6 +1,8 @@
 package interactive.ui;
 
+import java.io.InputStream;
 import java.io.PrintStream;
+import java.util.Objects;
 import java.util.Scanner;
 
 import interactive.core.InteractiveCore;
@@ -14,9 +16,13 @@ public class CommandLineInterface {
     private boolean quit;
     
     public CommandLineInterface() {
-        this.scanner = new Scanner(System.in);
-        this.out = System.out;
-        this.err = System.err;
+        this(System.in, System.out, System.err);
+    }
+    
+    public CommandLineInterface(final InputStream inStream, final PrintStream outStream, final PrintStream errStream) {
+        this.scanner = new Scanner(Objects.requireNonNull(inStream));
+        this.out = Objects.requireNonNull(outStream);
+        this.err = Objects.requireNonNull(errStream);
         
         this.core = new InteractiveCore();
         this.quit = false;

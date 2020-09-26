@@ -136,14 +136,14 @@ public class InteractiveCore {
             if (ret != null) {
                 return ret;
             } else {
-                throw new IllegalArgumentException("task instance number not found");
+                throw new IllegalArgumentException("no person mapped or task instance number not found");
             }
         } else {
             throw new IllegalArgumentException("task not found");
         }
     }
     
-    /* not supported at the moment for interactive
+    /* TODO not supported at the moment for interactive
     public Set<TaskInstance> getTaskInstancesOfPerson(Person person) {
         return this.world.getTaskInstancesOfPerson(person);
     }*/

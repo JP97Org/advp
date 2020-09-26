@@ -139,6 +139,13 @@ public enum EquivalenceKeyDescription {
                 throw new IllegalArgumentException("NumberFormatException " + e.getMessage());
             }
             }),
+        DOUBLE (s -> {
+            try {
+                return Double.parseDouble(s); 
+            } catch(NumberFormatException e) {
+                throw new IllegalArgumentException("NumberFormatException " + e.getMessage());
+            }
+            }),
         COMP (s -> Comparison.of(s)),
         LIST_STR (s -> Arrays.asList(s.split(DELIM_LIST_OR_SET))),
         LIST_INT (s -> Arrays.asList(s.split(DELIM_LIST_OR_SET)).stream().mapToInt(x -> {

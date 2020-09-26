@@ -1,5 +1,6 @@
 package interactive.ui;
 
+import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -17,6 +18,64 @@ import base.solution.NaiveFairNumSolver;
 import base.solution.NaiveSolver;
 
 public enum Command {
+    HELP("help") {
+        @Override
+        public void execute(MatchResult matcher, CommandLineInterface cli) throws IllegalArgumentException {
+            this.output = "Available commands:\n\n"
+                    + "help - print this help page\n"
+                    + "start - starts the core, i.e. creates a new empty world\n\n"
+                    + "keySym <EqKeyDesc>;<Args> - symmetric key creation (for person and task)\n"
+                    + "keyPerson <EqKeyDesc>;<Args> - person key creation\n"
+                    + "keyTask <EqKeyDesc>;<Args> - task key creation\n"
+                    + "keyList {person|task} - prints the list of the keys for person or task\n"
+                    + "keyOf {person|task} <Index> - prints the key with the given index in the person or task key list\n"
+                    + "keyReuse {person|task} <Index> - copies the key with the given index in the person or task key list\n"
+                    + "keyAddAll {person|task} <IndexOne> <IndexTwo> - adds the keys of the factory at second index to the one at the first index, afterwards removing the factory at the second index\n"
+                    + "keyContainer {person|task} <Indices ...> {OR|ALTERNATE|AND} <KeyID> - adds a container with the given connector and Key-ID with the keys at the given indices, afterwards removing the keys at the given indices\n"
+                    + "keyRemove {person|task} <Index> - removes the key at the given index\n\n"
+                    + "completePrepPersons <<Name>;...> - creates the persons with the given names and the respective prepared keys in the person key list. The names must be distinct and exactly as many as there are entries in the person key list\n"
+                    + "completePrepTasks <<<Name>,<NumberOfInstances>>;...> - creates the tasks with the given names and number of instances and the respective prepared keys in the task key list. The names must be distinct and exactly as many as there are entries in the task key list\n"
+                    + "clearPrep - delete all entries in the person and task key list\n\n"
+                    + "setSolver {naive|fairNum} {part|full} <RandomizationLevel> - sets the given solver (naive or fairNum) with partial or only full solution calculation and the given randomization level\n"
+                    + "solve - calls the solver's solve method, solving the set world\n\n"
+                    + "printTaskPerson <TaskName> <InstanceNumber> - prints the person who is mapped to the given task instance with the given task name and instance number\n"
+                    + "print - prints an overview of the preparations and the set world\n\n"
+                    + "reset - resets the core, i.e. removes the world and deletes all entries in the person and task key list\n"
+                    + "quit - quits the command line interface\n\n"
+                    + "Input Formats:\n\n"
+                    + "<Index>, <IndexOne>, <IndexTwo>, <KeyID>, <NumberOfInstances>, <InstanceNumber>  <RandomizationLevel> - non-negative integer, <KeyID> < 1E8\n"
+                    + "<Indices ...> - several <Index> separated by a whitespace\n"
+                    + "<Name>, <TaskName> - name which consist of any number of characters except \",\" and \";\"\n"
+                    + "<<?>;...> - several <?> separated by \";\"\n"
+                    + "<<?1>,<?2>> - <?1> and <?2> separated by \",\"\n"
+                    + "<EqKeyDesc> - <EqKeyName> and <EqKeyHint|...> separated by \"|\"\n"
+                    + "<EqKeyName> - {AGE|COMPARISON|EQUAL|GENDER|TIME_PERSON|TIME_TASK} (lamdbas not supported at the moment)\n" //TODO lambdas
+                    + "<EqKeyHint|...> - list of <EqKeyHint> separated by \"|\"\n"
+                    + "<EqKeyHint> - {STR|INT|DOUBLE|COMP|LIST_STR|LIST_INT|OP|HASH_SET_TI|TI} (lamdbas not supported at the moment)\n" //TODO lambdas
+                    + "<Args> - list of <Arg> separated by \"|\"\n"
+                    + "<Arg> - an argument for an equivalence key; the respective argument must match the equivalence key's required argument possibly defined by a creation hint (EqKeyHint)\n\n"
+                    + "Equivalence Keys, creation hints and arguments:\n\n"
+                    + "<Age> - non-negative integer\n"
+                    + "<Comp> - {GR|SM|GREQ|SMEQ|EQ} (>,<,>=,<=,==)\n"
+                    + "AGE - INT|COMP [optional] - <Age>|<Comp>\n"
+                    + "<Comparable> - {INT|DOUBLE|STR}\n"
+                    + "<ComparableArg> - an argument matching the set comparable format\n"
+                    + "COMPARISON - {INT|<Comparable>|COMP} [optional, assuming INT comparison] - <KeyID>|<ComparableArg>|<Comp>\n"
+                    + "<Obj> - an argument matching the set object format\n"
+                    + "EQUAL - {INT|<EqKeyHint>} - <KeyID>|<Obj>\n"
+                    + "<Gender> - {m|f|o}\n"
+                    + "GENDER - {STR} [optional] - <Gender>\n"
+                    + "" //TODO lambdas
+                    + "<Time> - a time instance using the format used by DateFormat.getDateInstance().parse(:String)\n"
+                    + "<Ti> - time interval consisting of two <Time> separated by \"-\"\n"
+                    + "<HashSetTi> - list of <Ti> separated by \",\"\n"
+                    + "TIME_PERSON - {HASH_SET_TI} [optional] - <HashSetTi>\n"
+                    + "TIME_TASK - {TI} [optional] - <Ti>\n\n"
+                    + "Example (creation of an task age key allowing only persons with age >=21):\n"
+                    + "keyTask AGE;21|SMEQ"; 
+        }
+    },
+    
     START("start") {
         @Override
         public void execute(MatchResult matcher, CommandLineInterface cli) throws IllegalArgumentException {
@@ -98,7 +157,7 @@ public enum Command {
         }
     },
     /**
-     * Add all contained keys from key factory at second index into factory at first.
+     * Add all contained keys from key factory at second index into factory at the first index.
      * Afterwards removing key at second index.
      */
     KEY_ADD_ALL("keyAddAll ((person)|(task)) (\\d+) (\\d+)") {
