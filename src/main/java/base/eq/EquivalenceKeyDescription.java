@@ -97,9 +97,11 @@ public enum EquivalenceKeyDescription {
         } else if (this.creationHints.length == 0){
             //creation without hints
             switch(this) {
-            case AGE: this.creationHints = new CreationHint[] {CreationHint.INT,CreationHint.COMP}; break;
+            case AGE: this.creationHints = new CreationHint[] {CreationHint.INT, CreationHint.COMP}; break;
             case COMPARISON: this.creationHints = new CreationHint[] {CreationHint.INT, CreationHint.INT,CreationHint.COMP}; break; //assuming int comparison
             case GENDER: this.creationHints = new CreationHint[] {CreationHint.STR}; break;
+            case LAMBDA_PERSON: this.creationHints = new CreationHint[] {CreationHint.INT, CreationHint.STR, CreationHint.LAMBDA, CreationHint.CLASS}; break;
+            case LAMBDA_TASK: this.creationHints = new CreationHint[] {CreationHint.STR, CreationHint.INT, CreationHint.LAMBDA, CreationHint.CLASS}; break;
             case TIME_PERSON: this.creationHints = new CreationHint[] {CreationHint.HASH_SET_TI}; break;
             case TIME_TASK: this.creationHints = new CreationHint[] {CreationHint.TI}; break;
             default: break;
@@ -134,6 +136,16 @@ public enum EquivalenceKeyDescription {
     }
 
     private enum CreationHint {
+        CLASS(s -> {
+            switch(s) {
+                case "String": return String.class;
+                case "Integer": return Integer.class;
+                case "Double": return Double.class;
+                case "Boolean": return Boolean.class;
+                case "TimeInterval": return TimeInterval.class;
+                default: return Object.class;
+            }
+        }),
         STR (s -> s),
         INT (s -> {
             try {
@@ -199,13 +211,14 @@ public enum EquivalenceKeyDescription {
          *                              and expr(p,t) is a function returning boolean
          * @return a bi-predicate from the given lambdaExpression
          */
-        private static <P,T> BiPredicate<P,T> createBiPredicateFromString(final String lambdaExpression) throws IllegalArgumentException {
+        private static BiPredicate<String, String> createBiPredicateFromString(final String lambdaExpression) throws IllegalArgumentException {
             final String matchRegex = "\\([a-z]+,[a-z]+\\)\\s->\\s.*";
             if (lambdaExpression != null && lambdaExpression.matches(matchRegex)) {
+                final String[] classes = lambdaExpression.split("> ")[0].substring(1).split(",");
                 LambdaFactory lambdaFactory = LambdaFactory.get();
-                BiPredicate<P, T> ret;
+                BiPredicate<String, String> ret;
                 try {
-                    ret = lambdaFactory.createLambda(lambdaExpression, new TypeReference<BiPredicate<P, T>>(){});
+                    ret = lambdaFactory.createLambda(lambdaExpression, new TypeReference<BiPredicate<String, String>>(){});
                 } catch (LambdaCreationException e) {
                     throw new IllegalArgumentException(e.getMessage());
                 }

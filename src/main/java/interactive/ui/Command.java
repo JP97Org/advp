@@ -49,9 +49,9 @@ public enum Command {
                     + "<<?>;...> - several <?> separated by \";\"\n"
                     + "<<?1>,<?2>> - <?1> and <?2> separated by \",\"\n"
                     + "<EqKeyDesc> - <EqKeyName> and <EqKeyHint|...> separated by \"|\"\n"
-                    + "<EqKeyName> - {AGE|COMPARISON|EQUAL|GENDER|TIME_PERSON|TIME_TASK} (lamdbas not supported at the moment)\n" //TODO lambdas
+                    + "<EqKeyName> - {AGE|COMPARISON|EQUAL|GENDER|LAMBDA_PERSON|LAMBDA_TASK|TIME_PERSON|TIME_TASK} (lamdbas experimental, only <String,String> at the moment)\n"
                     + "<EqKeyHint|...> - list of <EqKeyHint> separated by \"|\"\n"
-                    + "<EqKeyHint> - {STR|INT|DOUBLE|BOOL|COMP|LIST_STR|LIST_INT|OP|HASH_SET_TI|TI} (lamdbas not supported at the moment)\n" //TODO lambdas
+                    + "<EqKeyHint> - {CLASS|STR|INT|DOUBLE|BOOL|COMP|LIST_STR|LIST_INT|OP|LAMBDA|HASH_SET_TI|TI} (lamdbas experimental, only <String,String> at the moment))\n"
                     + "<Args> - list of <Arg> separated by \"|\"\n"
                     + "<Arg> - an argument for an equivalence key; the respective argument must match the equivalence key's required argument possibly defined by a creation hint (EqKeyHint)\n\n"
                     + "Equivalence Keys, creation hints and arguments:\n\n"
@@ -65,7 +65,12 @@ public enum Command {
                     + "EQUAL - {INT|<EqKeyHint>} - <KeyID>|<Obj>\n"
                     + "<Gender> - {m|f|o}\n"
                     + "GENDER - {STR} [optional] - <Gender>\n"
-                    + "" //TODO lambdas
+                    + "<LambdaObj> - {STR}\n"
+                    + "<LambdaObjArg> - an argument matching the set lambda object format\n"
+                    + "<LambdaExpr> - the lambda expression of the form \"(p,t) -> expr(p,t)\" where p and t are variables with names in ([a-z]+) and expr(p,t) is a function returning boolean\n"
+                    + "<ClassOfOtherValue> - {String}\n"
+                    + "LAMBDA_PERSON - {INT|<LambdaObj>|LAMBDA|CLASS} [optional, assuming <String,T>] - <KeyID>|<LambdaObjArg>|<LambdaExpr>|<ClassOfOtherValue>\n"
+                    + "LAMBDA_TASK - {<LambdaObj>|INT|LAMBDA|CLASS} [optional, assuming <P,String>] - <LambdaObjArg>|<KeyID>|<LambdaExpr>|<ClassOfOtherValue>\n"
                     + "<Time> - a time instance using the format used by DateFormat.getDateInstance().parse(:String)\n"
                     + "<Ti> - time interval consisting of two <Time> separated by \"-\"\n"
                     + "<HashSetTi> - list of <Ti> separated by \",\"\n"
