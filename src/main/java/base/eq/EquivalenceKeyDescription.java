@@ -1,6 +1,9 @@
 package base.eq;
 
 import base.EquivalenceKey;
+import pl.joegreen.lambdaFromString.LambdaCreationException;
+import pl.joegreen.lambdaFromString.LambdaFactory;
+import pl.joegreen.lambdaFromString.TypeReference;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -146,6 +149,13 @@ public enum EquivalenceKeyDescription {
                 throw new IllegalArgumentException("NumberFormatException " + e.getMessage());
             }
             }),
+        BOOL (s -> {
+            try {
+                return Boolean.parseBoolean(s); 
+            } catch(NumberFormatException e) {
+                throw new IllegalArgumentException("NumberFormatException " + e.getMessage());
+            }
+            }),
         COMP (s -> Comparison.of(s)),
         LIST_STR (s -> Arrays.asList(s.split(DELIM_LIST_OR_SET))),
         LIST_INT (s -> Arrays.asList(s.split(DELIM_LIST_OR_SET)).stream().mapToInt(x -> {
@@ -156,7 +166,7 @@ public enum EquivalenceKeyDescription {
             }
             }).toArray()),
         OP (s -> Operation.of(s)),
-        LAMBDA (s -> null), //TODO: lambdas unterstuetzen! --> wahrscheins mit eigenem abgespeckten compiler oder so, oder lib laden mit den entsprechenden objekten und dem vergleichslamda
+        LAMBDA (s -> createBiPredicateFromString(s)),
         HASH_SET_TI (s -> new HashSet<TimeInterval>(
                 Arrays.asList(
                         Arrays.stream(s.split(DELIM_LIST_OR_SET)).map(x -> {
@@ -180,6 +190,31 @@ public enum EquivalenceKeyDescription {
             this.transform = transform;
         }
         
+        /**
+         * Creates a bi-predicate from the given lambdaExpression
+         * @param <P> - the person's LEK part type
+         * @param <T> - the task's LEK part type
+         * @param lambdaExpression -    the lambda expression of the form "(p,t) -> expr(p,t)"
+         *                              where p and t are variables with names in ([a-z]+)
+         *                              and expr(p,t) is a function returning boolean
+         * @return a bi-predicate from the given lambdaExpression
+         */
+        private static <P,T> BiPredicate<P,T> createBiPredicateFromString(final String lambdaExpression) throws IllegalArgumentException {
+            final String matchRegex = "\\([a-z]+,[a-z]+\\)\\s->\\s.*";
+            if (lambdaExpression != null && lambdaExpression.matches(matchRegex)) {
+                LambdaFactory lambdaFactory = LambdaFactory.get();
+                BiPredicate<P, T> ret;
+                try {
+                    ret = lambdaFactory.createLambda(lambdaExpression, new TypeReference<BiPredicate<P, T>>(){});
+                } catch (LambdaCreationException e) {
+                    throw new IllegalArgumentException(e.getMessage());
+                }
+                return ret;
+            } else {
+                throw new IllegalArgumentException("Lambda expression must match (" + matchRegex + ")");
+            }
+        }
+
         Object transform(final String input) {
             return this.transform.apply(input);
         }

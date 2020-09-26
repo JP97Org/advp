@@ -51,7 +51,7 @@ public enum Command {
                     + "<EqKeyDesc> - <EqKeyName> and <EqKeyHint|...> separated by \"|\"\n"
                     + "<EqKeyName> - {AGE|COMPARISON|EQUAL|GENDER|TIME_PERSON|TIME_TASK} (lamdbas not supported at the moment)\n" //TODO lambdas
                     + "<EqKeyHint|...> - list of <EqKeyHint> separated by \"|\"\n"
-                    + "<EqKeyHint> - {STR|INT|DOUBLE|COMP|LIST_STR|LIST_INT|OP|HASH_SET_TI|TI} (lamdbas not supported at the moment)\n" //TODO lambdas
+                    + "<EqKeyHint> - {STR|INT|DOUBLE|BOOL|COMP|LIST_STR|LIST_INT|OP|HASH_SET_TI|TI} (lamdbas not supported at the moment)\n" //TODO lambdas
                     + "<Args> - list of <Arg> separated by \"|\"\n"
                     + "<Arg> - an argument for an equivalence key; the respective argument must match the equivalence key's required argument possibly defined by a creation hint (EqKeyHint)\n\n"
                     + "Equivalence Keys, creation hints and arguments:\n\n"

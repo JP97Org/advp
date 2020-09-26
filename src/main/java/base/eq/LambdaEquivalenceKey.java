@@ -128,6 +128,6 @@ public class LambdaEquivalenceKey<P,T> implements EquivalenceKey {
 
     @Override
     public String toString() {
-        return PROP_NAME + " | id= " + id + " | value= " + (ofPerson ? valueP : valueT) + " |biPredicate= " + biPredicate; 
+        return PROP_NAME + " | id= " + id + " | value= " + (ofPerson ? valueP : valueT) + " | biPredicate= " + biPredicate; 
     }
 }

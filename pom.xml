@@ -1,0 +1,106 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>org.jojo</groupId>
+  <artifactId>advp</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <packaging>jar</packaging>
+
+  <name>advp</name>
+  <url>http://maven.apache.org</url>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
+
+  <dependencies>
+  	<dependency>
+		<groupId>pl.joegreen</groupId>
+		<artifactId>lambda-from-string</artifactId>
+		<version>1.6</version>
+	</dependency>
+  
+    <dependency>
+    	<groupId>org.junit.jupiter</groupId>
+    	<artifactId>junit-jupiter-engine</artifactId>
+    	<version>5.5.2</version>
+    	<scope>test</scope>
+	</dependency>
+	<dependency>
+            <groupId>org.junit.platform</groupId>
+            <artifactId>junit-platform-runner</artifactId>
+            <version>1.7.0</version>
+            <scope>test</scope>
+    </dependency>
+    <dependency>
+        <groupId>junit</groupId>
+        <artifactId>junit</artifactId>
+        <version>4.12</version>
+        <scope>test</scope>
+    </dependency>
+  </dependencies>
+  
+  <build>
+  		<finalName>advp</finalName>
+		<plugins>
+
+        	<plugin>
+            	<artifactId>maven-surefire-plugin</artifactId>
+            	<version>2.19</version>
+            	<dependencies>
+                	<dependency>
+                    	<groupId>org.junit.platform</groupId>
+                    	<artifactId>junit-platform-surefire-provider</artifactId>
+                    	<version>1.0.0-M4</version>
+                	</dependency>
+                	<dependency>
+                    	<groupId>org.junit.vintage</groupId>
+                    	<artifactId>junit-vintage-engine</artifactId>
+                    	<version>4.12.0-M4</version>
+                	</dependency>
+            	</dependencies>
+        	</plugin>
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.8.1</version>
+				<configuration>
+					<source>8</source>
+					<target>8</target>
+				</configuration>
+			</plugin>
+			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<configuration>
+					<appendAssemblyId>false</appendAssemblyId>
+					<descriptorRefs>
+						<descriptorRef>jar-with-dependencies</descriptorRef>
+					</descriptorRefs>
+					<archive>
+						<manifest>
+							<mainClass>interactive.ui.Main</mainClass>
+						</manifest>
+					</archive>
+				</configuration>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+    			<artifactId>maven-jar-plugin</artifactId>
+    			<version>3.0.2</version>
+    			<executions>
+        			<execution>
+            			<id>default-jar</id>
+            			<phase>none</phase>
+        			</execution>
+    			</executions>
+			</plugin>
+		</plugins>
+	</build>
+</project>
