@@ -1,8 +1,15 @@
 package org.jojo.advp.interactive.core;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Comparator;
 import java.util.List;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.jojo.advp.base.Person;
@@ -19,12 +26,41 @@ public class InteractiveCore {
     private final List<KeyPairFactory> personsPreparation;
     private final List<KeyPairFactory> tasksPreparation;
     
+    private String[] personNames;
+    private String[] taskDescriptors;
+    
     public InteractiveCore() {
         this.personsPreparation = new ArrayList<>();
         this.tasksPreparation = new ArrayList<>();
         reset();
     }
     
+    public void load(final String serializedPersonsPreparation, final String serializedTasksPreparation) throws ClassNotFoundException, IOException {
+        reset();
+        this.personsPreparation.addAll(deserialize(serializedPersonsPreparation));
+        this.tasksPreparation.addAll(deserialize(serializedTasksPreparation));
+    }
+    
+    public void loadPersonNames(final String[] personNames) {
+        this.personNames = personNames;
+    }
+    
+    public String[] finishLoadingPersonNames() {
+        final String[] ret = this.personNames;
+        this.personNames = null;
+        return ret;
+    }
+    
+    public void loadTaskDescriptors(final String[] taskDescriptors) {
+        this.taskDescriptors = taskDescriptors;
+    }
+    
+    public String[] finishLoadingTaskDescriptors() {
+        final String[] ret = this.taskDescriptors;
+        this.taskDescriptors = null;
+        return ret;
+    }
+
     public void start() {
         this.world = new World();
     }
@@ -212,5 +248,44 @@ public class InteractiveCore {
 
     public boolean isPreparable(final int countPersons, final int countTasks) {
         return countPersons == personsPreparation.size() && countTasks == tasksPreparation.size();
+    }
+    
+    public String serializePersonsPreparation() throws IOException, ClassNotFoundException {
+        return serialize(personsPreparation);
+    }
+    
+    public String serializeTasksPreparation() throws IOException, ClassNotFoundException {
+        return serialize(tasksPreparation);
+    }
+    
+    private static final int TIMES = 10;
+    private static <T> String serialize(T o) throws IOException, ClassNotFoundException {
+        final ByteArrayOutputStream baos = new ByteArrayOutputStream ();
+        try (ObjectOutputStream oos = new ObjectOutputStream (baos)) {
+            oos.writeObject(o);
+        }
+        return Base64.getEncoder().encodeToString(baos.toByteArray())
+                .replaceAll(Pattern.quote("\n"), times("newline", TIMES))
+                .replaceAll(Pattern.quote("\""), times("quote", TIMES))
+                .replaceAll(Pattern.quote(";"), times("semicolon", TIMES));
+    }
+
+    private static String times(final String in, int times) {
+        final StringBuilder builder = new StringBuilder();
+        for (int i = 0; i < times; i++) {
+            builder.append(in);
+        }
+        return builder.toString();
+    }
+    
+    private static List<KeyPairFactory> deserialize(final String serializedPersonsPreparation) throws IOException, ClassNotFoundException {
+        ByteArrayInputStream bais = new ByteArrayInputStream (
+                Base64.getDecoder().decode(serializedPersonsPreparation
+                .replaceAll("(semicolon){"+TIMES+"}", ";")
+                .replaceAll("(quote){"+TIMES+"}", "\"")
+                .replaceAll("(newline){"+TIMES+"}", "\n")));
+        try (ObjectInputStream ois = new ObjectInputStream (bais)) {
+            return (List<KeyPairFactory>) ois.readObject();
+        }
     }
 }

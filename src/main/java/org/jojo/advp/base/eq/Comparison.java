@@ -1,5 +1,6 @@
 package org.jojo.advp.base.eq;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Objects;
@@ -10,7 +11,7 @@ import java.util.Objects;
  * @author jojo
  * @version 0.9
  */
-public enum Comparison {
+public enum Comparison implements Serializable {
     GR,SM,GREQ,SMEQ,EQ;
 
     /**

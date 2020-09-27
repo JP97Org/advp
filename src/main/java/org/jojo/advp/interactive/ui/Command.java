@@ -1,5 +1,6 @@
 package org.jojo.advp.interactive.ui;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -16,6 +17,7 @@ import org.jojo.advp.base.factory.KeyPairFactory;
 import org.jojo.advp.base.factory.TaskDescriptor;
 import org.jojo.advp.base.solution.NaiveFairNumSolver;
 import org.jojo.advp.base.solution.NaiveSolver;
+import org.jojo.util.DataSaverAndLoader;
 
 public enum Command {
     HELP("help") {
@@ -436,6 +438,55 @@ public enum Command {
                 throw new IllegalArgumentException("not started!");
             }
         }   
+    },
+    
+    LOAD("load (.+)") {
+        @Override
+        public void execute(MatchResult matcher, CommandLineInterface cli) throws IllegalArgumentException {
+            final String path = matcher.group(1);
+            final DataSaverAndLoader sal = new DataSaverAndLoader(java.nio.charset.StandardCharsets.UTF_8.name());
+            final String[][] data;
+            try {
+                data = sal.allDataValues(path);
+            } catch (IOException e) {
+                throw new IllegalArgumentException("IOException: " + e.getMessage());
+            }
+            if (data.length != 4) {
+                throw new IllegalArgumentException("File format not ok: data.length= " + data.length + " should be 4");
+            }
+            final String[] persons = data[0][0].isEmpty() ? null : data[0]; // "Person1";"Person2";...
+            final String[] taskDescriptors = data[1][0].isEmpty() ? null : data[1]; // "Task1,1";"Task2,1";...
+            final String serialPersonPreps = data[2][0];
+            final String serialTaskPreps = data[3][0];
+            try {
+                cli.getCore().load(serialPersonPreps, serialTaskPreps);
+                cli.getCore().loadPersonNames(persons);
+                cli.getCore().loadTaskDescriptors(taskDescriptors);
+            } catch (ClassNotFoundException | IOException e) {
+                e.printStackTrace();
+                throw new IllegalArgumentException("An exception occured: " + e.getMessage());
+            }
+        }
+    },
+    SAVE("save (.+)") {
+        @Override
+        public void execute(MatchResult matcher, CommandLineInterface cli) throws IllegalArgumentException {
+            final String path = matcher.group(1);
+            final DataSaverAndLoader sal = new DataSaverAndLoader(java.nio.charset.StandardCharsets.UTF_8.name());
+            final String[][] data = new String[4][];
+            data[0] = cli.getCore().finishLoadingPersonNames();
+            data[0] = data[0] == null ? new String[] {""} : data[0];
+            data[1] = cli.getCore().finishLoadingTaskDescriptors();
+            data[1] = data[1] == null ? new String[] {""} : data[1];
+            try {
+                data[2] = new String[] {cli.getCore().serializePersonsPreparation()};
+                data[3] = new String[] {cli.getCore().serializeTasksPreparation()};
+                sal.saveData(path, data);
+            } catch (ClassNotFoundException | IOException e) {
+                e.printStackTrace();
+                throw new IllegalArgumentException("An exception occured: " + e.getMessage());
+            }
+        }
     },
     
     RESET("reset") {

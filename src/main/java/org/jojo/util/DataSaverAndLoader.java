@@ -4,9 +4,10 @@ import java.io.*;
 
 import org.jojo.util.TextUtil;
 
-/** for CSV ',' separated */
+/** for CSV '";"' separated */
 public class DataSaverAndLoader {
-
+    private static final String DELIM = "\";\"";
+   
     // ALL:
     private String encoding;
 
@@ -83,12 +84,12 @@ public class DataSaverAndLoader {
             }
             String s = in.readLine();
             s = s.substring(1, s.length() - 1);
-            String ret[] = s.split("\",\"");
+            String ret[] = s.split(DELIM);
             return ret;
         } else {
             String s = in.readLine();
             s = s.substring(1, s.length() - 1);
-            String ret[] = s.split("\",\"");
+            String ret[] = s.split(DELIM);
             return ret;
         }
     }
@@ -119,8 +120,8 @@ public class DataSaverAndLoader {
      * @param y
      *            = column
      */
-    public String aDataValue(File F, int x, int y) throws IOException {
-        String[] ret = aLine(F, x);
+    public String aDataValue(File f, int x, int y) throws IOException {
+        String[] ret = aLine(f, x);
         if (ret != null)
             return ret[y];
         else
@@ -146,12 +147,12 @@ public class DataSaverAndLoader {
             lines[i] = lines[i].substring(1, lines[i].length() - 1);
         }
 
-        return TextUtil.twoDimensionalize(lines, "\",\"");
+        return TextUtil.twoDimensionalize(lines, DELIM);
     }
 
     // TESTED
-    public String[][] allDataValues(String FAddress) throws IOException {
-        return allDataValues(data(FAddress));
+    public String[][] allDataValues(String fAddress) throws IOException {
+        return allDataValues(data(fAddress));
     }
 
     // SAVE:
@@ -162,10 +163,10 @@ public class DataSaverAndLoader {
      * @param y
      *            = column
      */
-    public void saveAValue(File F, String value, int x, int y) throws IOException {
-        String[][] toSave = allDataValues(F);
+    public void saveAValue(File f, String value, int x, int y) throws IOException {
+        String[][] toSave = allDataValues(f);
         toSave[x][y] = value;
-        saveData(F, toSave);
+        saveData(f, toSave);
     }
 
     /**
@@ -204,7 +205,7 @@ public class DataSaverAndLoader {
     public void saveData(File f, String[][] valuesin) throws FileNotFoundException, IOException {
         BufferedWriter out = out(f);
         for (int i = 0; i < valuesin.length; i++) {
-            out.write("\"" + TextUtil.unsplitStringArray(valuesin[i], "\",\"") + "\"");
+            out.write("\"" + TextUtil.unsplitStringArray(valuesin[i], DELIM) + "\"");
             out.newLine();
         }
         out.flush();
@@ -219,7 +220,7 @@ public class DataSaverAndLoader {
     // TESTED
     public void appendData(File f, String[] appendix) throws IOException {
         BufferedWriter out = new BufferedWriter(new FileWriter(f, true));
-        out.write("\"" + TextUtil.unsplitStringArray(appendix, "\",\"") + "\"");
+        out.write("\"" + TextUtil.unsplitStringArray(appendix, DELIM) + "\"");
         out.flush();
         out.close();
     }

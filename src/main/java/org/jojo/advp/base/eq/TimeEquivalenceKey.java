@@ -19,6 +19,10 @@ import org.jojo.advp.base.TaskProperty;
  * @version 0.9
  */
 public class TimeEquivalenceKey implements EquivalenceKey {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -4901838592752690045L;
     private static final String PROP_NAME = "time";
     private static final String PROP_DESC = "an equivalence key for time-interval values";
     

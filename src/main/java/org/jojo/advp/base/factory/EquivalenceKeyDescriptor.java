@@ -1,5 +1,6 @@
 package org.jojo.advp.base.factory;
 
+import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -11,7 +12,11 @@ import org.jojo.advp.base.EquivalenceKey;
 import org.jojo.advp.base.eq.EquivalenceKeyDescription;
 import org.jojo.advp.base.eq.GenderEquivalenceKey;
 
-public class EquivalenceKeyDescriptor {
+public class EquivalenceKeyDescriptor implements Serializable {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -1354795253848716875L;
     private final Class<? extends EquivalenceKey> keyClass;
     private EquivalenceKey key;
     private final Object[] initargs;

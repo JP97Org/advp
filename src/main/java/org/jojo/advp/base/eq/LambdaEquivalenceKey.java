@@ -17,6 +17,10 @@ import org.jojo.advp.base.TaskProperty;
  * @param <T> - the task's LEK part type
  */
 public class LambdaEquivalenceKey<P,T> implements EquivalenceKey {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 2595126155065931394L;
     private static final String PROP_NAME = "lambda";
     private static final String PROP_DESC = "an equivalence key for equivalent values according to a lambda BiPredicate";
     

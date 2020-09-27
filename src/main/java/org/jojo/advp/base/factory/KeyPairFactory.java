@@ -1,5 +1,6 @@
 package org.jojo.advp.base.factory;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -10,9 +11,13 @@ import org.jojo.advp.base.EquivalenceKey;
 import org.jojo.advp.base.eq.EquivalenceKeyDescription;
 import org.jojo.advp.base.eq.Operation;
 
-public class KeyPairFactory {
+public class KeyPairFactory implements Serializable {
     //TODO: this is a key-pair- factory for ONE person-task pair!
     
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -61897893286443638L;
     private final List<EquivalenceKeyDescriptor> ofPersonKeys;
     private final List<EquivalenceKeyDescriptor> ofTaskKeys;
     

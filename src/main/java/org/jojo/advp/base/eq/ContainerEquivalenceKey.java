@@ -14,6 +14,10 @@ import org.jojo.advp.base.TaskProperty;
  * @version 0.9
  */
 public class ContainerEquivalenceKey<T extends EquivalenceKey> implements EquivalenceKey {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 7853144961238607739L;
     private static final String PROP_NAME = "container";
     private static final String PROP_DESC = "a container equivalence key";
     

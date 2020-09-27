@@ -13,6 +13,10 @@ import org.jojo.advp.base.TaskProperty;
  * @version 0.9
  */
 public class ComparisonEquivalenceKey<T extends Comparable<T>> implements EquivalenceKey {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -3569282618882715606L;
     private static final String PROP_NAME = "comparison";
     private static final String PROP_DESC = "an equivalence key which compares two values";
     

@@ -1,5 +1,6 @@
 package org.jojo.advp.base.eq;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -12,7 +13,11 @@ import java.util.Objects;
  * @author jojo
  * @version 0.9
  */
-public class TimeInterval implements Comparable<TimeInterval> {
+public class TimeInterval implements Comparable<TimeInterval>, Serializable {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 2772353962838666894L;
     private final Date from;
     private final Date to;
     

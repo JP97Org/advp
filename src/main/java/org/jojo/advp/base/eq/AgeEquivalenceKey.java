@@ -13,6 +13,10 @@ import org.jojo.advp.base.TaskProperty;
  * @version 0.9
  */
 public class AgeEquivalenceKey implements EquivalenceKey {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -9210263381806213149L;
     private static final String PROP_NAME = "age";
     private static final String PROP_DESC = "a comparison equivalence key for age values";
     

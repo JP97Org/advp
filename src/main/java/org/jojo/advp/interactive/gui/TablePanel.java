@@ -187,6 +187,20 @@ public class TablePanel extends JPanel {
         model.fireTableDataChanged();
     }
     
+    public void setToModel(String columnName, final String[] values) {
+        model.setRowCount(Math.max(values.length, model.getRowCount()));
+        final int col = model.findColumn(columnName);
+        for (int i = 0; i < values.length; i++) {
+            this.model.setValueAt(values[i], i, col);
+        }
+        model.fireTableDataChanged();
+    }
+    
+    public void reset() {
+        refresh(0);
+        refresh(initialRows);
+    }
+    
     public int getKeyRemoveIndex() {
         return this.keyRemoveIndex;
     }
@@ -223,7 +237,6 @@ public class TablePanel extends JPanel {
                         ret[i] = ret[i] + "," + num.toString();
                     }
                 }
-                
             }
             return ret;
         }

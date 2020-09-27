@@ -1,12 +1,14 @@
 package org.jojo.advp.base;
 
+import java.io.Serializable;
+
 /**
  * Represents an equivalence-key, i.e. a key for representing fitting/not-fitting task and person properties.
  * 
  * @author jojo
  * @version 0.9
  */
-public interface EquivalenceKey {
+public interface EquivalenceKey extends Serializable {
     /**
      * 
      * @return the respective person property of this key.

@@ -11,6 +11,7 @@ import java.awt.MenuItem;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.util.Arrays;
 import java.util.StringJoiner;
 
@@ -30,6 +31,8 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
+import javax.swing.filechooser.FileFilter;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
 
 import org.jojo.advp.interactive.ui.CommandLineInterface;
@@ -38,6 +41,7 @@ import org.jojo.util.BufferedPrintStream;
 import org.jojo.util.ComponentOutputStream;
 import org.jojo.util.ComponentPrintStream;
 import org.jojo.util.JDO;
+import org.jojo.util.JFC;
 import org.jojo.util.TextUtil;
 import org.jojo.util.ValidPrintStream;
 
@@ -231,7 +235,9 @@ public class GuiFrame extends JFrame implements TableModelListener {
         
         Menu file = new Menu("File");
         MenuItem loadM = new MenuItem("Load");
+        loadM.addActionListener(loadAl());
         MenuItem saveM = new MenuItem("Save");
+        saveM.addActionListener(saveAl());
         MenuItem exitM = new MenuItem("Exit");
         exitM.addActionListener(al("quit"));
         file.add(loadM);
@@ -328,6 +334,58 @@ public class GuiFrame extends JFrame implements TableModelListener {
         };
     }
     
+    private ActionListener loadAl() {
+        return new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                final JFC jfc = new JFC();
+                final FileFilter fileFilter = new FileNameExtensionFilter("ADVP CSV File","csv");
+                final File file = jfc.open("Load ADVP .csv file", fileFilter); 
+                if (file != null) {
+                    al("load " + file.getAbsolutePath()).actionPerformed(null);
+                    al("update").actionPerformed(null);
+                    final String[] persons = cli.getCore().finishLoadingPersonNames();
+                    if (persons != null) {
+                        personTable.setToModel("Person", persons);
+                    }
+                    final String[] taskDescriptors = cli.getCore().finishLoadingTaskDescriptors();
+                    if (taskDescriptors != null) {
+                        final String[] taskNames = Arrays.stream(taskDescriptors)
+                                .map(x -> x == null ? null : x.replaceAll(",.*", ""))
+                                .toArray(String[]::new);
+                        taskTable.setToModel("Task", taskNames);
+                        final String[] instances = Arrays.stream(taskDescriptors)
+                                .map(x -> x == null ? null : x.replaceAll(".*,", ""))
+                                .toArray(String[]::new);
+                        taskTable.setToModel("#Instances", instances);
+                    }
+                }
+            }
+        };
+    }
+    
+    private ActionListener saveAl() {
+        return new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                final JFC jfc = new JFC();
+                final FileFilter fileFilter = new FileNameExtensionFilter("ADVP CSV File","csv");
+                final File file = jfc.open("Save ADVP .csv file", fileFilter); 
+                if (file != null) {
+                    String[] persons = Arrays.stream(personTable.getPersons())
+                            .map(x -> x == null ? null : x.toString())
+                            .toArray(String[]::new);
+                    cli.getCore().loadPersonNames(persons);
+                    String[] taskDescriptors = Arrays.stream(taskTable.getTasks())
+                            .map(x -> x == null ? null : x.toString())
+                            .toArray(String[]::new);
+                    cli.getCore().loadTaskDescriptors(taskDescriptors);
+                    al("save " + file.getAbsolutePath()).actionPerformed(null);
+                }
+            }
+        };
+    }
+    
     private ActionListener al() {
         return al(null);
     }
@@ -362,6 +420,9 @@ public class GuiFrame extends JFrame implements TableModelListener {
                     final String resultStr = outB.getBuffer();
                     JDO result = new JDO("Result Overview", TextUtil.toHTML(resultStr));
                     result.open();
+                } else if(cmd.equals("reset")) {
+                    personTable.reset();
+                    taskTable.reset();
                 }
                 outB.suspend();
                 errB.suspend();
