@@ -170,7 +170,7 @@ public class InteractiveCore {
         ret.append("Preparation persons:\n");
         this.personsPreparation.forEach(x -> ret.append(x.toString(true)).append("\n"));
         ret.append("\nPreparation tasks:\n");
-        this.tasksPreparation.forEach(x -> ret.append(x.toString(true)).append("\n"));
+        this.tasksPreparation.forEach(x -> ret.append(x.toString(false)).append("\n"));
         
         ret.append("\nPersons:\n");
         final List<Person> persons = this.world.getPersons().stream().sorted(new Comparator<Person>() {
@@ -208,5 +208,9 @@ public class InteractiveCore {
     public void reset() {
         this.world = null;
         clearPreparations();
+    }
+
+    public boolean isPreparable(final int countPersons, final int countTasks) {
+        return countPersons == personsPreparation.size() && countTasks == tasksPreparation.size();
     }
 }

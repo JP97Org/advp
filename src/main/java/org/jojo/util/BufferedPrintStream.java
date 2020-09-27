@@ -202,4 +202,8 @@ public class BufferedPrintStream extends ValidPrintStream {
         buf = null;
     }
 
+    public String getBuffer() {
+        return buf.toString();
+    }
+
 }

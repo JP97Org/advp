@@ -31,6 +31,9 @@ public class JDO extends JDialog
 	 setAlwaysOnTop(true);
 	 setTitle(title);
 	 add(new JLabel(TextUtil.toHTML(text)));
+	 Dimension fs = getSize();
+     final Dimension d = getToolkit().getScreenSize();
+     setLocation((int) ((d.getWidth() - getWidth()) / 2 - fs.width / 2), (int) ((d.getHeight() - getHeight()) / 2 - fs.height / 2));
  }
  
  public JDO(String title, String text, String button)

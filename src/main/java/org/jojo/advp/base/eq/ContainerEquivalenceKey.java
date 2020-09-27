@@ -57,14 +57,30 @@ public class ContainerEquivalenceKey<T extends EquivalenceKey> implements Equiva
 
     @Override
     public boolean isEquivalent(EquivalenceKey other) {
-        if(other != null && id == other.getID()) {
+        return isEquivalent(other, true);
+    }
+    
+    private boolean isEquivalent(EquivalenceKey other, boolean isCheckingID) {
+        if(other != null && (!isCheckingID || id == other.getID())) {
             boolean ret = true;
             
             if(getClass().equals(other.getClass())) { //other type is also a container
-                //TODO: evtl. auch nicht akzeptieren
-                System.err.println("UNDEFINED_BEHAVIOR_Container_Eq_Key!!!!!!!!!!!!!");
-                final ContainerEquivalenceKey<?> o = (ContainerEquivalenceKey<?>)other;
-                ret = o.keys.stream().map(k -> this.isEquivalent(k)).reduce(false, (a,b) -> a || b);
+                if (id == other.getID()) {
+                    final ContainerEquivalenceKey<?> o = (ContainerEquivalenceKey<?>)other;
+                    switch(o.operation) {
+                    case OR:
+                        ret = o.keys.stream().map(k -> this.isEquivalent(k, false)).reduce(false, (a,b) -> a || b);
+                        break;
+                    case ALTERNATE:
+                        throw new UnsupportedOperationException("Alternate on container-container comparison is not allowed");
+                    case AND: //AND and default same case
+                    default:
+                        ret = o.keys.stream().map(k -> this.isEquivalent(k, false)).reduce(true, (a,b) -> a && b);
+                        break;
+                    }
+                } else {
+                    ret = false;
+                }
             } else { //other type is a singular eq-key
                 switch(operation) {
                 case OR:

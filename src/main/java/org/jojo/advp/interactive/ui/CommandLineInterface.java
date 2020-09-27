@@ -43,7 +43,7 @@ public class CommandLineInterface {
             if (output != null) {
                 this.out.println(output);
             }
-        } catch (final IllegalArgumentException exc) {
+        } catch (final IllegalArgumentException|UnsupportedOperationException exc) {
             this.err.println(exc.getMessage());
         }
     }

@@ -12,6 +12,7 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Arrays;
+import java.util.StringJoiner;
 
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
@@ -36,6 +37,8 @@ import org.jojo.advp.interactive.ui.CommandLineInterface;
 import org.jojo.util.BufferedPrintStream;
 import org.jojo.util.ComponentOutputStream;
 import org.jojo.util.ComponentPrintStream;
+import org.jojo.util.JDO;
+import org.jojo.util.TextUtil;
 import org.jojo.util.ValidPrintStream;
 
 public class GuiFrame extends JFrame implements TableModelListener {
@@ -60,7 +63,7 @@ public class GuiFrame extends JFrame implements TableModelListener {
     private CommandLineInterface cli;
     
     public GuiFrame() {
-        setTitle("ADVP - Allgemeines Dienstverteiler Programm");
+        setTitle("ADVP | Allgemeines Dienstverteiler Programm | General-Purpose Task-Person-Matcher");
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         Dimension fs = Toolkit.getDefaultToolkit().getScreenSize();
         fs.width = (int) fs.getWidth() - 70;
@@ -81,8 +84,8 @@ public class GuiFrame extends JFrame implements TableModelListener {
         
         JPanel north = new JPanel();
         north.setLayout(new BoxLayout(north, BoxLayout.X_AXIS));
-        north.add(getPersonPanel());
-        north.add(getTaskPanel());
+        north.add(createPersonPanel());
+        north.add(createTaskPanel());
         north.add(getSolverPanel());
         ct.add(north);
         
@@ -118,13 +121,13 @@ public class GuiFrame extends JFrame implements TableModelListener {
         ct.add(escr);
     }
 
-    private JPanel getPersonPanel() {
+    private JPanel createPersonPanel() {
         this.personTable = new TablePanel(TABLE_ROWS, "Add Person", cli, "Person", "Key List", "Add Key");
         this.personTable.addModelListener(this);
         return this.personTable;
     }
     
-    private JPanel getTaskPanel() {
+    private JPanel createTaskPanel() {
         this.taskTable = new TablePanel(TABLE_ROWS, "Add Task", cli, "Task", "#Instances" ,"Key List", "Add Key");
         this.taskTable.addModelListener(this);
         return this.taskTable;
@@ -261,7 +264,57 @@ public class GuiFrame extends JFrame implements TableModelListener {
         return new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // TODO do all the things necessary for solving
+                final StringJoiner persons = new StringJoiner(";");
+                final Object[] personsArr = personTable.getPersons();
+                boolean ok = true;
+                boolean end = false;
+                for (int i = 0; i < personsArr.length && ok; i++) {
+                    final Object now = personsArr[i];
+                    if (now == null) {
+                        end = true;
+                    } else {
+                        if (end) {
+                            ok = false;
+                        }
+                        persons.add(now.toString());
+                    }
+                }
+                final StringJoiner tasks = new StringJoiner(";");
+                final Object[] tasksArr = taskTable.getTasks();
+                end = false;
+                for (int i = 0; i < tasksArr.length && ok; i++) {
+                    final Object now = tasksArr[i];
+                    if (now == null) {
+                        end = true;
+                    } else {
+                        if (end) {
+                            ok = false;
+                        }
+                        tasks.add(now.toString());
+                    }
+                }
+                final int countPersons = (int) Arrays.stream(personsArr)
+                        .filter(x -> x != null)
+                        .filter(x -> !x.toString().isEmpty())
+                        .count();
+                final int countTasks = (int) Arrays.stream(tasksArr)
+                        .filter(x -> x != null)
+                        .filter(x -> !x.toString().isEmpty())
+                        .count();
+                ok &= cli.getCore().isPreparable(countPersons, countTasks);
+                if (ok) {
+                    final String[] cmds = {"start", 
+                        "completePrepPersons " + persons, 
+                        "completePrepTasks " + tasks,
+                        settings.getSolver(),
+                        "solve"};
+                    for (final String cmd : cmds) {
+                        al(cmd).actionPerformed(null);
+                    }
+                } else {
+                    JDO errDiag = new JDO("Error", "Check if all relevant person and task names and #Instances are given.");
+                    errDiag.open();
+                }
             }
         };
     }
@@ -270,7 +323,7 @@ public class GuiFrame extends JFrame implements TableModelListener {
         return new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // TODO do all the things necessary for showing solution
+                al("print").actionPerformed(null);
             }
         };
     }
@@ -305,6 +358,11 @@ public class GuiFrame extends JFrame implements TableModelListener {
                 cli.executeCommand(cmd);
                 personTable.setKeysToModel(cli.getCore().getPersonKeyPairFactoryList());
                 taskTable.setKeysToModel(cli.getCore().getTaskKeyPairFactoryList());
+                if (cmd.equals("print")) {
+                    final String resultStr = outB.getBuffer();
+                    JDO result = new JDO("Result Overview", TextUtil.toHTML(resultStr));
+                    result.open();
+                }
                 outB.suspend();
                 errB.suspend();
             }

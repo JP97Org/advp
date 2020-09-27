@@ -296,9 +296,6 @@ public class AddKeyDialog extends JDialog {
                         changeKey(cmd.toString());
                     } catch (NumberFormatException exc) {
                         JDO errDiag = new JDO("Error", "Wrong Number Format: " + exc.getMessage());
-                        Dimension fs = errDiag.getSize();
-                        final Dimension d = getToolkit().getScreenSize();
-                        errDiag.setLocation((int) ((d.getWidth() - errDiag.getWidth()) / 2 - fs.width / 2), (int) ((d.getHeight() - errDiag.getHeight()) / 2 - fs.height / 2));
                         errDiag.open();
                     }
                 }

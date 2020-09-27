@@ -176,22 +176,59 @@ public class TablePanel extends JPanel {
     
     private void setKeysToModel() {
         this.isUpdateNecessary = false;
+        final int col = model.findColumn("Key List");
         final int rowCount = model.getRowCount();
-        this.model.getDataVector().removeAllElements();
-        refresh(rowCount);
+        for (int row = 0; row < rowCount; row++) {
+            this.model.setValueAt(null, row, col);
+        }
         for (int row = 0; row < keys.size(); row++) {
-            this.model.setValueAt(keys.get(row).toString(bPerson), row, model.findColumn("Key List"));
+            this.model.setValueAt(keys.get(row).toString(bPerson), row, col);
         }
         model.fireTableDataChanged();
     }
     
     public int getKeyRemoveIndex() {
-        return this.keyRemoveIndex ;
+        return this.keyRemoveIndex;
     }
     
-    /*public KeyPairFactory getNewKey() {
-        return this.newKey;
-    }*/
+    public Object[] getPersons() {
+        if (bPerson) {
+            final Object[] ret = new Object[model.getRowCount()];
+            final int colNr = model.findColumn("Person");
+            for (int i = 0; i < ret.length; i++) {
+                ret[i] = model.getValueAt(i, colNr);
+                if(ret[i] != null && ret[i].toString().isEmpty()) {
+                    ret[i] = null;
+                }
+            }
+            return ret;
+        }
+        return null;
+    }
+    
+    public Object[] getTasks() {
+        if (!bPerson) {
+            final Object[] ret = new Object[model.getRowCount()];
+            final int taskColNr = model.findColumn("Task");
+            final int instColNr = model.findColumn("#Instances");
+            for (int i = 0; i < ret.length; i++) {
+                ret[i] = model.getValueAt(i, taskColNr);
+                if(ret[i] == null || ret[i].toString().isEmpty()) {
+                    ret[i] = null;
+                } else {
+                    final Object num = model.getValueAt(i, instColNr);
+                    if (num == null || num.toString().isEmpty()) {
+                        ret[i] = null;
+                    } else {
+                        ret[i] = ret[i] + "," + num.toString();
+                    }
+                }
+                
+            }
+            return ret;
+        }
+        return null;
+    }
     
     private class JButtonRenderer implements TableCellRenderer {
         public Component getTableCellRendererComponent(JTable table, Object value,
