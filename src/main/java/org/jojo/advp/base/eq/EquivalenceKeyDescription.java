@@ -19,7 +19,6 @@ import org.jojo.advp.base.EquivalenceKey;
 
 public enum EquivalenceKeyDescription {
     AGE (AgeEquivalenceKey.class, int.class, Comparison.class),
-    //TODO bei den generics noch schauen wie das besser geht, evtl. dann eh mit hints machen
     COMPARISON (ComparisonEquivalenceKey.class, int.class, Comparable.class, Comparison.class),
     CONTAINER (ContainerEquivalenceKey.class, int.class, List.class, Operation.class),
     EQUAL (EqualEquivalenceKey.class, int.class, Object.class),
@@ -52,6 +51,33 @@ public enum EquivalenceKeyDescription {
         return this.parameterTypes;
     }
     
+    public static String getDelim() {
+        return "|";
+    }
+    
+    public String[] getSettingsNames() {
+        final String[] ret = new String[this.creationHints.length];
+        switch(this) {
+            case AGE: ret[0] = "Age"; ret[1] = "Comparison"; break;
+            case COMPARISON: ret[0] = getIdString(); ret[1] = "Int. Value"; ret[2] = "Comparison"; break;
+            case CONTAINER: ret[2] = getIdString(); break;
+            case EQUAL: ret[0] = getIdString(); ret[1] = "Str. Value"; break;
+            case GENDER: ret[0] = "Gender"; break;
+            case LAMBDA_PERSON: ret[0] = getIdString(); ret[1] = "P Str. Value"; ret[2] = "Expression"; ret[3] = "Other Class" + getDelim() + "String"; break;
+            case LAMBDA_TASK: ret[0] = "T Str. Value"; ret[1] = getIdString(); ret[2] = "Expression"; ret[3] = "Other Class" + getDelim() + "String"; break;
+            case TIME_PERSON: ret[0] = "Set of Time-Intervals"; break;
+            case TIME_TASK: ret[0] = "Time-Interval"; break;
+            default: break;
+        }
+
+        return ret;
+    }
+    
+    private static String getIdString() {
+        final int id = IDs.nextID();
+        return "ID" + getDelim() + id;
+    }
+    
     public static EquivalenceKeyDescription ofArgs(final String args, final String delim) {
         Objects.requireNonNull(args);
         Objects.requireNonNull(delim);
@@ -68,7 +94,7 @@ public enum EquivalenceKeyDescription {
             ret.creationHints = new CreationHint[splitted.length - 1];
             for (int i = 1; i < splitted.length; i++) {
                 final int k = i;
-                final CreationHint hint = Arrays.stream(CreationHint.values()).filter(x -> x.name().equals(splitted[k])).iterator().next();
+                final CreationHint hint = Arrays.stream(CreationHint.values()).filter(x -> x.name().equals(splitted[k])).findFirst().orElse(null);
                 if (hint == null) {
                     throw new IllegalArgumentException("unknown hint \"" + splitted[k] + "\"!");
                 }
@@ -97,21 +123,35 @@ public enum EquivalenceKeyDescription {
             }
         } else if (this.creationHints.length == 0){
             //creation without hints
-            switch(this) {
-            case AGE: this.creationHints = new CreationHint[] {CreationHint.INT, CreationHint.COMP}; break;
-            case COMPARISON: this.creationHints = new CreationHint[] {CreationHint.INT, CreationHint.INT,CreationHint.COMP}; break; //assuming int comparison
-            case GENDER: this.creationHints = new CreationHint[] {CreationHint.STR}; break;
-            case LAMBDA_PERSON: this.creationHints = new CreationHint[] {CreationHint.INT, CreationHint.STR, CreationHint.LAMBDA, CreationHint.CLASS}; break;
-            case LAMBDA_TASK: this.creationHints = new CreationHint[] {CreationHint.STR, CreationHint.INT, CreationHint.LAMBDA, CreationHint.CLASS}; break;
-            case TIME_PERSON: this.creationHints = new CreationHint[] {CreationHint.HASH_SET_TI}; break;
-            case TIME_TASK: this.creationHints = new CreationHint[] {CreationHint.TI}; break;
-            default: break;
-            }
+            initializeDefaultCreationHints();
             if (argsStr.length == this.creationHints.length) {
                 return createInitArgs(argsStr);
             }
         }
         return null;
+    }
+    
+    public void initializeDefaultCreationHints() {
+        switch(this) {
+        case AGE: this.creationHints = new CreationHint[] {CreationHint.INT, CreationHint.COMP}; break;
+        case COMPARISON: this.creationHints = new CreationHint[] {CreationHint.INT, CreationHint.INT,CreationHint.COMP}; break; //assuming int comparison
+        case CONTAINER: this.creationHints = new CreationHint[3]; break;
+        case EQUAL: this.creationHints = new CreationHint[] {CreationHint.INT, CreationHint.STR}; break;
+        case GENDER: this.creationHints = new CreationHint[] {CreationHint.STR}; break;
+        case LAMBDA_PERSON: this.creationHints = new CreationHint[] {CreationHint.INT, CreationHint.STR, CreationHint.LAMBDA, CreationHint.CLASS}; break;
+        case LAMBDA_TASK: this.creationHints = new CreationHint[] {CreationHint.STR, CreationHint.INT, CreationHint.LAMBDA, CreationHint.CLASS}; break;
+        case TIME_PERSON: this.creationHints = new CreationHint[] {CreationHint.HASH_SET_TI}; break;
+        case TIME_TASK: this.creationHints = new CreationHint[] {CreationHint.TI}; break;
+        default: break;
+        }
+    }
+    
+    public CreationHint[] getCreationHints() {
+        CreationHint[] ret = new CreationHint[this.creationHints.length];
+        for (int i = 0; i < ret.length; i++) {
+            ret[i] = this.creationHints[i];
+        }
+        return ret;
     }
     
     private static boolean primitiveCheck(Class<?> cls, Object obj) {
@@ -136,7 +176,7 @@ public enum EquivalenceKeyDescription {
         return ret;
     }
 
-    private enum CreationHint {
+    public enum CreationHint {
         CLASS(s -> {
             switch(s) {
                 case "String": return String.class;
@@ -215,7 +255,6 @@ public enum EquivalenceKeyDescription {
         private static BiPredicate<String, String> createBiPredicateFromString(final String lambdaExpression) throws IllegalArgumentException {
             final String matchRegex = "\\([a-z]+,[a-z]+\\)\\s->\\s.*";
             if (lambdaExpression != null && lambdaExpression.matches(matchRegex)) {
-                final String[] classes = lambdaExpression.split("> ")[0].substring(1).split(",");
                 LambdaFactory lambdaFactory = LambdaFactory.get();
                 BiPredicate<String, String> ret;
                 try {
@@ -231,6 +270,15 @@ public enum EquivalenceKeyDescription {
 
         Object transform(final String input) {
             return this.transform.apply(input);
+        }
+        
+        public boolean isFormatOk(final String input) {
+            try {
+                final boolean ok = transform(input) != null;
+                return ok;
+            } catch (IllegalArgumentException e) {
+                return false;
+            }
         }
         
         private static TimeInterval tiSplit(final String s) throws ParseException {

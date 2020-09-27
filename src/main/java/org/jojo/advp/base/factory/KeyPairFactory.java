@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import org.jojo.advp.base.EquivalenceKey;
 import org.jojo.advp.base.eq.EquivalenceKeyDescription;
@@ -24,6 +25,19 @@ public class KeyPairFactory {
         Objects.requireNonNull(toCopy);
         this.ofPersonKeys = Arrays.asList(toCopy.ofPersonKeys.stream().map(x -> new EquivalenceKeyDescriptor(x)).toArray(EquivalenceKeyDescriptor[]::new));
         this.ofTaskKeys = Arrays.asList(toCopy.ofTaskKeys.stream().map(x -> new EquivalenceKeyDescriptor(x)).toArray(EquivalenceKeyDescriptor[]::new));
+    }
+    
+    public KeyPairFactory(final boolean bPerson, final List<EquivalenceKey> keys) {
+        this();
+        if (bPerson) {
+            this.ofPersonKeys.addAll(keys.stream()
+                    .map(x -> new EquivalenceKeyDescriptor(x))
+                    .collect(Collectors.toList()));
+        } else {
+            this.ofTaskKeys.addAll(keys.stream()
+                    .map(x -> new EquivalenceKeyDescriptor(x))
+                    .collect(Collectors.toList()));
+        }
     }
     
     public List<EquivalenceKey> getOfPersonKeys() {
@@ -70,5 +84,19 @@ public class KeyPairFactory {
         final Object[] initargs = {id, keys, op};
         final EquivalenceKeyDescriptor containerDesc = new EquivalenceKeyDescriptor(EquivalenceKeyDescription.CONTAINER, initargs);
         keysDesc.add(containerDesc);
+    }
+
+    public void remove(final boolean bPerson, int innerIndex) {
+        if (bPerson) {
+            if(innerIndex >= this.ofPersonKeys.size()) {
+                throw new IllegalArgumentException("indexOutOfBounds with index(inner)= " + innerIndex + " | size= " + this.ofPersonKeys.size());
+            }
+            this.ofPersonKeys.remove(innerIndex);
+        } else {
+            if(innerIndex >= this.ofTaskKeys.size()) {
+                throw new IllegalArgumentException("indexOutOfBounds with index(inner)= " + innerIndex + " | size= " + this.ofTaskKeys.size());
+            }
+            this.ofTaskKeys.remove(innerIndex);
+        }
     }
 }

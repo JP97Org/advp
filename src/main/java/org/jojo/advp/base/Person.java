@@ -85,8 +85,8 @@ public class Person {
             final TimeEquivalenceKey key = (TimeEquivalenceKey) this.properties.stream()
                 .filter(x -> x.getEquivalenceKey().getClass().equals(TimeEquivalenceKey.class))
                 .map(x -> x.getEquivalenceKey())
-                .iterator().next();
-            if(key != null) {
+                .findFirst().orElse(null);
+            if (key != null) {
                 key.mapped(ti);
             }
         }

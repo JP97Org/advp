@@ -181,8 +181,8 @@ public class World {
      */
     public boolean mapTaskInstanceToPerson(final Task taskArg, final Person personArg) {
         if(tasks.contains(Objects.requireNonNull(taskArg)) && persons.contains(Objects.requireNonNull(personArg))) {
-            final Task task = tasks.stream().filter(x -> x.equals(taskArg)).iterator().next();
-            final Person person = persons.stream().filter(x -> x.equals(personArg)).iterator().next();
+            final Task task = tasks.stream().filter(x -> x.equals(taskArg)).findFirst().orElse(null);
+            final Person person = persons.stream().filter(x -> x.equals(personArg)).findFirst().orElse(null);
             
             final boolean ok = task.getNumberOfInstances() > 0 && check(task, person);
             

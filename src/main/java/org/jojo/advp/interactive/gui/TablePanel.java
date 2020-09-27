@@ -4,9 +4,13 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.util.ArrayList;
 import java.util.EventObject;
 import java.util.List;
+import java.util.Objects;
 import java.util.Vector;
 
 import javax.swing.AbstractCellEditor;
@@ -21,7 +25,9 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 
+import org.jojo.advp.base.EquivalenceKey;
 import org.jojo.advp.base.factory.KeyPairFactory;
+import org.jojo.advp.interactive.ui.CommandLineInterface;
 
 public class TablePanel extends JPanel {
     /**
@@ -31,19 +37,33 @@ public class TablePanel extends JPanel {
     private final int initialRows;
     private final boolean bPerson;
     private final String[] heads;
+    private final DefaultTableModel model;
     private final JTable table;
-    private final DefaultTableModel model; 
     
-    private KeyPairFactory newKey;
     private List<KeyPairFactory> keys;
+    
+    private boolean isUpdateNecessary;
     private int keyRemoveIndex = -1;
     
-    public TablePanel(final int initialRows, final String buttonName, final String... heads) {
+    private CommandLineInterface cli;
+    
+    public TablePanel(final int initialRows, final String buttonName, final CommandLineInterface cli
+            , final String... heads) {
         this.initialRows = initialRows;
         this.bPerson = buttonName.contains("Person");
+        this.cli = Objects.requireNonNull(cli);
         this.heads = heads;
         this.model = new DefaultTableModel();
-        this.table = new JTable(this.model);
+        this.table = new JTable(this.model) {
+            /**
+             * 
+             */
+            private static final long serialVersionUID = 8263161517438294548L;
+        
+            public String getToolTipText(MouseEvent e) {
+                return GUIUtil.getToolTipText(this, e);
+            }
+        };
         this.keys = new ArrayList<KeyPairFactory>();
         reload();
         JScrollPane sPane = new JScrollPane(this.table);
@@ -53,23 +73,32 @@ public class TablePanel extends JPanel {
         JPanel buttons = new JPanel();
         buttons.setLayout(new BoxLayout(buttons, BoxLayout.X_AXIS));
         JButton addObject = new JButton(buttonName);
+        JButton removeObject = new JButton(buttonName.replaceAll("Add", "Remove"));
         addObject.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 model.addRow((Vector<Object>)null);
+                model.fireTableDataChanged();
+                removeObject.setEnabled(true);
             }
         });
         buttons.add(addObject);
-        JButton removeObject = new JButton(buttonName.replaceAll("Add", "Remove"));
         removeObject.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 final int last = model.getRowCount() - 1;
                 model.removeRow(last);
+                isUpdateNecessary = true;
+                model.fireTableDataChanged();
+                if (last == 0) {
+                    removeObject.setEnabled(false);
+                }
             }
         });
         buttons.add(removeObject);
         add(buttons);
+        
+        this.isUpdateNecessary = false;
     }
     
     public void addModelListener(TableModelListener l) {
@@ -77,11 +106,10 @@ public class TablePanel extends JPanel {
     }
     
     private void reload() {
-        final int lastColumn = heads.length - 1;
         for (String h : heads) {
             model.addColumn(h);
         }
-        model.setRowCount(initialRows);
+        refresh(initialRows);
         table.getColumn("Key List").setCellEditor(new TableCellEditor() {
             @Override
             public Object getCellEditorValue() {
@@ -125,40 +153,57 @@ public class TablePanel extends JPanel {
             }
             
         });
+        final int lastColumn = heads.length - 1;
+        
         table.getColumn(table.getColumnName(lastColumn)).setCellRenderer(
                 new JButtonRenderer());
         table.getColumn(table.getColumnName(lastColumn)).setCellEditor(
                 new JButtonEditor());
     } 
     
-    public void setKeysToModel(final List<KeyPairFactory> list) {
-        this.keys = list;
-        addKeysToModel();
+    private void refresh(final int rowCount) {
+        this.model.setRowCount(rowCount);
     }
     
-    private void addKeysToModel() {
+    public boolean isUpdateNecessary() {
+        return this.isUpdateNecessary;
+    }
+    
+    public void setKeysToModel(final List<KeyPairFactory> list) {
+        this.keys = list;
+        setKeysToModel();
+    }
+    
+    private void setKeysToModel() {
+        this.isUpdateNecessary = false;
+        final int rowCount = model.getRowCount();
+        this.model.getDataVector().removeAllElements();
+        refresh(rowCount);
         for (int row = 0; row < keys.size(); row++) {
             this.model.setValueAt(keys.get(row).toString(bPerson), row, model.findColumn("Key List"));
         }
+        model.fireTableDataChanged();
     }
     
     public int getKeyRemoveIndex() {
         return this.keyRemoveIndex ;
     }
     
-    public KeyPairFactory getNewKey() {
+    /*public KeyPairFactory getNewKey() {
         return this.newKey;
-    }
+    }*/
     
     private class JButtonRenderer implements TableCellRenderer {
-        private JButton button = new JButton();
-
         public Component getTableCellRendererComponent(JTable table, Object value,
                 boolean isSelected, boolean hasFocus, int row, int column) {
+            JButton button = new JButton();
             table.setShowGrid(true);
             table.setGridColor(Color.LIGHT_GRAY);
             button.setText("Add Key");
             button.setToolTipText("Opens a dialog for adding keys");
+            if (row > keys.size()) {
+                button.setEnabled(false);
+            }
             return button;
         }
     }
@@ -168,12 +213,9 @@ public class TablePanel extends JPanel {
          * 
          */
         private static final long serialVersionUID = -189576724227287762L;
-        private JButton button;
 
         public JButtonEditor() {
             super();
-            button = new JButton("Add Key");
-            button.setOpaque(true);
         }
 
         public Object getCellEditorValue() {
@@ -203,16 +245,67 @@ public class TablePanel extends JPanel {
 
         public Component getTableCellEditorComponent(JTable table, Object value,
                 boolean isSelected, int row, int column) {
+            final JButton button = new JButton("Add Key");
+            button.setToolTipText("Opens a dialog for adding keys");
             for (ActionListener al : button.getActionListeners()) {
                 button.removeActionListener(al);
             }
-            button.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    //TODO open dialog for changing persons key here
-                    System.out.println("Zeilenzahl: " + row);
-                }
-            });
+            if (row <= keys.size()) {
+                button.addActionListener(new ActionListener() {
+                    public void actionPerformed(ActionEvent e) {
+                        final KeyPairFactory key;
+                        if (keys.size() > row) {
+                            key = keys.get(row);
+                        } else {
+                            key = new KeyPairFactory();
+                            keys.add(key);
+                            if (bPerson) {
+                                cli.getCore().addPersonKeyPairFactory(key);
+                            } else {
+                                cli.getCore().addTaskKeyPairFactory(key);
+                            }
+                        }
+                        final List<EquivalenceKey> localKeys = bPerson ? key.getOfPersonKeys() : key.getOfTaskKeys();
+                        final int sizeBefore = localKeys.size();
+                        final int maxIndex = keys.size() - 1;
+                        final AddKeyDialog addKey = new AddKeyDialog(bPerson, row, key, cli, maxIndex);
+                        addKey.pack();
+                        addKey.setVisible(true);
+                        addKey.addWindowListener(new WindowListener() {
+                            @Override
+                            public void windowOpened(WindowEvent e) {
+                            }
+
+                            @Override
+                            public void windowClosing(WindowEvent e) {
+                                isUpdateNecessary = true;
+                                if (localKeys.size() == 0 && sizeBefore != 0) {
+                                    keyRemoveIndex = row;
+                                }
+                                model.fireTableDataChanged();
+                            }
+                            @Override
+                            public void windowClosed(WindowEvent e) {
+                            }
+                            @Override
+                            public void windowIconified(WindowEvent e) {
+                            }
+                            @Override
+                            public void windowDeiconified(WindowEvent e) {
+                            }
+                            @Override
+                            public void windowActivated(WindowEvent e) {
+                            }
+                            @Override
+                            public void windowDeactivated(WindowEvent e) {
+                            }
+                        });
+                    }
+                });
+            } else {
+                button.setEnabled(false);
+            }
             return button;
         }
-    } 
+    }
 }

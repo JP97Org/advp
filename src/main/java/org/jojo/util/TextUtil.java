@@ -241,8 +241,8 @@ public class TextUtil {
     }
 
     public static String toHTML(String text) {
-        if (text.contains("\n")) {
-            text = text.replaceAll("\n", "<br />");
+        if (text.contains(System.lineSeparator())) {
+            text = text.replaceAll(System.lineSeparator(), "<br />");
             text = "<html>" + text + "</html>";
         }
         return text;
@@ -256,5 +256,17 @@ public class TextUtil {
         }
 
         return ret;
+    }
+    
+    public static String toStringWithLineFeeds(Object o, int charsPerLine) {
+        StringBuilder ret = new StringBuilder();
+        final String in = o.toString();
+        for (int i = 0;i < in.length();i++) {
+            ret.append(in.charAt(i));
+            if (i % charsPerLine == 0 && i > 0) {
+                ret.append(System.lineSeparator());
+            }
+        }
+        return ret.toString();
     }
 }

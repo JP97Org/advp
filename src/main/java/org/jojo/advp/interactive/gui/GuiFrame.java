@@ -31,7 +31,6 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 
-import org.jojo.advp.base.factory.KeyPairFactory;
 import org.jojo.advp.interactive.ui.CommandLineInterface;
 
 import org.jojo.util.BufferedPrintStream;
@@ -45,7 +44,7 @@ public class GuiFrame extends JFrame implements TableModelListener {
      */
     private static final long serialVersionUID = 1446027899237228791L;
 
-    private static final int TABLE_ROWS = 20;
+    private static final int TABLE_ROWS = 20;//1;//2;//
     
     private TablePanel personTable;
     private TablePanel taskTable;
@@ -56,8 +55,8 @@ public class GuiFrame extends JFrame implements TableModelListener {
     
     private Settings settings = new Settings();
     
-    BufferedPrintStream outB;
-    BufferedPrintStream errB;
+    private BufferedPrintStream outB;
+    private BufferedPrintStream errB;
     private CommandLineInterface cli;
     
     public GuiFrame() {
@@ -68,6 +67,14 @@ public class GuiFrame extends JFrame implements TableModelListener {
         fs.height = (int) fs.getHeight() - 100;
         setPreferredSize(fs);
         createMenuBar();
+        
+        ComponentOutputStream outS = new ComponentOutputStream(out);
+        ValidPrintStream outP = new ComponentPrintStream(outS);
+        outB = new BufferedPrintStream(outP);
+        ComponentOutputStream errS = new ComponentOutputStream(err);
+        ValidPrintStream errP = new ComponentPrintStream(errS);
+        errB = new BufferedPrintStream(errP);
+        this.cli = new CommandLineInterface(System.in, outB, errB);
         
         Container ct = getContentPane();
         ct.setLayout(new BoxLayout(ct, BoxLayout.Y_AXIS));
@@ -109,24 +116,16 @@ public class GuiFrame extends JFrame implements TableModelListener {
         //ct.add(new JSeparator());
         ct.add(new JLabel("ERR:"));
         ct.add(escr);
-
-        ComponentOutputStream outS = new ComponentOutputStream(out);
-        ValidPrintStream outP = new ComponentPrintStream(outS);
-        outB = new BufferedPrintStream(outP);
-        ComponentOutputStream errS = new ComponentOutputStream(err);
-        ValidPrintStream errP = new ComponentPrintStream(errS);
-        errB = new BufferedPrintStream(errP);
-        this.cli = new CommandLineInterface(System.in, outB, errB);
     }
 
     private JPanel getPersonPanel() {
-        this.personTable = new TablePanel(TABLE_ROWS, "Add Person", "Person", "Key List", "Add Key");
+        this.personTable = new TablePanel(TABLE_ROWS, "Add Person", cli, "Person", "Key List", "Add Key");
         this.personTable.addModelListener(this);
         return this.personTable;
     }
     
     private JPanel getTaskPanel() {
-        this.taskTable = new TablePanel(TABLE_ROWS, "Add Task", "Task", "#Instances" ,"Key List", "Add Key");
+        this.taskTable = new TablePanel(TABLE_ROWS, "Add Task", cli, "Task", "#Instances" ,"Key List", "Add Key");
         this.taskTable.addModelListener(this);
         return this.taskTable;
     }
@@ -228,8 +227,12 @@ public class GuiFrame extends JFrame implements TableModelListener {
         MenuBar mb = new MenuBar();
         
         Menu file = new Menu("File");
+        MenuItem loadM = new MenuItem("Load");
+        MenuItem saveM = new MenuItem("Save");
         MenuItem exitM = new MenuItem("Exit");
         exitM.addActionListener(al("quit"));
+        file.add(loadM);
+        file.add(saveM);
         file.add(exitM);
         
         Menu edit = new Menu("Edit");
@@ -314,19 +317,13 @@ public class GuiFrame extends JFrame implements TableModelListener {
     @Override
     public void tableChanged(final TableModelEvent e) {
         DefaultTableModel model = (DefaultTableModel)e.getSource();
-        if (e.getColumn() == model.findColumn("Key List")) {
-            final boolean bPerson = model.getColumnCount() == 3;
-            final TablePanel table = bPerson ? personTable : taskTable;
+        final boolean bPerson = model.getColumnCount() == 3;
+        final TablePanel table = bPerson ? personTable : taskTable;
+        if (table.isUpdateNecessary()) {
             final int removeIndex = table.getKeyRemoveIndex();
             if (removeIndex >= 0) {
                 al("keyRemove " + (bPerson ? "person" : "task") + " " + removeIndex).actionPerformed(null);
             } else {
-                final KeyPairFactory newKey = table.getNewKey();
-                if (bPerson) {
-                    cli.getCore().addPersonKeyPairFactory(newKey);
-                } else {
-                    cli.getCore().addTaskKeyPairFactory(newKey);
-                }
                 al("update").actionPerformed(null);
             }
         }

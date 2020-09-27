@@ -1,6 +1,5 @@
 package org.jojo.advp.interactive.ui;
 
-import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -8,6 +7,7 @@ import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.jojo.advp.base.EquivalenceKey;
 import org.jojo.advp.base.Solver;
 import org.jojo.advp.base.eq.EquivalenceKeyDescription;
 import org.jojo.advp.base.eq.Operation;
@@ -62,7 +62,7 @@ public enum Command {
                     + "<ComparableArg> - an argument matching the set comparable format\n"
                     + "COMPARISON - {INT|<Comparable>|COMP} [optional, assuming INT comparison] - <KeyID>|<ComparableArg>|<Comp>\n"
                     + "<Obj> - an argument matching the set object format\n"
-                    + "EQUAL - {INT|<EqKeyHint>} - <KeyID>|<Obj>\n"
+                    + "EQUAL - {INT|<EqKeyHint>} [optional, assuming STR] - <KeyID>|<Obj>\n"
                     + "<Gender> - {m|f|o}\n"
                     + "GENDER - {STR} [optional] - <Gender>\n"
                     + "<LambdaObj> - {STR}\n"
@@ -216,13 +216,15 @@ public enum Command {
                    if (bPerson) {
                        cli.getCore().addPersonKeyPairFactory(container);
                        
-                       for (int i = indices.length - 1; i >= 0;i--) {
+                       for (int i = indices.length - 1; i >= 0; i--) {
                            final int index = indices[i];
                            cli.getCore().removePersonKeyPairFactory(index);
                        }
                    } else {
                        cli.getCore().addTaskKeyPairFactory(container);
-                       for (final int index : indices) {
+                       
+                       for (int i = indices.length - 1; i >= 0; i--) {
+                           final int index = indices[i];
                            cli.getCore().removeTaskKeyPairFactory(index);
                        }
                    }
@@ -230,6 +232,46 @@ public enum Command {
                 } else {
                     final int index = Arrays.stream(indices).filter(x -> x >= list.size()).iterator().nextInt();
                     throw new IllegalArgumentException("indexOutOfBounds with index= " + index + " | size= " + list.size());
+                }
+            } catch (NumberFormatException e) {
+                throw new IllegalArgumentException("NumberFormatException " + e.getMessage());
+            }
+        }
+    },
+    KEY_CONTAINER_INTERNAL("keyContainerInternal ((person)|(task)) (\\d+) ((\\d+)( \\d+)*) ((OR)|(ALTERNATE)|(AND)) (\\d+)") {
+        @Override
+        public void execute(MatchResult matcher, CommandLineInterface cli) throws IllegalArgumentException {
+            final boolean bPerson = matcher.group(1).equals("person");
+            final String opStr = matcher.group(8);
+            try {
+                final int outerIndex = Integer.parseInt(matcher.group(4));
+                final int id = Integer.parseInt(matcher.group(12));
+                final String indicesStr = matcher.group(5);
+                final int[] indices = Arrays.stream(indicesStr.split("\\s")).mapToInt(s -> Integer.parseInt(s)).toArray();
+                Arrays.sort(indices); //important for removing!
+                final List<KeyPairFactory> preList = bPerson ? cli.getCore().getPersonKeyPairFactoryList() : cli.getCore().getTaskKeyPairFactoryList();
+                if (outerIndex >= preList.size()) {
+                    throw new IllegalArgumentException("indexOutOfBounds with index(outer)= " + outerIndex + " | size= " + preList.size());
+                }
+                final KeyPairFactory factory = preList.get(outerIndex);
+                final List<EquivalenceKey> list = bPerson ? factory.getOfPersonKeys() : factory.getOfTaskKeys();
+                if (Arrays.stream(indices).allMatch(x -> x < list.size())) {
+                   final List<EquivalenceKey> listCont = new ArrayList<>();
+                   for (final int index : indices) {
+                       listCont.add(list.get(index));
+                   }
+                   final KeyPairFactory container = new KeyPairFactory(bPerson, listCont);
+                   container.container(id, bPerson, Operation.of(opStr));
+                   factory.addKeyPairs(container);
+                   
+                   for (int i = indices.length - 1; i >= 0; i--) {
+                       final int index = indices[i];
+                       factory.remove(bPerson, index);
+                   }
+                   this.output = OK;
+                } else {
+                    final int index = Arrays.stream(indices).filter(x -> x >= list.size()).iterator().nextInt();
+                    throw new IllegalArgumentException("indexOutOfBounds with index(inner)= " + index + " | size= " + list.size());
                 }
             } catch (NumberFormatException e) {
                 throw new IllegalArgumentException("NumberFormatException " + e.getMessage());
@@ -258,7 +300,30 @@ public enum Command {
             }
         }
     },
-   
+    KEY_REMOVE_INTERNAL("keyRemoveInternal ((person)|(task)) (\\d+) (\\d+)") {
+        @Override
+        public void execute(MatchResult matcher, CommandLineInterface cli) throws IllegalArgumentException {
+            final boolean bPerson = matcher.group(1).equals("person");
+            try {
+                final int index = Integer.parseInt(matcher.group(4));
+                final int innerIndex = Integer.parseInt(matcher.group(5));
+                final List<KeyPairFactory> list = bPerson ? cli.getCore().getPersonKeyPairFactoryList() : cli.getCore().getTaskKeyPairFactoryList();
+                if (index < list.size()) {
+                    if (bPerson) {
+                        cli.getCore().removePersonKey(index, innerIndex);
+                    } else {
+                        cli.getCore().removeTaskKey(index, innerIndex);
+                    }
+                    this.output = OK;
+                } else {
+                    throw new IllegalArgumentException("indexOutOfBounds with index= " + index + " | size= " + list.size());
+                }
+            } catch (NumberFormatException e) {
+                throw new IllegalArgumentException("NumberFormatException " + e.getMessage());
+            }
+        }
+    },
+    
     COMPLETE_PREP_PERSONS("completePrepPersons ((.+;)*(.+))") {
         @Override
         public void execute(MatchResult matcher, CommandLineInterface cli) throws IllegalArgumentException {
