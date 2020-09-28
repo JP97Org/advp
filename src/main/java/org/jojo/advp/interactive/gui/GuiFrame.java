@@ -14,6 +14,7 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.List;
 import java.util.StringJoiner;
 
 import javax.swing.BoxLayout;
@@ -240,10 +241,16 @@ public class GuiFrame extends JFrame implements TableModelListener {
         loadM.addActionListener(loadAl());
         MenuItem saveM = new MenuItem("Save");
         saveM.addActionListener(saveAl());
+        MenuItem loadCommands = new MenuItem("Load Commands");
+        loadCommands.addActionListener(loadCommands());
+        MenuItem saveCommands = new MenuItem("Save Commands");
+        saveCommands.addActionListener(saveCommands());
         MenuItem exitM = new MenuItem("Exit");
         exitM.addActionListener(al("quit"));
         file.add(loadM);
         file.add(saveM);
+        file.add(loadCommands);
+        file.add(saveCommands);
         file.add(exitM);
         
         Menu edit = new Menu("Edit");
@@ -392,24 +399,28 @@ public class GuiFrame extends JFrame implements TableModelListener {
                 if (file != null) {
                     al("load " + file.getAbsolutePath()).actionPerformed(null);
                     al("update").actionPerformed(null);
-                    final String[] persons = cli.getCore().finishLoadingPersonNames();
-                    if (persons != null) {
-                        personTable.setToModel("Person", persons);
-                    }
-                    final String[] taskDescriptors = cli.getCore().finishLoadingTaskDescriptors();
-                    if (taskDescriptors != null) {
-                        final String[] taskNames = Arrays.stream(taskDescriptors)
-                                .map(x -> x == null ? null : x.replaceAll(",.*", ""))
-                                .toArray(String[]::new);
-                        taskTable.setToModel("Task", taskNames);
-                        final String[] instances = Arrays.stream(taskDescriptors)
-                                .map(x -> x == null ? null : x.replaceAll(".*,", ""))
-                                .toArray(String[]::new);
-                        taskTable.setToModel("#Instances", instances);
-                    }
+                    finishLoading();
                 }
             }
         };
+    }
+    
+    private void finishLoading() {
+        final String[] persons = cli.getCore().finishLoadingPersonNames();
+        if (persons != null) {
+            personTable.setToModel("Person", persons);
+        }
+        final String[] taskDescriptors = cli.getCore().finishLoadingTaskDescriptors();
+        if (taskDescriptors != null) {
+            final String[] taskNames = Arrays.stream(taskDescriptors)
+                    .map(x -> x == null ? null : x.replaceAll(",.*", ""))
+                    .toArray(String[]::new);
+            taskTable.setToModel("Task", taskNames);
+            final String[] instances = Arrays.stream(taskDescriptors)
+                    .map(x -> x == null ? null : x.replaceAll(".*,", ""))
+                    .toArray(String[]::new);
+            taskTable.setToModel("#Instances", instances);
+        }
     }
     
     private ActionListener saveAl() {
@@ -429,6 +440,57 @@ public class GuiFrame extends JFrame implements TableModelListener {
                             .toArray(String[]::new);
                     cli.getCore().loadTaskDescriptors(taskDescriptors);
                     al("save " + file.getAbsolutePath()).actionPerformed(null);
+                }
+            }
+        };
+    }
+    
+
+    private ActionListener loadCommands() {
+        return new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                final JFC jfc = new JFC();
+                final FileFilter fileFilter = new FileNameExtensionFilter("ADVP CSV File","csv");
+                final File file = jfc.open("Load ADVP Commands .csv file", fileFilter); 
+                if (file != null) {
+                    DataSaverAndLoader sal = new DataSaverAndLoader(java.nio.charset.StandardCharsets.UTF_8.name());
+                    final String[][] data;
+                    try {
+                        data = sal.allDataValues(file);
+                    } catch (IOException e1) {
+                        al("error " + e1.getMessage()).actionPerformed(null);
+                        return;
+                    }
+                    for (int i = 0; i < data.length; i++) {
+                        cli.executeCommand(data[i][0]);
+                    }
+                    al("update").actionPerformed(null);
+                    finishLoading();
+                }
+            }
+        };
+    }
+    
+    private ActionListener saveCommands() {
+        return new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                final JFC jfc = new JFC();
+                final FileFilter fileFilter = new FileNameExtensionFilter("ADVP CSV File","csv");
+                final File file = jfc.open("Save ADVP Commands .csv file", fileFilter); 
+                if (file != null) {
+                    final List<String> commands = cli.getHistory();
+                    final String[][] data = new String[commands.size()][1];
+                    for (int i = 0; i < commands.size(); i++) {
+                        data[i][0] = commands.get(i);
+                    }
+                    DataSaverAndLoader sal = new DataSaverAndLoader(java.nio.charset.StandardCharsets.UTF_8.name());
+                    try {
+                        sal.saveData(file, data);
+                    } catch (IOException e1) {
+                        al("error " + e1.getMessage()).actionPerformed(null);
+                    }
                 }
             }
         };
