@@ -5,6 +5,8 @@ import java.util.ArrayList;
 
 import javax.swing.JTextArea;
 
+import static org.apache.commons.lang3.StringEscapeUtils.escapeHtml4;
+
 public class TextUtil {
     private TextUtil() {
         
@@ -241,6 +243,7 @@ public class TextUtil {
     }
 
     public static String toHTML(String text) {
+        text = escapeHtml4(text);
         if (text.contains(System.lineSeparator())) {
             text = text.replaceAll(System.lineSeparator(), "<br />");
             text = "<html>" + text + "</html>";

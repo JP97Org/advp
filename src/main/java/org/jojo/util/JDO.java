@@ -10,6 +10,7 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 
 import org.jojo.util.TextUtil;
 
@@ -23,7 +24,12 @@ public class JDO extends JDialog {
         b2 = null;
         setAlwaysOnTop(true);
         setTitle(title);
-        add(new JLabel(TextUtil.toHTML(text)));
+        final JLabel label = new JLabel(TextUtil.toHTML(text));
+        JScrollPane scr = new JScrollPane(label);
+        scr.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        scr.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        
+        add(scr);
         Dimension fs = getSize();
         final Dimension d = getToolkit().getScreenSize();
         setLocation((int) ((d.getWidth() - getWidth()) / 2 - fs.width / 2),
