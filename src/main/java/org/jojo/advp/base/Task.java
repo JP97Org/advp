@@ -15,6 +15,7 @@ import org.jojo.advp.base.factory.TaskDescriptor;
  */
 public class Task {
     private final String name;
+    private final int initialNumberOfInstances;
     private int numberInstances;
     private final Set<TaskProperty> properties;
     
@@ -27,6 +28,7 @@ public class Task {
     public Task(String name, int numberInstances) {
         if(numberInstances < 0) throw new IllegalArgumentException("NumberInstances must be >= 0.");
         this.name = Objects.requireNonNull(name);
+        this.initialNumberOfInstances = numberInstances;
         this.numberInstances = numberInstances;
         this.properties = new HashSet<>();
     }
@@ -62,6 +64,14 @@ public class Task {
      */
     public int getNumberOfInstances() {
         return this.numberInstances;
+    }
+    
+    /**
+     * 
+     * @return the initial number of instances
+     */
+    public int getInitialNumberOfInstances() {
+        return this.initialNumberOfInstances;
     }
     
     /**

@@ -12,6 +12,7 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.StringJoiner;
 
@@ -40,6 +41,7 @@ import org.jojo.advp.interactive.ui.CommandLineInterface;
 import org.jojo.util.BufferedPrintStream;
 import org.jojo.util.ComponentOutputStream;
 import org.jojo.util.ComponentPrintStream;
+import org.jojo.util.DataSaverAndLoader;
 import org.jojo.util.JDO;
 import org.jojo.util.JFC;
 import org.jojo.util.TextUtil;
@@ -257,15 +259,18 @@ public class GuiFrame extends JFrame implements TableModelListener {
         solveMi.addActionListener(solve());
         MenuItem show = new MenuItem("Show Solution");
         show.addActionListener(showSolution());
+        MenuItem saveSolution = new MenuItem("Save Solution");
+        saveSolution.addActionListener(saveSolution());
         solve.add(solveMi);
         solve.add(show);
+        solve.add(saveSolution);
         
         mb.add(file);
         mb.add(edit);
         mb.add(solve);
         setMenuBar(mb);
     }
-    
+
     private ActionListener solve() {
         return new ActionListener() {
             @Override
@@ -334,6 +339,49 @@ public class GuiFrame extends JFrame implements TableModelListener {
         };
     }
     
+    private ActionListener saveSolution() {
+        return new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (cli.getCore().isSolved()) {
+                    if (!cli.getCore().isFullySolved()) {
+                        al("info solution to be saved is not fully solved").actionPerformed(null);
+                    }
+                    save();
+                } else {
+                    JDO solveDiag = new JDO("Solve?", 
+                            "The problem is not solved, would you like it to be solved?", 
+                            "OK");
+                    solveDiag.getB1().addActionListener(new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            solve().actionPerformed(e);
+                            solveDiag.setVisible(false);
+                            solveDiag.dispose();
+                            save();
+                        }
+                    });
+                    solveDiag.open();
+                }
+            }
+            
+            private void save() {
+                final JFC jfc = new JFC();
+                final FileFilter fileFilter = new FileNameExtensionFilter("CSV File","csv");
+                final File file = jfc.open("Save solution mappings to .csv file", fileFilter);
+                if (file != null) {
+                    final DataSaverAndLoader sal = new DataSaverAndLoader(java.nio.charset.StandardCharsets.UTF_8.name());
+                    try {
+                        sal.saveData(file, cli.getCore().getMappings());
+                        al("info saved solution to " + file.getAbsolutePath()).actionPerformed(null);
+                    } catch (IOException e) {
+                        al("error " + e.getMessage()).actionPerformed(null);
+                    }
+                }
+            }
+        };
+    }
+    
     private ActionListener loadAl() {
         return new ActionListener() {
             @Override
@@ -390,7 +438,7 @@ public class GuiFrame extends JFrame implements TableModelListener {
         return al(null);
     }
     
-    protected ActionListener al(final String cmd) {
+    private ActionListener al(final String cmd) {
        ActionListener ret = new ActionListener() {
         public void actionPerformed(ActionEvent arg0) {
            if (cmd != null) {
@@ -410,6 +458,16 @@ public class GuiFrame extends JFrame implements TableModelListener {
             } else if (cmd.equals("update")) {
                 personTable.setKeysToModel(cli.getCore().getPersonKeyPairFactoryList());
                 taskTable.setKeysToModel(cli.getCore().getTaskKeyPairFactoryList());
+            } else if (cmd.startsWith("info ")) {
+                final String output = cmd.replaceFirst("info\\s", "");
+                outB.begin();
+                outB.println(output);
+                outB.suspend();
+            } else if (cmd.startsWith("error ")) {
+                final String output = cmd.replaceFirst("error\\s", "");
+                errB.begin();
+                errB.println(output);
+                errB.suspend();
             } else {
                 outB.begin();
                 errB.begin();

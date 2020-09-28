@@ -462,6 +462,7 @@ public enum Command {
                 cli.getCore().load(serialPersonPreps, serialTaskPreps);
                 cli.getCore().loadPersonNames(persons);
                 cli.getCore().loadTaskDescriptors(taskDescriptors);
+                this.output = OK;
             } catch (ClassNotFoundException | IOException e) {
                 e.printStackTrace();
                 throw new IllegalArgumentException("An exception occured: " + e.getMessage());
@@ -482,6 +483,7 @@ public enum Command {
                 data[2] = new String[] {cli.getCore().serializePersonsPreparation()};
                 data[3] = new String[] {cli.getCore().serializeTasksPreparation()};
                 sal.saveData(path, data);
+                this.output = OK;
             } catch (ClassNotFoundException | IOException e) {
                 e.printStackTrace();
                 throw new IllegalArgumentException("An exception occured: " + e.getMessage());

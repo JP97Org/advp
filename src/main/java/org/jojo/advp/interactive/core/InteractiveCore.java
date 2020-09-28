@@ -29,6 +29,8 @@ public class InteractiveCore {
     private String[] personNames;
     private String[] taskDescriptors;
     
+    private boolean solved;
+    
     public InteractiveCore() {
         this.personsPreparation = new ArrayList<>();
         this.tasksPreparation = new ArrayList<>();
@@ -71,6 +73,14 @@ public class InteractiveCore {
     
     public boolean hasSolver() {
         return isStarted() && this.world.getSolver() != null;
+    }
+
+    public boolean isSolved() {
+        return isStarted() && solved;
+    }
+    
+    public boolean isFullySolved() {
+        return isStarted() && this.world.isCompletelyMapped();
     }
     
     public KeyPairFactory getNewKeyPairFactory() {
@@ -196,7 +206,8 @@ public class InteractiveCore {
         this.world.setSolver(solver);
     }
     
-    public boolean solve() {
+    public synchronized boolean solve() {
+        this.solved = true;
         return this.world.solve();
     }
     
@@ -241,8 +252,33 @@ public class InteractiveCore {
         return ret.toString();
     }
     
+    public String[][] getMappings() {
+        final List<Task> tasks = this.world.getTasks().stream().sorted(new Comparator<Task>() {
+            @Override
+            public int compare(Task o1, Task o2) {
+                return o1.getName().compareTo(o2.getName());
+            }}).collect(Collectors.toList());
+        
+        final String[][] ret = new String[getNumberOfTaskInstances(tasks)][2];
+        for (int o = 0, count = 0; o < tasks.size(); o++) {
+            final Task task = tasks.get(o);
+            for (int i = 0; i < task.getInitialNumberOfInstances(); i++, count++) {
+                final Person person = this.world.getPersonOfTaskInstance(task, i);
+                final String pStr = person == null ? "" : person.toString();
+                ret[count][0] = task.getName() + "[" + i + "]";
+                ret[count][1] = pStr;
+            }
+        }
+        return ret;
+    }
+    
+    private static int getNumberOfTaskInstances(final List<Task> tasks) {
+        return tasks.stream().mapToInt(t -> t.getInitialNumberOfInstances()).sum();
+    }
+
     public void reset() {
         this.world = null;
+        this.solved = false;
         clearPreparations();
     }
 
