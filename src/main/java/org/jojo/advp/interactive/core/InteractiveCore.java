@@ -7,15 +7,20 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Base64;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import org.jojo.advp.base.EquivalenceKey;
 import org.jojo.advp.base.Person;
 import org.jojo.advp.base.Solver;
 import org.jojo.advp.base.Task;
 import org.jojo.advp.base.World;
+import org.jojo.advp.base.eq.TimeInterval;
 import org.jojo.advp.base.factory.GeneralFactory;
 import org.jojo.advp.base.factory.KeyPairFactory;
 import org.jojo.advp.base.factory.PropertySetFactory;
@@ -323,5 +328,35 @@ public class InteractiveCore {
         try (ObjectInputStream ois = new ObjectInputStream (bais)) {
             return (List<KeyPairFactory>) ois.readObject();
         }
+    }
+
+    public void prepare(final World localWorld) {
+        Objects.requireNonNull(localWorld);
+        reset();
+        final List<String> personNamesList = new ArrayList<String>();
+        final List<String> taskDescriptorsList = new ArrayList<String>();
+        
+        for (final Person p : localWorld.getPersons()) {
+            personNamesList.add(p.getName());
+            final List<EquivalenceKey> keys = p.getProperties().stream()
+                    .map(x -> x.getEquivalenceKey()).collect(Collectors.toList());
+            final KeyPairFactory factory = new KeyPairFactory(true, keys);
+            this.personsPreparation.add(factory);
+        }
+        
+        for (final Task t : localWorld.getTasks()) {
+            taskDescriptorsList.add(t.getName() + "," + t.getInitialNumberOfInstances());
+            final List<EquivalenceKey> keys = t.getProperties().stream()
+                    .map(x -> x.getEquivalenceKey()).collect(Collectors.toList());
+            final KeyPairFactory factory = new KeyPairFactory(false, keys);
+            this.tasksPreparation.add(factory);
+        }
+        
+        loadPersonNames(personNamesList.toArray(new String[personNamesList.size()]));
+        loadTaskDescriptors(taskDescriptorsList.toArray(new String[taskDescriptorsList.size()]));
+    }
+
+    public Set<Task> getWorldTasks() {
+        return this.world.getTasks();
     }
 }

@@ -290,6 +290,25 @@ public class GuiFrame extends JFrame implements TableModelListener {
         };
     }
     
+    
+    protected void finishLoading() {
+        final String[] persons = cli.getCore().finishLoadingPersonNames();
+        if (persons != null) {
+            personTable.setToModel("Person", persons);
+        }
+        final String[] taskDescriptors = cli.getCore().finishLoadingTaskDescriptors();
+        if (taskDescriptors != null) {
+            final String[] taskNames = Arrays.stream(taskDescriptors)
+                    .map(x -> x == null ? null : x.replaceAll(",.*", ""))
+                    .toArray(String[]::new);
+            taskTable.setToModel("Task", taskNames);
+            final String[] instances = Arrays.stream(taskDescriptors)
+                    .map(x -> x == null ? null : x.replaceAll(".*,", ""))
+                    .toArray(String[]::new);
+            taskTable.setToModel("#Instances", instances);
+        }
+    }
+    
     private ActionListener al() {
         return al(null);
     }
@@ -332,9 +351,10 @@ public class GuiFrame extends JFrame implements TableModelListener {
                 taskTable.setKeysToModel(cli.getCore().getTaskKeyPairFactoryList());
                 if (cmd.equals("print")) {
                     final String resultStr = outB.getBuffer();
-                    JDO result = new JDO("Result Overview", TextUtil.toHTML(resultStr));
+                    JDO result = new JDO("Result Overview", resultStr);
                     result.open();
-                } else if(cmd.equals("reset")) {
+                } else if (cmd.equals("reset")) {
+                    SpecialUtil.reset();
                     personTable.reset();
                     taskTable.reset();
                 }

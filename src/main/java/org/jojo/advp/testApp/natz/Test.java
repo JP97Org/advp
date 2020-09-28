@@ -22,7 +22,7 @@ public class Test {
     private static final boolean OPTIMIZE = false; //TODO optimize more!
     private static final boolean ORIG_SOLVER = false;
     
-    private static final File REAL_INPUT = /*null; */ new File("/home/jojo/Dokumente/in.csv"); /**/
+    public static File REAL_INPUT = /*null; */ new File("/home/jojo/Dokumente/in.csv"); /**/
     
     private static final int TRY_FIND_ITERATIONS = 10; //use not more than 10 for WorseOrigSolver!
     
@@ -124,7 +124,7 @@ public class Test {
         return calc(cntMapped + (nc.isFullyMapped() ? 1 : 0), iter + 1, until);
     }
     
-    private static String[] getDateStrings() {
+    public static String[] getDateStrings() {
         final String[] ret;
         if(REAL_INPUT == null) {
             ret = new String[21];
@@ -138,7 +138,7 @@ public class Test {
         return ret;
     }
     
-    private static Set<Person> getPersons(final PersonFactory pf, final List<TimeInterval> dates) {
+    public static Set<Person> getPersons(final PersonFactory pf, final List<TimeInterval> dates) {
         final Set<Person> persons = new HashSet<Person>();
         if(REAL_INPUT == null) {
             /*persons.add(pf.getPerson("Felix|m|o", false, false, dates));

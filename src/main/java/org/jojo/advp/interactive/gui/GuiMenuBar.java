@@ -163,28 +163,10 @@ public class GuiMenuBar {
                 if (file != null) {
                     frame.al("load " + file.getAbsolutePath()).actionPerformed(null);
                     frame.al("update").actionPerformed(null);
-                    finishLoading();
+                    frame.finishLoading();
                 }
             }
         };
-    }
-    
-    private void finishLoading() {
-        final String[] persons = cli.getCore().finishLoadingPersonNames();
-        if (persons != null) {
-            personTable.setToModel("Person", persons);
-        }
-        final String[] taskDescriptors = cli.getCore().finishLoadingTaskDescriptors();
-        if (taskDescriptors != null) {
-            final String[] taskNames = Arrays.stream(taskDescriptors)
-                    .map(x -> x == null ? null : x.replaceAll(",.*", ""))
-                    .toArray(String[]::new);
-            taskTable.setToModel("Task", taskNames);
-            final String[] instances = Arrays.stream(taskDescriptors)
-                    .map(x -> x == null ? null : x.replaceAll(".*,", ""))
-                    .toArray(String[]::new);
-            taskTable.setToModel("#Instances", instances);
-        }
     }
     
     private ActionListener saveAl() {
@@ -230,7 +212,7 @@ public class GuiMenuBar {
                         cli.executeCommand(data[i][0]);
                     }
                     frame.al("update").actionPerformed(null);
-                    finishLoading();
+                    frame.finishLoading();
                 }
             }
         };
@@ -252,8 +234,9 @@ public class GuiMenuBar {
                     DataSaverAndLoader sal = new DataSaverAndLoader(java.nio.charset.StandardCharsets.UTF_8.name());
                     try {
                         sal.saveData(file, data);
+                        frame.al("info saved commands to " + file.getAbsolutePath()).actionPerformed(e);
                     } catch (IOException e1) {
-                        frame.al("error " + e1.getMessage()).actionPerformed(null);
+                        frame.al("error " + e1.getMessage()).actionPerformed(e);
                     }
                 }
             }

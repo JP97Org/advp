@@ -176,6 +176,10 @@ public class TablePanel extends JPanel {
     
     private void setKeysToModel() {
         this.isUpdateNecessary = false;
+        if (this.keys.size() > model.getRowCount()) {
+            model.setRowCount(this.keys.size());
+        }
+        
         final int col = model.findColumn("Key List");
         final int rowCount = model.getRowCount();
         for (int row = 0; row < rowCount; row++) {

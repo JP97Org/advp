@@ -20,18 +20,21 @@ import org.jojo.advp.base.eq.TimeEquivalenceKey;
 import org.jojo.advp.base.eq.TimeInterval;
 
 public class TaskFactory {
-    protected static final int COUNT_FLOORS = 3;
+    public static final int COUNT_FLOORS = 3;
     
-    protected static final int FLOOR_NUM_INSTANCE = 2;
-    protected static final int POOL_NUM_INSTANCE = 6;
+    public static final int FLOOR_NUM_INSTANCE = 2;
+    public static final int POOL_NUM_INSTANCE = 6;
     
-    protected static final String POOL_STR = "Pool";
-    protected static final String FLOOR_STR = "Floor ";
+    public static final String POOL_STR = "Pool";
+    public static final String FLOOR_STR = "Floor ";
     
     private final List<TimeInterval> dates;
     private final List<Task> tasks;
     
-    public TaskFactory(String... datesAsStr) {
+    private final boolean uniqueNames;
+    
+    public TaskFactory(final boolean uniqueNames, final String... datesAsStr) {
+        this.uniqueNames = uniqueNames;
         final ArrayList<String> datesClean = new ArrayList<String>();
         for(String date : datesAsStr) {
             if(!date.trim().equals("")) {
@@ -53,11 +56,15 @@ public class TaskFactory {
         this.tasks = new ArrayList<>();
     }
     
+    public TaskFactory(String... datesAsStr) {
+        this(false, datesAsStr);
+    }
+
     public Task getFloorK(int k, TimeInterval date) {
         if(k < 0) throw new IllegalArgumentException("k must be >= 0");
         if(k >= COUNT_FLOORS) throw new IllegalArgumentException("k must be less than " + COUNT_FLOORS);
         
-        final Task ret = new Task(FLOOR_STR + k, FLOOR_NUM_INSTANCE);
+        final Task ret = new Task(FLOOR_STR + k + (this.uniqueNames ? (" " + date) : ""), FLOOR_NUM_INSTANCE);
             
         final Operation alternate = Operation.ALTERNATE;
             
@@ -89,7 +96,7 @@ public class TaskFactory {
     }
     
     public Task getPool(TimeInterval date) {
-        final Task ret = new Task(POOL_STR, POOL_NUM_INSTANCE);
+        final Task ret = new Task(POOL_STR + (this.uniqueNames ? (" " + date) : ""), POOL_NUM_INSTANCE);
         //TODO: evtl. properties noch setzen! (wenn es welche gibt, hab jetzt erstmal keine gesehen)
         
         final TimeEquivalenceKey tek = new TimeEquivalenceKey(date);

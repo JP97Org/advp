@@ -152,4 +152,9 @@ public class TimeInterval implements Comparable<TimeInterval>, Serializable {
     public int compareTo(TimeInterval o) {
         return this.getFrom().compareTo(o.getFrom());
     }
+    
+    @Override
+    public String toString() {
+        return from.toString() + " - " + to.toString();
+    }
 }
