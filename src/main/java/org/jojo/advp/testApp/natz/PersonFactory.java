@@ -13,15 +13,34 @@ import org.jojo.advp.base.eq.GenderEquivalenceKey;
 import org.jojo.advp.base.eq.TimeEquivalenceKey;
 import org.jojo.advp.base.eq.TimeInterval;
 
+/**
+ * Represents a person factory for natz persons.
+ * 
+ * @author jojo
+ * @version 0.9
+ */
 public class PersonFactory {
     public static final int ID_NEW = nextID();
     
     private Set<Person> persons;
     
+    /**
+     * Creates a new person factory for natz persons.
+     */
     public PersonFactory() {
         this.persons = new HashSet<>();
     }
     
+    /**
+     * Gets a person, i.e. gets a person from the person set if a person with the given name was already created
+     * or creates a new person.
+     * 
+     * @param name - the name
+     * @param female - whether the person should be female
+     * @param newPerson - whether the person should be a new person (has the 'new' property)
+     * @param dates - the dates when the person is available
+     * @return a person
+     */
     public Person getPerson(final String name, final boolean female, final boolean newPerson, final List<TimeInterval> dates) {
         if(this.persons.stream().map(p -> p.getName()).anyMatch(p -> p.equals(name))) {
             return this.persons.stream().filter(p -> p.getName().equals(name)).iterator().next();

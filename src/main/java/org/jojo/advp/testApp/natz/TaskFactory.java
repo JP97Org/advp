@@ -19,6 +19,12 @@ import org.jojo.advp.base.eq.Operation;
 import org.jojo.advp.base.eq.TimeEquivalenceKey;
 import org.jojo.advp.base.eq.TimeInterval;
 
+/**
+ * Represents a task factory for natz tasks.
+ * 
+ * @author jojo
+ * @version 0.9
+ */
 public class TaskFactory {
     public static final int COUNT_FLOORS = 3;
     
@@ -33,6 +39,12 @@ public class TaskFactory {
     
     private final boolean uniqueNames;
     
+    /**
+     * Creates a new task factory.
+     * 
+     * @param uniqueNames - whether the names of the tasks should be unique
+     * @param datesAsStr - the dates as strings
+     */
     public TaskFactory(final boolean uniqueNames, final String... datesAsStr) {
         this.uniqueNames = uniqueNames;
         final ArrayList<String> datesClean = new ArrayList<String>();
@@ -56,10 +68,22 @@ public class TaskFactory {
         this.tasks = new ArrayList<>();
     }
     
+    /**
+     * Creates a new task factory for tasks with non-unique names.
+     * 
+     * @param datesAsStr - the dates as strings
+     */
     public TaskFactory(String... datesAsStr) {
         this(false, datesAsStr);
     }
 
+    /**
+     * Gets a floor task.
+     * 
+     * @param k - the floor number
+     * @param date - the date
+     * @return a floor task with the given floor number at the given date
+     */
     public Task getFloorK(int k, TimeInterval date) {
         if(k < 0) throw new IllegalArgumentException("k must be >= 0");
         if(k >= COUNT_FLOORS) throw new IllegalArgumentException("k must be less than " + COUNT_FLOORS);
@@ -95,6 +119,12 @@ public class TaskFactory {
         return ret;
     }
     
+    /**
+     * Gets a pool task.
+     * 
+     * @param date - the date
+     * @return a pool task at the given date
+     */
     public Task getPool(TimeInterval date) {
         final Task ret = new Task(POOL_STR + (this.uniqueNames ? (" " + date) : ""), POOL_NUM_INSTANCE);
         //TODO: evtl. properties noch setzen! (wenn es welche gibt, hab jetzt erstmal keine gesehen)
@@ -109,6 +139,11 @@ public class TaskFactory {
         return ret;
     }
     
+    /**
+     * Gets all tasks.
+     * 
+     * @return a set of all tasks
+     */
     public Set<Task> getAllTasks() {
         final Set<Task> ret = new HashSet<Task>();
         
@@ -122,10 +157,20 @@ public class TaskFactory {
         return ret;
     }
     
+    /**
+     * Gets the dates.
+     * 
+     * @return the dates
+     */
     public List<TimeInterval> getDates() {
         return this.dates;
     }
 
+    /**
+     * 
+     * @param date - the date
+     * @return the tasks at the given date
+     */
     public List<Task> getTasksOfDate(final TimeInterval date) {
         return Arrays.asList(this.tasks.stream()
                 .filter(x -> date.equals(TimeEquivalenceKey.extract(x).getTimeIntervals().iterator().next()))

@@ -12,6 +12,15 @@ import org.jojo.advp.base.EquivalenceKey;
 import org.jojo.advp.base.eq.EquivalenceKeyDescription;
 import org.jojo.advp.base.eq.GenderEquivalenceKey;
 
+/**
+ * Represents a descriptor of an equivalence key so that a key can be directly extracted from an 
+ * instance of this class.
+ * 
+ * @see {@link EquivalenceKeyDescription}
+ * 
+ * @author jojo
+ * @version 0.9
+ */
 public class EquivalenceKeyDescriptor implements Serializable {
     /**
      * 
@@ -21,6 +30,19 @@ public class EquivalenceKeyDescriptor implements Serializable {
     private EquivalenceKey key;
     private final Object[] initargs;
 
+    /**
+     * Creates a new EquivalenceKeyDescriptor.
+     * 
+     * @param keyClass - the class of the key
+     * @param parameterTypes - the parameter types
+     * @param initargs - the initial arguments
+     * @throws NoSuchMethodException
+     * @throws SecurityException
+     * @throws InstantiationException
+     * @throws IllegalAccessException
+     * @throws IllegalArgumentException
+     * @throws InvocationTargetException
+     */
     public EquivalenceKeyDescriptor(final Class<? extends EquivalenceKey> keyClass, final Class<?>[] parameterTypes,
             final Object... initargs) throws NoSuchMethodException, SecurityException, InstantiationException,
             IllegalAccessException, IllegalArgumentException, InvocationTargetException {
@@ -29,6 +51,13 @@ public class EquivalenceKeyDescriptor implements Serializable {
         this.initargs = Objects.requireNonNull(initargs);
     }
 
+    /**
+     * Creates a new EquivalenceKeyDescriptor.
+     * 
+     * @param desc - an equivalence key description
+     * @param initargs - initial arguments for the key
+     * @see {@link EquivalenceKeyDescription}
+     */
     public EquivalenceKeyDescriptor(final EquivalenceKeyDescription desc, final Object... initargs) {
         Objects.requireNonNull(desc);
         Objects.requireNonNull(initargs);
@@ -48,6 +77,11 @@ public class EquivalenceKeyDescriptor implements Serializable {
         this.initargs = initargs;
     }
     
+    /**
+     * Creates a new EquivalenceKeyDescriptor.
+     * 
+     * @param key - an equivalence key
+     */
     public EquivalenceKeyDescriptor(final EquivalenceKey key) {
         Objects.requireNonNull(key);
         this.keyClass = key.getClass();
@@ -55,6 +89,11 @@ public class EquivalenceKeyDescriptor implements Serializable {
         this.initargs = null;
     }
     
+    /**
+     * Creates a new EquivalenceKeyDescriptor.
+     * 
+     * @param toCopy - the key descriptor which should be copied
+     */
     public EquivalenceKeyDescriptor(final EquivalenceKeyDescriptor toCopy) {
         Objects.requireNonNull(toCopy);
         this.keyClass = toCopy.keyClass;
@@ -111,6 +150,10 @@ public class EquivalenceKeyDescriptor implements Serializable {
         return cls;
     }
 
+    /**
+     * 
+     * @return the key
+     */
     public EquivalenceKey getKey() {
         return this.key;
     }

@@ -11,6 +11,12 @@ import org.jojo.advp.base.Person;
 import org.jojo.advp.base.Task;
 import org.jojo.advp.base.eq.TimeInterval;
 
+/**
+ * The Test class for the ADVP test App 'natz'.
+ * 
+ * @author jojo
+ * @version 0.9
+ */
 public class Test {
     private static final boolean PARTIAL = true;
     
@@ -22,6 +28,9 @@ public class Test {
     private static final boolean OPTIMIZE = false; //TODO optimize more!
     private static final boolean ORIG_SOLVER = false;
     
+    /**
+     * The real input file or null if random input should be generated.
+     */
     public static File REAL_INPUT = /*null; */ new File("/home/jojo/Dokumente/in.csv"); /**/
     
     private static final int TRY_FIND_ITERATIONS = 10; //use not more than 10 for WorseOrigSolver!
@@ -33,6 +42,12 @@ public class Test {
     private static boolean solutionFound = false;
     private static String[][] lastRes = null;
     
+    /**
+     * The main method for the testing of the natz test app.
+     * 
+     * @param args - not used
+     * @throws FileNotFoundException if the input file is not found
+     */
     public static void main(String[] args) throws FileNotFoundException {
         long before;
         /*if(ITERATIONS > 0) {
@@ -124,6 +139,10 @@ public class Test {
         return calc(cntMapped + (nc.isFullyMapped() ? 1 : 0), iter + 1, until);
     }
     
+    /**
+     * 
+     * @return the dates as strings
+     */
     public static String[] getDateStrings() {
         final String[] ret;
         if(REAL_INPUT == null) {
@@ -138,6 +157,12 @@ public class Test {
         return ret;
     }
     
+    /**
+     * 
+     * @param pf - the person factory
+     * @param dates - the dates
+     * @return a set of persons
+     */
     public static Set<Person> getPersons(final PersonFactory pf, final List<TimeInterval> dates) {
         final Set<Person> persons = new HashSet<Person>();
         if(REAL_INPUT == null) {

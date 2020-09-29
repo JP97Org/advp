@@ -17,9 +17,15 @@ import org.jojo.advp.base.factory.KeyPairFactory;
 import org.jojo.advp.base.factory.TaskDescriptor;
 import org.jojo.advp.base.solution.NaiveFairNumSolver;
 import org.jojo.advp.base.solution.NaiveSolver;
-import org.jojo.util.DataSaverAndLoader;
+import org.jojo.util.CSVDataInteractor;
 
-public enum Command {
+/**
+ * A command enum.
+ * 
+ * @author jojo
+ * @version 0.9
+ */
+public enum Command { //TODO: maybe refactor to correct command pattern
     HELP("help") {
         @Override
         public void execute(MatchResult matcher, CommandLineInterface cli) throws IllegalArgumentException {
@@ -444,7 +450,7 @@ public enum Command {
         @Override
         public void execute(MatchResult matcher, CommandLineInterface cli) throws IllegalArgumentException {
             final String path = matcher.group(1);
-            final DataSaverAndLoader sal = new DataSaverAndLoader(java.nio.charset.StandardCharsets.UTF_8.name());
+            final CSVDataInteractor sal = new CSVDataInteractor(java.nio.charset.StandardCharsets.UTF_8.name());
             final String[][] data;
             try {
                 data = sal.allDataValues(path);
@@ -473,7 +479,7 @@ public enum Command {
         @Override
         public void execute(MatchResult matcher, CommandLineInterface cli) throws IllegalArgumentException {
             final String path = matcher.group(1);
-            final DataSaverAndLoader sal = new DataSaverAndLoader(java.nio.charset.StandardCharsets.UTF_8.name());
+            final CSVDataInteractor sal = new CSVDataInteractor(java.nio.charset.StandardCharsets.UTF_8.name());
             final String[][] data = new String[4][];
             data[0] = cli.getCore().finishLoadingPersonNames();
             data[0] = data[0] == null ? new String[] {""} : data[0];
@@ -520,6 +526,14 @@ public enum Command {
         this.output = null;
     }
     
+    /**
+     * Executes the command matching the given input.
+     * 
+     * @param input - the given input 
+     * @param cli - the command line interface
+     * @return the command matching the given input
+     * @throws IllegalArgumentException if input is not a valid command
+     */
     public static Command executeMatching(final String input, final CommandLineInterface cli) throws IllegalArgumentException {
         for (final Command command : Command.values()) {
             final Matcher matcher = command.pattern.matcher(input);
@@ -532,8 +546,19 @@ public enum Command {
         throw new IllegalArgumentException("not a valid command!");
     }
     
+    /**
+     * Executes this command.
+     * 
+     * @param matcher - the matcher of the input
+     * @param cli - the command line interface
+     * @throws IllegalArgumentException if an argument in invalid
+     */
     public abstract void execute(MatchResult matcher, CommandLineInterface cli) throws IllegalArgumentException;
     
+    /**
+     * 
+     * @return the output of the last execution of this command
+     */
     public String getOutput() {
         return output;
     }

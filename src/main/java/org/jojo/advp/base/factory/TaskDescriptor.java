@@ -2,10 +2,22 @@ package org.jojo.advp.base.factory;
 
 import java.util.Objects;
 
+/**
+ * Describes a task.
+ * 
+ * @author jojo
+ * @version 0.9
+ */
 public class TaskDescriptor {
     private final String name;
     private final int numInstances;
     
+    /**
+     * Creates a new task descriptor.
+     * 
+     * @param name - the name of the task
+     * @param numInstances - the number of instances of the task
+     */
     public TaskDescriptor(final String name, final int numInstances) {
         if(numInstances < 0) throw new IllegalArgumentException("NumberInstances must be >= 0.");
         
@@ -13,10 +25,18 @@ public class TaskDescriptor {
         this.numInstances = numInstances;
     }
     
+    /**
+     * 
+     * @return the name of the task
+     */
     public String getName() {
         return name;
     }
     
+    /**
+     * 
+     * @return the number of instances of the task
+     */
     public int getNumInstances() {
         return numInstances;
     }

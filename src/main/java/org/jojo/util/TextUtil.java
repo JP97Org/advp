@@ -1,179 +1,26 @@
 package org.jojo.util;
 
-import java.awt.TextArea;
 import java.util.ArrayList;
+import static org.apache.commons.text.StringEscapeUtils.escapeHtml4;
 
-import javax.swing.JTextArea;
-
-import static org.apache.commons.lang3.StringEscapeUtils.escapeHtml4;
-
+/**
+ * An utility class for text processing.
+ * 
+ * @author jojo
+ * @version 0.9
+ */
 public class TextUtil {
     private TextUtil() {
         
     }
 
-    public static int[] getTextPositions(String toBeSearched, String seekThis) {
-        int[] ret = null;
-
-        char[] tbs = toBeSearched.toCharArray();
-        char[] st = seekThis.toCharArray();
-
-        boolean[] right = new boolean[st.length];
-        if (tbs != null && st != null && tbs.length != 0 && st.length != 0) {
-            outer: for (int i = 0, x = 0; i <= tbs.length;) {
-
-                if (allRightBoolArrayToBoolean(right)) {
-                    ret = new int[2];
-                    ret[0] = i - st.length;
-                    ret[1] = i;
-                    break;
-                }
-
-                else if (i < tbs.length) {
-                    for (; x < st.length;) {
-                        if (st[x] == tbs[i]) {
-                            right[x] = true;
-                            x++;
-                            i++;
-                            continue outer;
-                        } else {
-                            x = 0;
-                            i++;
-                            continue outer;
-                        }
-                    }
-                }
-            }
-        }
-
-        return ret;
-    }
-
-    public static int[] getTextPositions(String toBeSearched, String seekThis, int position) {
-        int[] ret = null;
-
-        char[] tbs = toBeSearched.toCharArray();
-        char[] st = seekThis.toCharArray();
-
-        boolean[] right = new boolean[st.length];
-
-        if (tbs != null && st != null && tbs.length != 0 && st.length != 0) {
-            outer: for (int x = 0; position <= tbs.length;) {
-
-                if (allRightBoolArrayToBoolean(right)) {
-                    ret = new int[2];
-                    ret[0] = position - st.length;
-                    ret[1] = position;
-                    break;
-                }
-
-                else if (position < tbs.length) {
-                    for (; x < st.length;) {
-                        if (st[x] == tbs[position]) {
-                            right[x] = true;
-                            x++;
-                            position++;
-                            continue outer;
-                        } else if (position != tbs.length - 1) {
-                            x = 0;
-                            position++;
-                            continue outer;
-                        } else {
-                            x = 0;
-                            position = 0;
-                            continue outer;
-                        }
-
-                    }
-                }
-            }
-        }
-        return ret;
-    }
-
-    public static String getEntry(String[] array, String PartOfEntry) {
-        String ret = null;
-
-        for (int i = 0; i < array.length; i++) {
-            if (array[i].contains(PartOfEntry)) {
-                ret = array[i];
-                break;
-            }
-        }
-
-        return ret;
-    }
-
-    public static String getEntry(String[] array, String PartOfEntry, int position) {
-        String ret = null;
-
-        for (int i = position; i < array.length; i++) {
-            if (array[i].contains(PartOfEntry)) {
-                ret = array[i];
-                break;
-            }
-        }
-
-        return ret;
-    }
-
-    public static String getEntry(String[] array, String PartOfEntry, int position, TextArea prep) {
-        String ret = null;
-
-        for (; position < array.length; position++) {
-            if (array[position].contains(PartOfEntry)) {
-                ret = array[position];
-                prep.setText(array[position]);
-                prep.select(getTextPositions(array[position], PartOfEntry)[0],
-                        getTextPositions(array[position], PartOfEntry)[1]);
-                break;
-            }
-        }
-
-        return ret;
-    }
-
-    public static String getEntry(String[] array, String PartOfEntry, int position, JTextArea prep) {
-        String ret = null;
-
-        for (; position < array.length; position++) {
-            if (array[position].contains(PartOfEntry)) {
-                ret = array[position];
-                prep.setText(array[position]);
-                prep.select(getTextPositions(array[position], PartOfEntry)[0],
-                        getTextPositions(array[position], PartOfEntry)[1]);
-                break;
-            }
-        }
-
-        return ret;
-    }
-
-    public static int getEntryNumber(String[] array, String entry, int position) {
-        int ret = Integer.MAX_VALUE;
-
-        for (int i = position; i < array.length; i++) {
-            if (array[i].equals(entry)) {
-                ret = i;
-                break;
-            }
-        }
-
-        return ret;
-    }
-
-    public static int getEntryCount(String[] array, String PartOfEntry) {
-        int ret = 0;
-
-        for (int position = 0; position < array.length; position++) {
-            if (array[position].contains(PartOfEntry)) {
-                ret = ret + 1;
-            }
-        }
-
-        return ret;
-    }
-
+    /**
+     * Unsplits the given string array by the given delim.
+     * 
+     * @param toBeUnsplited - the array to be unsplitted
+     * @param spliter - the given delim
+     * @return the unsplitted string
+     */
     public static String unsplitStringArray(String[] toBeUnsplited, String spliter) {
         String ret = "";
         if (spliter.equals("\\n")) {
@@ -194,6 +41,14 @@ public class TextUtil {
         return ret;
     }
 
+    /**
+     * Unsplits the given string array by the given delims.
+     * 
+     * @param toBeUnsplited - the array to be unsplitted
+     * @param outer - the outer delim
+     * @param inner - the inner delim
+     * @return the unsplitted string
+     */
     public static String unsplitStringArray(String[][] toBeUnsplited, String outer, String inner) {
         String ret = "";
 
@@ -207,6 +62,13 @@ public class TextUtil {
         return ret;
     }
 
+    /**
+     * Two-dimensionalizes the given string array by the given delim.
+     * 
+     * @param s - the given string array
+     * @param spliter - the given delim
+     * @return the two dimensional array
+     */
     public static String[][] twoDimensionalize(String[] s, String spliter) {
         if (spliter.equals("\\n")) {
             spliter = "\n";
@@ -227,21 +89,12 @@ public class TextUtil {
         return ret;
     }
 
-    private static boolean allRightBoolArrayToBoolean(boolean[] b) {
-        boolean ret = false;
-
-        for (int i = 0; i < b.length; i++) {
-            if (b[i]) {
-                ret = true;
-            } else {
-                ret = false;
-                break;
-            }
-        }
-
-        return ret;
-    }
-
+    /**
+     * Converts the given text to html.
+     * 
+     * @param text - the given text
+     * @return html version of the given text
+     */
     public static String toHTML(String text) {
         text = escapeHtml4(text);
         if (text.contains(System.lineSeparator())) {
@@ -251,6 +104,12 @@ public class TextUtil {
         return text;
     }
 
+    /**
+     * Converts the given object array to a string array.
+     * 
+     * @param o - the given object array
+     * @return a string array representing the given object array
+     */
     public static String[] toString(Object[] o) {
         String[] ret = new String[o.length];
 
@@ -261,6 +120,13 @@ public class TextUtil {
         return ret;
     }
     
+    /**
+     * Converts the given object to a string with the given count of characters per line.
+     * 
+     * @param o - the given object
+     * @param charsPerLine - the given count of characters per line
+     * @return a string with the given count of characters per line representing the given object
+     */
     public static String toStringWithLineFeeds(Object o, int charsPerLine) {
         StringBuilder ret = new StringBuilder();
         final String in = o.toString();

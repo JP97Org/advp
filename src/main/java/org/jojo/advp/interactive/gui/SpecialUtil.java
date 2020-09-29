@@ -21,9 +21,15 @@ import org.jojo.advp.testApp.natz.PersonFactory;
 import org.jojo.advp.testApp.natz.TaskFactory;
 import org.jojo.advp.testApp.natz.Test;
 import org.jojo.advp.testApp.natz.TestInputLoader;
-import org.jojo.util.DataSaverAndLoader;
+import org.jojo.util.CSVDataInteractor;
 import org.jojo.util.JFC;
 
+/**
+ * An utility class for the special menu.
+ * 
+ * @author jojo
+ * @version 0.9
+ */
 public final class SpecialUtil {
     private static List<TimeInterval> dates;
     
@@ -31,10 +37,19 @@ public final class SpecialUtil {
         
     }
     
+    /**
+     * Resets the natz dates.
+     */
     public static void reset() {
         dates = null;
     }
 
+    /**
+     * 
+     * @param guiFrame - the main frame
+     * @param cli - the CLI
+     * @return an action listener to load a random natz
+     */
     public static ActionListener loadRandomNatz(GuiFrame guiFrame, CommandLineInterface cli) {
         return new ActionListener() {
             @Override
@@ -55,6 +70,12 @@ public final class SpecialUtil {
         };
     }
 
+    /**
+     * 
+     * @param guiFrame - the main frame
+     * @param cli - the CLI
+     * @return an action listener to load a natz from file
+     */
     public static ActionListener loadNatz(GuiFrame guiFrame, CommandLineInterface cli) {
         return new ActionListener() {
             @Override
@@ -84,6 +105,12 @@ public final class SpecialUtil {
         };
     }
 
+    /**
+     * 
+     * @param guiFrame - the main frame
+     * @param cli - the CLI
+     * @return an action listener to save a natz result to file
+     */
     public static ActionListener saveNatzResult(GuiFrame guiFrame, CommandLineInterface cli) {
         return new ActionListener() {
             @Override
@@ -92,7 +119,7 @@ public final class SpecialUtil {
                 final FileFilter fileFilter = new FileNameExtensionFilter("ADVP CSV File","csv");
                 final File file = jfc.open("Save natz out .csv file", fileFilter); 
                 if (file != null) {
-                    DataSaverAndLoader sal = new DataSaverAndLoader(java.nio.charset.StandardCharsets.UTF_8.name());
+                    CSVDataInteractor sal = new CSVDataInteractor(java.nio.charset.StandardCharsets.UTF_8.name());
                     try {
                         final String[][] data = generateOutput(cli);
                         sal.saveData(file, data);

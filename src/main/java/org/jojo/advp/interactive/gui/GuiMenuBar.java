@@ -17,10 +17,16 @@ import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.jojo.advp.interactive.ui.CommandLineInterface;
-import org.jojo.util.DataSaverAndLoader;
+import org.jojo.util.CSVDataInteractor;
 import org.jojo.util.JDO;
 import org.jojo.util.JFC;
 
+/**
+ * Contains the menu bar for the main frame of the GUI.
+ * 
+ * @author jojo
+ * @version 0.9
+ */
 public class GuiMenuBar {
     private final GuiFrame frame;
     private final TablePanel personTable;
@@ -29,6 +35,11 @@ public class GuiMenuBar {
     
     private final MenuBar mb;
     
+    /**
+     * Creates a new menu bar for the given main frame.
+     * 
+     * @param frame - the given main frame
+     */
     public GuiMenuBar(final GuiFrame frame) {
         this.frame = frame;
         this.personTable = frame.getPersonTable();
@@ -105,6 +116,10 @@ public class GuiMenuBar {
         mb.add(help);
     }
     
+    /**
+     * 
+     * @return the menu bar
+     */
     public MenuBar getMenuBar() {
         return mb;
     }
@@ -141,7 +156,7 @@ public class GuiMenuBar {
                 final FileFilter fileFilter = new FileNameExtensionFilter("CSV File","csv");
                 final File file = jfc.open("Save solution mappings to .csv file", fileFilter);
                 if (file != null) {
-                    final DataSaverAndLoader sal = new DataSaverAndLoader(java.nio.charset.StandardCharsets.UTF_8.name());
+                    final CSVDataInteractor sal = new CSVDataInteractor(java.nio.charset.StandardCharsets.UTF_8.name());
                     try {
                         sal.saveData(file, cli.getCore().getMappings());
                         frame.al("info saved solution to " + file.getAbsolutePath()).actionPerformed(null);
@@ -200,7 +215,7 @@ public class GuiMenuBar {
                 final FileFilter fileFilter = new FileNameExtensionFilter("ADVP CSV File","csv");
                 final File file = jfc.open("Load ADVP Commands .csv file", fileFilter); 
                 if (file != null) {
-                    DataSaverAndLoader sal = new DataSaverAndLoader(java.nio.charset.StandardCharsets.UTF_8.name());
+                    CSVDataInteractor sal = new CSVDataInteractor(java.nio.charset.StandardCharsets.UTF_8.name());
                     final String[][] data;
                     try {
                         data = sal.allDataValues(file);
@@ -231,7 +246,7 @@ public class GuiMenuBar {
                     for (int i = 0; i < commands.size(); i++) {
                         data[i][0] = commands.get(i);
                     }
-                    DataSaverAndLoader sal = new DataSaverAndLoader(java.nio.charset.StandardCharsets.UTF_8.name());
+                    CSVDataInteractor sal = new CSVDataInteractor(java.nio.charset.StandardCharsets.UTF_8.name());
                     try {
                         sal.saveData(file, data);
                         frame.al("info saved commands to " + file.getAbsolutePath()).actionPerformed(e);

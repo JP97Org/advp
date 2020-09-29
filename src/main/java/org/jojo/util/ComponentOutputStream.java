@@ -6,18 +6,34 @@ import java.io.OutputStream;
 import javax.swing.JLabel;
 import javax.swing.text.JTextComponent;
 
+/**
+ * Represents an output stream for writing to a JTextComponent or a JLabel.
+ * 
+ * @author jojo
+ * @version 0.9
+ */
 public class ComponentOutputStream extends OutputStream {
     private JTextComponent t;
     private JLabel l;
     private String s;
     private boolean isJLabel;
 
+    /**
+     * Creates a new component output stream.
+     * 
+     * @param t - the JTextComponent to which should be written
+     */
     public ComponentOutputStream(JTextComponent t) {
         this.t = t;
         this.s = "";
         this.isJLabel = false;
     }
 
+    /**
+     * Creates a new component output stream.
+     * 
+     * @param l - the JLabel to which should be written
+     */
     public ComponentOutputStream(JLabel l) {
         this.l = l;
         this.s = "";
@@ -29,6 +45,7 @@ public class ComponentOutputStream extends OutputStream {
         s = s + (char) ((byte) arg0);
     }
 
+    @Override
     public void flush() {
         if (!isJLabel) {
             t.setText(t.getText() + s);
@@ -44,11 +61,6 @@ public class ComponentOutputStream extends OutputStream {
                 l.setText(l.getText() + "</html>");
             }
             s = "";
-        }
-        try {
-            super.flush();
-        } catch (IOException e) {
-            e.printStackTrace();
         }
     }
 

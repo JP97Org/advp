@@ -66,8 +66,10 @@ public class ComparisonEquivalenceKey<T extends Comparable<T>> implements Equiva
     public boolean isEquivalent(EquivalenceKey other) {
         if(other != null && getClass().equals(other.getClass())) {
             final ComparisonEquivalenceKey<?> o = (ComparisonEquivalenceKey<?>)other;
-            if(value.getClass().equals(o.value.getClass()) && comp == o.comp.anti() && id == o.id) {
-                return comp((T)o.value);
+            if (value.getClass().equals(o.value.getClass()) && comp == o.comp.anti() && id == o.id) {
+                @SuppressWarnings("unchecked") // it is checked by value.getClass().equals(o.value.getClass())
+                final T oVal = (T)o.value;
+                return comp(oVal);
             }
         }
         return false;

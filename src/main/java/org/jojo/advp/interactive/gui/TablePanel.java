@@ -29,6 +29,12 @@ import org.jojo.advp.base.EquivalenceKey;
 import org.jojo.advp.base.factory.KeyPairFactory;
 import org.jojo.advp.interactive.ui.CommandLineInterface;
 
+/**
+ * Represents a table panel.
+ * 
+ * @author jojo
+ * @version 0.9
+ */
 public class TablePanel extends JPanel {
     /**
      * 
@@ -47,6 +53,14 @@ public class TablePanel extends JPanel {
     
     private CommandLineInterface cli;
     
+    /**
+     * Creates a new table panel.
+     * 
+     * @param initialRows - the initial row count
+     * @param buttonName - the name of the add button
+     * @param cli - the CLI
+     * @param heads - the table header
+     */
     public TablePanel(final int initialRows, final String buttonName, final CommandLineInterface cli
             , final String... heads) {
         this.initialRows = initialRows;
@@ -101,6 +115,11 @@ public class TablePanel extends JPanel {
         this.isUpdateNecessary = false;
     }
     
+    /**
+     * Adds the given table model listener to this panel's table model.
+     * 
+     * @param l - the given table model listener
+     */
     public void addModelListener(TableModelListener l) {
         this.model.addTableModelListener(l);
     }
@@ -165,10 +184,19 @@ public class TablePanel extends JPanel {
         this.model.setRowCount(rowCount);
     }
     
+    /**
+     * 
+     * @return whether an update is necessary
+     */
     public boolean isUpdateNecessary() {
         return this.isUpdateNecessary;
     }
     
+    /**
+     * Sets the model of this panel's table to the given list of key factories.
+     * 
+     * @param list - the list of key factories
+     */
     public void setKeysToModel(final List<KeyPairFactory> list) {
         this.keys = list;
         setKeysToModel();
@@ -191,6 +219,12 @@ public class TablePanel extends JPanel {
         model.fireTableDataChanged();
     }
     
+    /**
+     * Sets the values to this panel's table model at the column with the given column name.
+     * 
+     * @param columnName - the given column name
+     * @param values - the values
+     */
     public void setToModel(String columnName, final String[] values) {
         model.setRowCount(Math.max(values.length, model.getRowCount()));
         final int col = model.findColumn(columnName);
@@ -200,15 +234,26 @@ public class TablePanel extends JPanel {
         model.fireTableDataChanged();
     }
     
+    /**
+     * Resets this table panel, i.e. removing all the contents.
+     */
     public void reset() {
         refresh(0);
         refresh(initialRows);
     }
     
+    /**
+     * 
+     * @return the index of the key to be removed or -1 if no key is to be removed
+     */
     public int getKeyRemoveIndex() {
         return this.keyRemoveIndex;
     }
     
+    /**
+     * 
+     * @return the persons' names
+     */
     public Object[] getPersons() {
         if (bPerson) {
             final Object[] ret = new Object[model.getRowCount()];
@@ -224,6 +269,11 @@ public class TablePanel extends JPanel {
         return null;
     }
     
+    /**
+     * 
+     * @return the task descriptors, <br />
+     * name and #instances separated by "," or a null entry if either name or #instances is not set
+     */
     public Object[] getTasks() {
         if (!bPerson) {
             final Object[] ret = new Object[model.getRowCount()];

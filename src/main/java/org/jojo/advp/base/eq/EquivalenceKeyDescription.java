@@ -17,6 +17,12 @@ import java.util.function.Function;
 
 import org.jojo.advp.base.EquivalenceKey;
 
+/**
+ * An enum for describing equivalence keys in order to ease dynamic creation.
+ * 
+ * @author jojo
+ * @version 0.9
+ */
 public enum EquivalenceKeyDescription {
     AGE (AgeEquivalenceKey.class, int.class, Comparison.class),
     COMPARISON (ComparisonEquivalenceKey.class, int.class, Comparable.class, Comparison.class),
@@ -43,18 +49,34 @@ public enum EquivalenceKeyDescription {
         this.parameterTypes = Objects.requireNonNull(parameterTypes);
     }
     
+    /**
+     * 
+     * @return the class of the key
+     */
     public Class<? extends EquivalenceKey> getEqKeyClass() {
         return this.keyClass;
     }
     
+    /**
+     * 
+     * @return the parameter types of the key
+     */
     public Class<?>[] getParamTypes() {
         return this.parameterTypes;
     }
     
+    /**
+     * 
+     * @return the delim for the settings name and the default value
+     */
     public static String getDelim() {
         return "|";
     }
     
+    /**
+     * 
+     * @return the settings names of the key
+     */
     public String[] getSettingsNames() {
         final String[] ret = new String[this.creationHints.length];
         switch(this) {
@@ -78,6 +100,12 @@ public enum EquivalenceKeyDescription {
         return "ID" + getDelim() + id;
     }
     
+    /**
+     * 
+     * @param args - the arguments
+     * @param delim - the delim for splitting the arguments
+     * @return the equivalence key description referenced by the given arguments or null if none is found
+     */
     public static EquivalenceKeyDescription ofArgs(final String args, final String delim) {
         Objects.requireNonNull(args);
         Objects.requireNonNull(delim);
@@ -104,6 +132,12 @@ public enum EquivalenceKeyDescription {
         return ret;
     }
 
+    /**
+     * Creates the initialization arguments for this key and the given arguments string.
+     * 
+     * @param argsStr - the given arguments string
+     * @return the initialization arguments for this key and the given arguments string
+     */
     public Object[] createInitArgs(final String[] argsStr) {
         Objects.requireNonNull(argsStr);
         if (argsStr.length == this.creationHints.length) {
@@ -131,6 +165,9 @@ public enum EquivalenceKeyDescription {
         return null;
     }
     
+    /**
+     * Initializes the default creation hints for this key description.
+     */
     public void initializeDefaultCreationHints() {
         switch(this) {
         case AGE: this.creationHints = new CreationHint[] {CreationHint.INT, CreationHint.COMP}; break;
@@ -146,6 +183,10 @@ public enum EquivalenceKeyDescription {
         }
     }
     
+    /**
+     * 
+     * @return the creation hints
+     */
     public CreationHint[] getCreationHints() {
         CreationHint[] ret = new CreationHint[this.creationHints.length];
         for (int i = 0; i < ret.length; i++) {
@@ -176,6 +217,12 @@ public enum EquivalenceKeyDescription {
         return ret;
     }
 
+    /**
+     * An enum representing hints for creation of arguments of a key.
+     * 
+     * @author jojo
+     * @version 0.9
+     */
     public enum CreationHint {
         CLASS(s -> {
             switch(s) {
@@ -243,10 +290,9 @@ public enum EquivalenceKeyDescription {
             this.transform = transform;
         }
         
+        //TODO: also allow dynamic creation of lambdas which are not <String, String>
         /**
          * Creates a bi-predicate from the given lambdaExpression
-         * @param <P> - the person's LEK part type
-         * @param <T> - the task's LEK part type
          * @param lambdaExpression -    the lambda expression of the form "(p,t) -> expr(p,t)"
          *                              where p and t are variables with names in ([a-z]+)
          *                              and expr(p,t) is a function returning boolean
@@ -272,6 +318,11 @@ public enum EquivalenceKeyDescription {
             return this.transform.apply(input);
         }
         
+        /**
+         * 
+         * @param input - input
+         * @return whether format of input is ok
+         */
         public boolean isFormatOk(final String input) {
             try {
                 final boolean ok = transform(input) != null;

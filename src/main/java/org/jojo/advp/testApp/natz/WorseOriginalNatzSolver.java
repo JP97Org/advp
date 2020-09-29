@@ -15,12 +15,23 @@ import org.jojo.advp.base.eq.TimeEquivalenceKey;
 import org.jojo.advp.base.eq.TimeInterval;
 import org.jojo.advp.base.solution.FairNumSolver;
 
+/**
+ * Represents the original 'natz' solver.
+ * 
+ * @author jojo
+ * @version 0.9
+ */
 public class WorseOriginalNatzSolver extends FairNumSolver {
     private final TaskFactory tf;
     private int randomizeLvl;
 
     private Set<Person> alreadyTried;
     
+    /**
+     * Creates a new solver.
+     * 
+     * @param tf - the task factory
+     */
     public WorseOriginalNatzSolver(final TaskFactory tf) {
         super();
         this.tf = tf;
@@ -28,6 +39,13 @@ public class WorseOriginalNatzSolver extends FairNumSolver {
         this.alreadyTried = new HashSet<>();
     }
     
+    /**
+     * Creates a new solver.
+     * 
+     * @param computePartialSolutionWhenSolvingNotPossible - whether partial solving is ok
+     * @param randomizeLvl - the randomization level
+     * @param tf - the task factory
+     */
     public WorseOriginalNatzSolver(final boolean computePartialSolutionWhenSolvingNotPossible, final int randomizeLvl, final TaskFactory tf) {
         super(computePartialSolutionWhenSolvingNotPossible);
         if(randomizeLvl < 0) throw new IllegalArgumentException("randomizeLvl must be >= 0");
@@ -48,6 +66,7 @@ public class WorseOriginalNatzSolver extends FairNumSolver {
         final List<TimeInterval> dates = this.tf.getDates();
         Collections.sort(dates);
         
+        @SuppressWarnings("unused") // may be used later (see TODO evtl. secondLastTasksMap)
         TimeInterval secondLastDate = null;
         TimeInterval lastDate = null;
         
@@ -147,7 +166,13 @@ public class WorseOriginalNatzSolver extends FairNumSolver {
                 || (name.contains(TaskFactory.FLOOR_STR) && nameTwo.contains(TaskFactory.FLOOR_STR));
     }
 
-    @Override
+    /**
+     * This method should not be used for this solver!
+     * 
+     * @param map - ignored
+     * @param alreadyTried - ignored
+     * @return null
+     */
     protected Person getNextPerson(Map<Person, Integer> map, Set<Person> alreadyTried) {
         // other method is used!
         return null;

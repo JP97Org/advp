@@ -36,6 +36,12 @@ import org.jojo.advp.base.factory.KeyPairFactory;
 import org.jojo.advp.interactive.ui.CommandLineInterface;
 import org.jojo.util.JDO;
 
+/**
+ * Represents an add key dialog, i.e. a dialog for adding and removing keys for one key factory.
+ * 
+ * @author jojo
+ * @version 0.9
+ */
 public class AddKeyDialog extends JDialog {
     /**
      * 
@@ -55,6 +61,15 @@ public class AddKeyDialog extends JDialog {
     
     private final JTextField removeIndicesTextField;
     
+    /**
+     * Creates a new add key dialog.
+     * 
+     * @param bPerson - whether this dialog is for person's factory
+     * @param index - the index of the factory
+     * @param key - the factory
+     * @param cli - the command line interface
+     * @param maxIndex - the maximal index in use
+     */
     public AddKeyDialog(final boolean bPerson, final int index, final KeyPairFactory key, 
             final CommandLineInterface cli, final int maxIndex) {
         this.bPerson = bPerson;
@@ -106,7 +121,6 @@ public class AddKeyDialog extends JDialog {
         
         ct.add(south);
     }
-    
     
     private void reload() {
         for (String h : heads) {
@@ -319,6 +333,11 @@ public class AddKeyDialog extends JDialog {
         reloadData();
     }
 
+    /**
+     * Adds the given table model listener to the table model of this dialog's table.
+     * 
+     * @param l - the given table model listener
+     */
     public void addTableModelListener(final TableModelListener l) {
         this.model.addTableModelListener(l);
     }

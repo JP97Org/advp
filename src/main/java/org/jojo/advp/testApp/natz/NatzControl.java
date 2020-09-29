@@ -13,10 +13,28 @@ import org.jojo.advp.base.solution.FairNumSolver;
 import org.jojo.advp.base.solution.NaiveFairNumSolver;
 import org.jojo.advp.base.solution.OptimizedFairNumSolver;
 
+/**
+ * Represents the controller for the natz.
+ * 
+ * @author jojo
+ * @version 0.9
+ */
 public class NatzControl {
     private World world;
     private List<TimeInterval> dates;
     
+    /**
+     * Creates a new controller for the natz.
+     * 
+     * @param persons - the persons
+     * @param tasks - the tasks
+     * @param dates - the dates
+     * @param partial - whether partial solving should be accepted
+     * @param randomizeLvl - the randomization level
+     * @param optimize - whether optimization should take place (experimental)
+     * @param origSolver - whether the original solver should be used
+     * @param tf - the task factory
+     */
     public NatzControl(final Set<Person> persons, final Set<Task> tasks, 
             final List<TimeInterval> dates, final boolean partial, final int randomizeLvl,
             final boolean optimize, final boolean origSolver, final TaskFactory tf) {
@@ -35,6 +53,11 @@ public class NatzControl {
         this.world.setSolver(solver);
     }
 
+    /**
+     * Calculates the output table.
+     * 
+     * @return the output table
+     */
     public String[][] calculateTable() {
         boolean solved = this.world.isCompletelyMapped();
         if (!solved) {
@@ -97,6 +120,10 @@ public class NatzControl {
         return (i < numPool) ? i : ((i - numPool) % numFloor);
     }
 
+    /**
+     * 
+     * @return whether the world is fully mapped
+     */
     public boolean isFullyMapped() {
         return world.isCompletelyMapped();
     }

@@ -3,19 +3,32 @@ package org.jojo.util;
 import java.io.PrintStream;
 import java.util.Locale;
 
+/**
+ * Represents a buffered print stream.
+ * 
+ * @author jojo
+ * @version 0.9
+ */
 public class BufferedPrintStream extends ValidPrintStream {
 
     private boolean doBuffer;
     private StringBuilder buf;
     private PrintStream ps;
 
+    /**
+     * Creates a new buffered print stream for the given valid print stream.
+     * 
+     * @param out - the given valid print stream
+     */
     public BufferedPrintStream(ValidPrintStream out) {
-        super(out);
-        ps = out;
-        doBuffer = false;
-        buf = new StringBuilder();
+        this((PrintStream) out);
     }
 
+    /**
+     * Creates a new buffered print stream for the given print stream.
+     * 
+     * @param out - the given print stream
+     */
     public BufferedPrintStream(PrintStream out) {
         super(out);
         ps = out;
@@ -23,6 +36,11 @@ public class BufferedPrintStream extends ValidPrintStream {
         buf = new StringBuilder();
     }
 
+    /**
+     * Begins buffering.
+     * 
+     * @see {@link BufferedPrintStream#suspend}
+     */
     public void begin() {
         if (!doesBuffer()) {
             doBuffer(true);
@@ -39,7 +57,7 @@ public class BufferedPrintStream extends ValidPrintStream {
     @Override
     public void print(String s) {
         if (doesBuffer()) {
-            buf.append(s);
+            buf.append(s == null ? "null" : s);
         } else {
             ps.print(s);
         }
@@ -59,6 +77,10 @@ public class BufferedPrintStream extends ValidPrintStream {
         return this;
     }
 
+    /**
+     * 
+     * @return whether this stream buffers
+     */
     public boolean doesBuffer() {
         return doBuffer;
     }
@@ -67,7 +89,11 @@ public class BufferedPrintStream extends ValidPrintStream {
         this.doBuffer = doBuffer;
     }
 
+    @Override
     public void flush() {
+        if (buf != null) {
+            ps.print(buf);
+        }
         buf = null;
         super.flush();
     }
@@ -187,14 +213,18 @@ public class BufferedPrintStream extends ValidPrintStream {
         print(String.valueOf(o) + "\n");
     }
 
+    /**
+     * Ends this stream, i.e. ending buffering, flushing and closing this stream.
+     */
     public void end() {
-        if (buf != null)
-            ps.print(buf);
-        doBuffer(false);
         flush();
+        doBuffer(false);
         close();
     }
 
+    /**
+     * Suspends buffering, i.e. printing the buffer to the underlying stream and ending buffering.
+     */
     public void suspend() {
         if (buf != null)
             ps.print(buf);
@@ -202,6 +232,10 @@ public class BufferedPrintStream extends ValidPrintStream {
         buf = null;
     }
 
+    /**
+     * 
+     * @return the content of the buffer as a string
+     */
     public String getBuffer() {
         return buf.toString();
     }

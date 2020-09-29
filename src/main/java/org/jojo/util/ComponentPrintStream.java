@@ -4,8 +4,19 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.util.Locale;
 
+/**
+ * Represents a print stream for printing to a ComponentOutputStream.
+ * 
+ * @author jojo
+ * @version 0.9
+ */
 public class ComponentPrintStream extends ValidPrintStream {
 
+    /**
+     * Creates a new component print stream.
+     * 
+     * @param out - the ComponentOutputStream to which this stream should print
+     */
     public ComponentPrintStream(ComponentOutputStream out) {
         super(out, false);
     }
@@ -17,11 +28,15 @@ public class ComponentPrintStream extends ValidPrintStream {
 
     @Override
     public void print(String s) {
-        for (int i = 0; i < s.length(); i++) {
-            try {
-                out.write(s.codePointAt(i));
-            } catch (IOException e) {
-                e.printStackTrace();
+        if (s == null) {
+            print("null");
+        } else {
+            for (int i = 0; i < s.length(); i++) {
+                try {
+                    out.write(s.codePointAt(i));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         }
 
@@ -30,7 +45,6 @@ public class ComponentPrintStream extends ValidPrintStream {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
 
     @Override

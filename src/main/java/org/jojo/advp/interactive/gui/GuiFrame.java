@@ -35,9 +35,14 @@ import org.jojo.util.BufferedPrintStream;
 import org.jojo.util.ComponentOutputStream;
 import org.jojo.util.ComponentPrintStream;
 import org.jojo.util.JDO;
-import org.jojo.util.TextUtil;
 import org.jojo.util.ValidPrintStream;
 
+/**
+ * Represents the main frame of the GUI.
+ * 
+ * @author jojo
+ * @version 0.9
+ */
 public class GuiFrame extends JFrame implements TableModelListener {
     /**
      * 
@@ -59,6 +64,9 @@ public class GuiFrame extends JFrame implements TableModelListener {
     private TablePanel personTable;
     private TablePanel taskTable;
     
+    /**
+     * Creates a new GUI main frame.
+     */
     public GuiFrame() {
         setTitle("ADVP | Allgemeines Dienstverteiler Programm | General-Purpose Task-Person-Matcher");
         setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -222,6 +230,11 @@ public class GuiFrame extends JFrame implements TableModelListener {
         this.settings.setSolver(solverType, partial, randLvl);
     }
 
+    /**
+     * Creates an action listener for solving.
+     * 
+     * @return an action listener for solving
+     */
     protected ActionListener solve() {
         return new ActionListener() {
             @Override
@@ -280,7 +293,12 @@ public class GuiFrame extends JFrame implements TableModelListener {
             }
         };
     }
-    
+
+    /**
+     * Creates an action listener for showing the solution.
+     * 
+     * @return an action listener for showing the solution
+     */
     protected ActionListener showSolution() {
         return new ActionListener() {
             @Override
@@ -290,7 +308,11 @@ public class GuiFrame extends JFrame implements TableModelListener {
         };
     }
     
-    
+    /**
+     * Finishes loading, i.e. sets the persons and the tasks from the core's buffer to the table.
+     * @see {@link org.jojo.advp.interactive.core.InteractiveCore#finishLoadingPersonNames}
+     * @see {@link org.jojo.advp.interactive.core.InteractiveCore#finishLoadingTaskDescriptors}
+     */
     protected void finishLoading() {
         final String[] persons = cli.getCore().finishLoadingPersonNames();
         if (persons != null) {
@@ -313,6 +335,12 @@ public class GuiFrame extends JFrame implements TableModelListener {
         return al(null);
     }
     
+    /**
+     * An action listener for executing commands.
+     * 
+     * @param cmd - the given command
+     * @return an action listener for executing commands
+     */
     protected ActionListener al(final String cmd) {
        ActionListener ret = new ActionListener() {
         public void actionPerformed(ActionEvent arg0) {
@@ -367,14 +395,26 @@ public class GuiFrame extends JFrame implements TableModelListener {
        return ret;
     }
     
+    /**
+     * 
+     * @return the person table panel
+     */
     protected TablePanel getPersonTable() {
         return this.personTable;
     }
     
+    /**
+     * 
+     * @return the task table panel
+     */
     protected TablePanel getTaskTable() {
         return this.taskTable;
     }
     
+    /**
+     * 
+     * @return the command line interface
+     */
     protected CommandLineInterface getCli() {
         return this.cli;
     }

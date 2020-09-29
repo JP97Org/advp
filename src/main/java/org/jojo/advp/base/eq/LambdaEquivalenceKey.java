@@ -109,13 +109,17 @@ public class LambdaEquivalenceKey<P,T> implements EquivalenceKey {
                 if (this.ofPerson) {
                     valP = this.valueP;
                     if (this.oValClass.isInstance(o.valueT) && o.oValClass.isInstance(this.valueP)) {
-                        valT = (T) o.valueT;
+                        @SuppressWarnings("unchecked") // it is checked by this.oValClass.isInstance(o.valueT)
+                        final T oVal = (T) o.valueT;
+                        valT = oVal;
                     } else {
                         return false;
                     }
                 } else {
                     if (this.oValClass.isInstance(o.valueP) && o.oValClass.isInstance(this.valueT)) {
-                        valP = (P) o.valueP;
+                        @SuppressWarnings("unchecked") // it is checked by this.oValClass.isInstance(o.valueP)
+                        final P oVal = (P) o.valueP;
+                        valP = oVal;
                     } else {
                         return false;
                     }
